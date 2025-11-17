@@ -1,0 +1,10 @@
+This is the repository for Neulite, a light-weight neuron simulator. This repository contains the following:
+
+* bionetlite: The front-end module (bionetlite)
+* flavors: Versions of the kernel
+* helper: Helper scripts
+* kernel: The default (vanilla) Neulite kernel
+* test: Tests for kernels
+
+Enjoy!
+The Neulite Core Team
