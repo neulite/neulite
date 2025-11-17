@@ -1,0 +1,131 @@
+// SPDX-License-Identifier: GPL-2.0-only
+// Copyright (C) 2024,2025 Neulite Core Team <neulite-core@numericalbrain.org>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <assert.h>
+#include "conn.h"
+#include "neuron.h"
+#include "config.h"
+
+extern int strip_comment_destructive ( char * );
+extern int remove_blank_destructive_for_csv ( char * );
+extern int get_lines ( const char * );
+
+conn_t *initialize_connection ( const int n_each, const int n_offset, const population_t *u, const neuron_t *n, const char *filename )
+{
+  conn_t *c = calloc (1, sizeof ( conn_t ) );
+
+  if ( n -> n_neuron == 0 ) { c -> n_conn = 0; return c; }
+  
+  int *pre_table = calloc ( 0, sizeof ( int ) ); // allocate dynamically
+  int *pre_ary   = calloc ( 0, sizeof ( int ) ); // allocate dynamically
+  int *post_ary  = calloc ( n -> n_neuron, sizeof ( int ) );
+  int n_conn = 0, n_pre = 0;
+  {
+    char buf [ 1024 ] ;
+    FILE *file = fopen ( filename, "r" );
+    if ( ! file ) { fprintf ( stderr, "Error: no such file %s\n", filename ); exit ( 1 ); }
+
+    int pre = -1, pre_ary_size = 0, pre_table_size = 0;
+    while ( fgets ( buf, 1024, file ) ) {
+      if ( strip_comment_destructive ( buf ) == 0 ) { continue; }
+      if ( remove_blank_destructive_for_csv ( buf ) == 0 ) { continue; }
+      int d_pre, d_post_i;
+      const int nf = sscanf ( buf, "%d,%d", &d_pre, &d_post_i );
+      assert ( nf == 2 );
+      if ( n_offset <= d_post_i && d_post_i < n_offset + n_each ) {
+	n_conn += 1;
+        if ( pre < d_pre ) {
+	  pre_table_size++;
+	  pre_table = realloc ( pre_table, pre_table_size * sizeof ( int ) );
+	  pre_table [ pre_table_size - 1 ] = d_pre;
+	  pre = d_pre;
+	  pre_ary_size++;
+	  pre_ary = realloc ( pre_ary, pre_ary_size * sizeof ( int ) );
+	  pre_ary [ pre_ary_size - 1 ] = 1;
+	} else {
+	  pre_ary [ pre_ary_size - 1 ] += 1;
+	}
+	post_ary [ d_post_i - n_offset ] += 1;
+      }
+    }
+    fclose ( file );
+    assert ( pre_table_size == pre_ary_size );
+    n_pre = pre_table_size;
+  }
+
+  c -> n_conn = n_conn;
+  c -> n_pre = n_pre;
+  c -> n_post = n -> n_neuron; // Note: RHS is X n_post, O n -> n_neuron
+
+  c -> pre_table  = calloc ( c -> n_pre,  sizeof ( int ) ); // list of ids of presynaptic neurons
+  for ( int i = 0; i < c -> n_pre; i++ ) { c -> pre_table [ i ] = pre_table [ i ]; }
+  c -> ptr_pre = calloc ( c -> n_pre + 1, sizeof ( int ) );
+  for ( int i = 0; i < c -> n_pre; i++ ) { c -> ptr_pre [ i + 1 ] = c -> ptr_pre [ i ] + pre_ary [ i ]; }
+  c -> ptr_post = calloc ( c -> n_post + 1, sizeof ( int ) );
+  for ( int i = 0; i < c -> n_post; i++ ) { c -> ptr_post [ i + 1 ] = c -> ptr_post [ i ] + post_ary [ i ]; }
+
+  free ( pre_table );
+  free ( pre_ary );
+  free ( post_ary );
+
+  c -> post_c = calloc ( c -> n_conn, sizeof ( int ) );
+  c -> weight = calloc ( c -> n_conn, sizeof ( double ) );
+  c -> erev   = calloc ( c -> n_conn, sizeof ( double ) );
+  c -> decay  = calloc ( c -> n_conn, sizeof ( double ) );
+  c -> delay = calloc ( c -> n_conn, sizeof ( int ) );
+  c -> id    = calloc ( c -> n_conn, sizeof ( int ) );
+
+  { 
+    int *local_idx = calloc ( c -> n_post, sizeof ( int ) );
+    FILE *file = fopen ( filename, "r" );
+    char buf [ 1024 ];
+    int idx = 0;
+    while ( fgets ( buf, 1024, file ) ) {
+      if ( strip_comment_destructive ( buf ) == 0 ) { continue; }
+      if ( remove_blank_destructive_for_csv ( buf ) == 0 ) { continue; }
+      int d_pre, d_post_i, d_post_c, d_delay;
+      double f_weight, f_decay, f_erev;
+      char c_type;
+      const int nf = sscanf ( buf, "%d,%d,%d,%lf,%lf,%lf,%d,%c", &d_pre, &d_post_i, &d_post_c, &f_weight, &f_decay, &f_erev, &d_delay, &c_type );
+      assert ( nf == 8 );
+
+      if ( n_offset <= d_post_i && d_post_i < n_offset + n_each ) {
+	assert ( d_post_c < u -> n_comp [ n -> pid [ d_post_i - n_offset ] ] );
+      }
+      
+      if ( n_offset <= d_post_i && d_post_i < n_offset + n_each ) {
+	const int solver_id = c -> ptr_post [ d_post_i - n_offset ] + local_idx [ d_post_i - n_offset ];
+	c -> post_c [ solver_id ] = d_post_c;
+	c -> weight [ solver_id ] = f_weight;
+	c -> erev   [ solver_id ] = f_erev;
+	c -> decay  [ solver_id ] = exp ( - DT / f_decay );
+	local_idx [ d_post_i - n_offset ]++;
+	c -> delay [ idx ] = d_delay;
+	c -> id    [ idx ] = solver_id;
+	idx++;
+      }
+    }
+    free ( local_idx );
+    fclose ( file );
+  }
+  
+  return c;
+}
+
+void finalize_connection ( conn_t *c )
+{
+  if ( c -> pre_table != NULL ) { free ( c -> pre_table ); }
+  if ( c -> ptr_pre   != NULL ) { free ( c -> ptr_pre   ); }
+  if ( c -> ptr_post  != NULL ) { free ( c -> ptr_post  ); }
+  if ( c -> post_c != NULL ) { free ( c -> post_c ); }
+  if ( c -> weight != NULL ) { free ( c -> weight ); }
+  if ( c -> erev   != NULL ) { free ( c -> erev   ); }
+  if ( c -> decay  != NULL ) { free ( c -> decay  ); }
+  if ( c -> delay != NULL ) { free ( c -> delay ); }
+  if ( c -> id    != NULL ) { free ( c -> id    ); }
+  free ( c );
+}

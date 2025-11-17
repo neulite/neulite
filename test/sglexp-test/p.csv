@@ -1,0 +1,3 @@
+# n_cell, n_comp, name, swc_file, ion_file
+1280, 3682, Scnn1a, data/Scnn1a_473845048_m_c.swc, data/472363762.csv
+320,  1900, PV,     data/Pvalb_470522102_m_c.swc,  data/472912177.csv
