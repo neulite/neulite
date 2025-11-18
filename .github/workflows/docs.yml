@@ -1,0 +1,42 @@
+name: Deploy Docs
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install sphinx sphinx-rtd-theme sphinx-intl
+
+      - name: Build docs
+        working-directory: docs
+        run: |
+          make html
+          make html_en
+          mkdir -p build/pages/ja build/pages/en
+          cp -r build/html/* build/pages/ja/
+          cp -r build/html_en/* build/pages/en/
+          echo '<meta http-equiv="refresh" content="0;url=en/">' > build/pages/index.html
+          touch build/pages/.nojekyll
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/build/pages
