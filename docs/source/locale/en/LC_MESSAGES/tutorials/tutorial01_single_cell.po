@@ -92,9 +92,9 @@ msgstr "**Run the bionet_lite Code Example**"
 msgid "BMTKチュートリアルが完了したら、次のセクションに進んでください。"
 msgstr "Once the BMTK tutorial is complete, proceed to the next section."
 
-#: ../../source/tutorials/tutorial01_single_cell.rst:40
-msgid "BMTKからbionet_liteへの変更"
-msgstr "Changes from BMTK to bionet_lite"
+#: ../../source/tutorials/tutorial01_single_cell.rst:39
+msgid "bionetからbionet_liteへの変更"
+msgstr "Changes from bionet to bionet_lite"
 
 #: ../../source/tutorials/tutorial01_single_cell.rst:42
 msgid "**変更が必要なのはimport文だけです。** それ以外のコードは完全に同じです。"
@@ -204,23 +204,23 @@ msgid "Neulite用のポピュレーションファイル。カラム構成は以
 msgstr "A population file for Neulite. The column structure is as follows:"
 
 #: ../../source/tutorials/tutorial01_single_cell.rst:150
-msgid "``#n_cell``: 細胞数"
+msgid "``#n_cell``: Number of cells"
 msgstr "``#n_cell``: Number of cells"
 
 #: ../../source/tutorials/tutorial01_single_cell.rst:151
-msgid "``n_comp``: コンパートメント数"
+msgid "``n_comp``: Number of compartments"
 msgstr "``n_comp``: Number of compartments"
 
 #: ../../source/tutorials/tutorial01_single_cell.rst:152
-msgid "``name``: ポピュレーション名"
+msgid "``name``: Population name"
 msgstr "``name``: Population name"
 
 #: ../../source/tutorials/tutorial01_single_cell.rst:153
-msgid "``swc_file``: SWCモーフォロジファイルのパス"
+msgid "``swc_file``: Path to SWC morphology file"
 msgstr "``swc_file``: Path to SWC morphology file"
 
 #: ../../source/tutorials/tutorial01_single_cell.rst:154
-msgid "``ion_file``: イオンチャネルパラメータファイルのパス"
+msgid "``ion_file``: Path to ion channel parameter file"
 msgstr "``ion_file``: Path to ion channel parameter file"
 
 #: ../../source/tutorials/tutorial01_single_cell.rst:157

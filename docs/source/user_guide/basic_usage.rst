@@ -69,13 +69,13 @@ bionet_liteは、既存のBMTKコードでNeuliteBuilderをインポートする
 .. code-block:: python
 
    net.add_edges(
-       source={'pop_name': 'Exc'},  # 送信元ポピュレーション
-       target={'pop_name': 'Inh'},  # 受信先ポピュレーション
-       connection_rule=5,  # 接続数または接続確率
-       syn_weight=0.001,  # シナプス重み
-       delay=2.0,  # 遅延（ms）
-       dynamics_params='AMPA_ExcToInh.json',  # シナプスパラメータ
-       model_template='exp2syn'  # シナプスモデル
+       source={'pop_name': 'Exc'},  # Source population
+       target={'pop_name': 'Inh'},  # Target population
+       connection_rule=5,  # Number of connections or probability
+       syn_weight=0.001,  # Synaptic weight
+       delay=2.0,  # Delay (ms)
+       dynamics_params='AMPA_ExcToInh.json',  # Synapse parameters
+       model_template='exp2syn'  # Synapse model
    )
 
 サポートされているシナプスモデル
@@ -94,13 +94,13 @@ bionet_liteは、既存のBMTKコードでNeuliteBuilderをインポートする
 
 .. code-block:: python
 
-   # ネットワークのビルド
+   # Build the network
    net.build()
 
-   # ノード情報の保存
+   # Save node information
    net.save_nodes(output_dir='network')
 
-   # エッジ情報の保存
+   # Save edge information
    net.save_edges(output_dir='network')
 
 実行の流れ

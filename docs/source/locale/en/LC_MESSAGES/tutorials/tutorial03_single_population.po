@@ -122,23 +122,23 @@ msgid "100個のニューロンの情報が含まれます。カラム構成は�
 msgstr "Contains information for 100 neurons. The column structure is as follows:"
 
 #: ../../source/tutorials/tutorial03_single_population.rst:84
-msgid "``#n_cell``: 細胞数（100個）"
+msgid "``#n_cell``: Number of cells (100)"
 msgstr "``#n_cell``: Number of cells (100)"
 
 #: ../../source/tutorials/tutorial03_single_population.rst:85
-msgid "``n_comp``: コンパートメント数"
+msgid "``n_comp``: Number of compartments"
 msgstr "``n_comp``: Number of compartments"
 
 #: ../../source/tutorials/tutorial03_single_population.rst:86
-msgid "``name``: ポピュレーション名"
+msgid "``name``: Population name"
 msgstr "``name``: Population name"
 
 #: ../../source/tutorials/tutorial03_single_population.rst:87
-msgid "``swc_file``: SWCモーフォロジファイルのパス"
+msgid "``swc_file``: Path to SWC morphology file"
 msgstr "``swc_file``: Path to SWC morphology file"
 
 #: ../../source/tutorials/tutorial03_single_population.rst:88
-msgid "``ion_file``: イオンチャネルパラメータファイルのパス"
+msgid "``ion_file``: Path to ion channel parameter file"
 msgstr "``ion_file``: Path to ion channel parameter file"
 
 #: ../../source/tutorials/tutorial03_single_population.rst:91
@@ -150,39 +150,39 @@ msgid "シナプス接続情報が含まれます。bionet_liteは、bionetが�
 msgstr "Contains synaptic connection information. bionet_lite applies the connection rules defined by bionet and determines specific connection locations (post cid)."
 
 #: ../../source/tutorials/tutorial03_single_population.rst:102
-msgid "``#pre nid``: シナプス前ニューロンID"
+msgid "``#pre nid``: Presynaptic neuron ID"
 msgstr "``#pre nid``: Presynaptic neuron ID"
 
 #: ../../source/tutorials/tutorial03_single_population.rst:103
-msgid "``post nid``: シナプス後ニューロンID"
+msgid "``post nid``: Postsynaptic neuron ID"
 msgstr "``post nid``: Postsynaptic neuron ID"
 
 #: ../../source/tutorials/tutorial03_single_population.rst:104
-msgid "``post cid``: シナプス後コンパートメントID"
+msgid "``post cid``: Postsynaptic compartment ID"
 msgstr "``post cid``: Postsynaptic compartment ID"
 
 #: ../../source/tutorials/tutorial03_single_population.rst:105
-msgid "``weight``: シナプス重み"
+msgid "``weight``: Synaptic weight"
 msgstr "``weight``: Synaptic weight"
 
 #: ../../source/tutorials/tutorial03_single_population.rst:106
-msgid "``tau_decay``: 減衰時定数（ms）"
+msgid "``tau_decay``: Decay time constant (ms)"
 msgstr "``tau_decay``: Decay time constant (ms)"
 
 #: ../../source/tutorials/tutorial03_single_population.rst:107
-msgid "``tau_rise``: 上昇時定数（ms）"
+msgid "``tau_rise``: Rise time constant (ms)"
 msgstr "``tau_rise``: Rise time constant (ms)"
 
 #: ../../source/tutorials/tutorial03_single_population.rst:108
-msgid "``erev``: 逆転電位（mV）"
+msgid "``erev``: Reversal potential (mV)"
 msgstr "``erev``: Reversal potential (mV)"
 
 #: ../../source/tutorials/tutorial03_single_population.rst:109
-msgid "``delay``: シナプス遅延（ms）"
+msgid "``delay``: Synaptic delay (ms)"
 msgstr "``delay``: Synaptic delay (ms)"
 
 #: ../../source/tutorials/tutorial03_single_population.rst:110
-msgid "``e/i``: 興奮性(e)または抑制性(i)"
+msgid "``e/i``: Excitatory (e) or inhibitory (i)"
 msgstr "``e/i``: Excitatory (e) or inhibitory (i)"
 
 #: ../../source/tutorials/tutorial03_single_population.rst:113

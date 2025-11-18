@@ -23,11 +23,11 @@ bionet_liteのメインインターフェースです。BMTKの ``NetworkBuilder
    from bionetlite import NeuliteBuilder
 
    net = NeuliteBuilder(
-       name,                        # ネットワーク名（必須）
-       convert_morphologies=True,   # SWCファイルをNeulite用に変換
-       convert_ion_channels=True,   # イオンチャネルJSONをCSVに変換
-       simulation_config=None,      # シミュレーション設定（オプション）
-       generate_config_h=True       # config.hを自動生成
+       name,                        # Network name (required)
+       convert_morphologies=True,   # Convert SWC files for Neulite
+       convert_ion_channels=True,   # Convert ion channel JSON to CSV
+       simulation_config=None,      # Simulation config (optional)
+       generate_config_h=True       # Auto-generate config.h
    )
 
 主要メソッド
@@ -41,12 +41,12 @@ add_nodes()
 .. code-block:: python
 
    net.add_nodes(
-       N=100,                              # ニューロン数
-       pop_name='Exc',                     # ポピュレーション名
-       model_type='biophysical',           # モデルタイプ
-       morphology='Scnn1a.swc',            # 形態ファイル名
-       dynamics_params='472363762_fit.json',  # イオンチャネルパラメータ
-       ei='e'                              # 'e'（興奮性）または'i'（抑制性）
+       N=100,                              # Number of neurons
+       pop_name='Exc',                     # Population name
+       model_type='biophysical',           # Model type
+       morphology='Scnn1a.swc',            # Morphology file name
+       dynamics_params='472363762_fit.json',  # Ion channel parameters
+       ei='e'                              # 'e' (excitatory) or 'i' (inhibitory)
    )
 
 **対応モデル**: 現在は ``model_type='biophysical'`` のみ対応
@@ -59,13 +59,13 @@ add_edges()
 .. code-block:: python
 
    net.add_edges(
-       source={'pop_name': 'Exc'},         # 送信元ポピュレーション
-       target={'pop_name': 'Inh'},         # 受信先ポピュレーション
-       connection_rule=5,                  # 接続数または接続確率
-       syn_weight=0.001,                   # シナプス重み
-       delay=2.0,                          # 遅延（ms、整数に丸められる）
-       target_sections=['somatic', 'basal'],  # ターゲットセクション
-       dynamics_params='ExcToInh.json'     # シナプスパラメータ
+       source={'pop_name': 'Exc'},         # Source population
+       target={'pop_name': 'Inh'},         # Target population
+       connection_rule=5,                  # Number of connections or probability
+       syn_weight=0.001,                   # Synaptic weight
+       delay=2.0,                          # Delay (ms, rounded to integer)
+       target_sections=['somatic', 'basal'],  # Target sections
+       dynamics_params='ExcToInh.json'     # Synapse parameters
    )
 
 **対応モデル**: 現在は ``exp2syn`` のみ対応

@@ -145,7 +145,7 @@ config.hは以下の場所に生成されます：
 
 .. code-block:: text
 
-   neulite/ # または {base_dir}_nl/
+   neulite/ # or {base_dir}_nl/
    └── kernel/
        └── config.h
 

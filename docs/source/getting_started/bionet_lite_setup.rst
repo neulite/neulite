@@ -209,11 +209,11 @@ bionet_liteは、``neulite/`` ディレクトリ内にNeulite用のファイル�
 
    #n_cell,n_comp,name,swc_file,ion_file
 
-* ``#n_cell``: ポピュレーション内のセル数
-* ``n_comp``: コンパートメント数
-* ``name``: ポピュレーション名
-* ``swc_file``: 形態ファイルのパス
-* ``ion_file``: イオンチャネル設定ファイルのパス
+* ``#n_cell``: Number of cells in the population
+* ``n_comp``: Number of compartments
+* ``name``: Population name
+* ``swc_file``: Path to morphology file
+* ``ion_file``: Path to ion channel configuration file
 
 **<src>_<trg>_connection.csv** - シナプス接続情報
 
@@ -221,15 +221,15 @@ bionet_liteは、``neulite/`` ディレクトリ内にNeulite用のファイル�
 
    #pre nid,post nid,post cid,weight,tau_decay,tau_rise,erev,delay,e/i
 
-* ``#pre nid``: シナプス前ニューロンID
-* ``post nid``: シナプス後ニューロンID
-* ``post cid``: シナプス後コンパートメントID
-* ``weight``: シナプス重み
-* ``tau_decay``: 減衰時定数（ms）
-* ``tau_rise``: 上昇時定数（ms）
-* ``erev``: 逆転電位（mV）
-* ``delay``: 伝達遅延（ms）
-* ``e/i``: 興奮性(e)または抑制性(i)
+* ``#pre nid``: Presynaptic neuron ID
+* ``post nid``: Postsynaptic neuron ID
+* ``post cid``: Postsynaptic compartment ID
+* ``weight``: Synaptic weight
+* ``tau_decay``: Decay time constant (ms)
+* ``tau_rise``: Rise time constant (ms)
+* ``erev``: Reversal potential (mV)
+* ``delay``: Transmission delay (ms)
+* ``e/i``: Excitatory (e) or inhibitory (i)
 
 オプション設定
 ==============

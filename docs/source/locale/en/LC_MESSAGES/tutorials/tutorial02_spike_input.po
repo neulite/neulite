@@ -118,23 +118,23 @@ msgid "生物物理学的ニューロン（1個）の情報が含まれます。
 msgstr "Contains information for biophysical neuron(s) (1 neuron). The column structure is as follows:"
 
 #: ../../source/tutorials/tutorial02_spike_input.rst:99
-msgid "``#n_cell``: 細胞数"
+msgid "``#n_cell``: Number of cells"
 msgstr "``#n_cell``: Number of cells"
 
 #: ../../source/tutorials/tutorial02_spike_input.rst:100
-msgid "``n_comp``: コンパートメント数"
+msgid "``n_comp``: Number of compartments"
 msgstr "``n_comp``: Number of compartments"
 
 #: ../../source/tutorials/tutorial02_spike_input.rst:101
-msgid "``name``: ポピュレーション名"
+msgid "``name``: Population name"
 msgstr "``name``: Population name"
 
 #: ../../source/tutorials/tutorial02_spike_input.rst:102
-msgid "``swc_file``: SWCモーフォロジファイルのパス"
+msgid "``swc_file``: Path to SWC morphology file"
 msgstr "``swc_file``: Path to SWC morphology file"
 
 #: ../../source/tutorials/tutorial02_spike_input.rst:103
-msgid "``ion_file``: イオンチャネルパラメータファイルのパス"
+msgid "``ion_file``: Path to ion channel parameter file"
 msgstr "``ion_file``: Path to ion channel parameter file"
 
 #: ../../source/tutorials/tutorial02_spike_input.rst:106

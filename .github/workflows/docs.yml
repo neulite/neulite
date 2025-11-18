@@ -29,6 +29,8 @@ jobs:
       - name: Build HTML
         working-directory: docs
         run: |
+          # Compile .po to .mo files for translations
+          sphinx-intl build -d source/locale
           make html
           make html_en
           mkdir -p build/pages/ja build/pages/en

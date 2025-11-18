@@ -173,11 +173,11 @@ bionet_liteは以下の処理を行います：
 
 **カラム:**
 
-* ``#id`` - コンパートメント番号（0から始まる）
+* ``#id`` - Compartment number (0-based)
 * ``type`` - 1=soma, 2=axon, 3=basal dendrite, 4=apical dendrite
-* ``x, y, z`` - 3D座標（μm）
-* ``r`` - 半径（μm）
-* ``parent`` - 親のコンパートメント番号（-1はルート）
+* ``x, y, z`` - 3D coordinates (μm)
+* ``r`` - Radius (μm)
+* ``parent`` - Parent compartment number (-1 for root)
 
 出力先: ``<neulite_dir>/data/``
 
@@ -265,19 +265,19 @@ bionet_liteは以下のディレクトリ構造を生成します：
 .. code-block:: text
 
    project/
-   ├── network/                      # SONATA形式（BMTK互換）
+   ├── network/                      # SONATA format (BMTK compatible)
    │   ├── V1_nodes.h5
    │   ├── V1_node_types.csv
    │   ├── V1_V1_edges.h5
    │   └── V1_V1_edge_types.csv
-   └── neulite/                      # Neulite形式
+   └── neulite/                      # Neulite format
        ├── V1_population.csv
        ├── V1_V1_connection.csv
        ├── kernel/
        │   └── config.h
        └── data/
-           ├── *.swc                 # 変換されたSWCファイル
-           └── *.csv                 # イオンチャネルCSV
+           ├── *.swc                 # Converted SWC files
+           └── *.csv                 # Ion channel CSV
 
 次のステップ
 ============

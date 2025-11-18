@@ -60,10 +60,10 @@ bionetからbionet_liteへの変更
 
    from bionetlite import NeuliteBuilder as NetworkBuilder
 
-   # ネットワークの作成
+   # Create network
    net = NetworkBuilder('mcortex')
 
-   # 単一の生物物理学的ニューロンを追加
+   # Add a single biophysical neuron
    net.add_nodes(
        N=1,
        pop_name='Scnn1a',
@@ -73,10 +73,10 @@ bionetからbionet_liteへの変更
        morphology='Scnn1a_473845048_m.swc'
    )
 
-   # ネットワークのビルド
+   # Build the network
    net.build()
 
-   # ファイルへの保存
+   # Save to files
    net.save_nodes(output_dir='sim_ch01/network')
 
 生成されるファイル
@@ -147,11 +147,11 @@ Neulite用のポピュレーションファイル。カラム構成は以下の�
    #n_cell,n_comp,name,swc_file,ion_file
    1,3682,default_100_100,data/Scnn1a_473845048_m.swc,data/472363762_fit.csv
 
-* ``#n_cell``: 細胞数
-* ``n_comp``: コンパートメント数
-* ``name``: ポピュレーション名
-* ``swc_file``: SWCモーフォロジファイルのパス
-* ``ion_file``: イオンチャネルパラメータファイルのパス
+* ``#n_cell``: Number of cells
+* ``n_comp``: Number of compartments
+* ``name``: Population name
+* ``swc_file``: Path to SWC morphology file
+* ``ion_file``: Path to ion channel parameter file
 
 mcortex_mcortex_connection.csv
 -------------------------------
@@ -207,10 +207,10 @@ Neuliteカーネルの実行
 
 .. code-block:: bash
 
-   # neuliteディレクトリに移動
+   # Navigate to neulite directory
    cd neulite
 
-   # Neuliteカーネルを実行
+   # Run Neulite kernel
    ./nl mcortex_population.csv mcortex_mcortex_connection.csv
 
 シミュレーション結果ファイル

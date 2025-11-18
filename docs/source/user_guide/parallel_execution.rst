@@ -14,12 +14,12 @@ bionet_liteをインポートしたネットワーク構築コードを、mpirun
 
 .. code-block:: bash
 
-   # 4プロセスで並列実行
+   # Run in parallel with 4 processes
    mpirun -n 4 python build_network.py
 
 .. code-block:: bash
 
-   # 16プロセスで並列実行
+   # Run in parallel with 16 processes
    mpirun -n 16 python build_network.py
 
 コードの変更は不要
@@ -32,7 +32,7 @@ bionet_liteをインポートしたネットワーク構築コードを、mpirun
    # build_network.py
    from bionetlite import NeuliteBuilder as NetworkBuilder
 
-   # 通常通りのコード
+   # Normal code
    net = NetworkBuilder('v1')
    net.add_nodes(...)
    net.add_edges(...)

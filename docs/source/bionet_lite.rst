@@ -31,9 +31,9 @@ BMTKで記述されたネットワーク構築コードのimport文を変更す�
    from bionetlite import NeuliteBuilder as NetworkBuilder
 
    net = NetworkBuilder('v1')
-   net.add_nodes(...)  # 同じコード
-   net.build()         # 同じコード
-   net.save_nodes(output_dir='network')  # 同じコード
+   net.add_nodes(...)  # Same code
+   net.build()         # Same code
+   net.save_nodes(output_dir='network')  # Same code
 
 
 技術的詳細

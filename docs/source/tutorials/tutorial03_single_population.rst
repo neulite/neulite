@@ -81,11 +81,11 @@ mcortex_population.csv
    #n_cell,n_comp,name,swc_file,ion_file
    100,3682,Scnn1a_100,data/Scnn1a_473845048_m.swc,data/472363762_fit.csv
 
-* ``#n_cell``: 細胞数（100個）
-* ``n_comp``: コンパートメント数
-* ``name``: ポピュレーション名
-* ``swc_file``: SWCモーフォロジファイルのパス
-* ``ion_file``: イオンチャネルパラメータファイルのパス
+* ``#n_cell``: Number of cells (100)
+* ``n_comp``: Number of compartments
+* ``name``: Population name
+* ``swc_file``: Path to SWC morphology file
+* ``ion_file``: Path to ion channel parameter file
 
 mcortex_mcortex_connection.csv
 -------------------------------
@@ -99,15 +99,15 @@ mcortex_mcortex_connection.csv
    0,12,892,0.00005,1.7,0.1,0.0,2,e
    ...
 
-* ``#pre nid``: シナプス前ニューロンID
-* ``post nid``: シナプス後ニューロンID
-* ``post cid``: シナプス後コンパートメントID
-* ``weight``: シナプス重み
-* ``tau_decay``: 減衰時定数（ms）
-* ``tau_rise``: 上昇時定数（ms）
-* ``erev``: 逆転電位（mV）
-* ``delay``: シナプス遅延（ms）
-* ``e/i``: 興奮性(e)または抑制性(i)
+* ``#pre nid``: Presynaptic neuron ID
+* ``post nid``: Postsynaptic neuron ID
+* ``post cid``: Postsynaptic compartment ID
+* ``weight``: Synaptic weight
+* ``tau_decay``: Decay time constant (ms)
+* ``tau_rise``: Rise time constant (ms)
+* ``erev``: Reversal potential (mV)
+* ``delay``: Synaptic delay (ms)
+* ``e/i``: Excitatory (e) or inhibitory (i)
 
 仕様
 ----------

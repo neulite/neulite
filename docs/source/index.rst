@@ -60,10 +60,10 @@ Neuliteは、`Brain Modeling Toolkit (BMTK) <https://github.com/AllenInstitute/b
 
 .. code-block:: python
 
-   # bionetの代わりにbionet_liteをインポート
+   # Import bionet_lite instead of bionet
    from bionetlite import NeuliteBuilder as NetworkBuilder
 
-   # あとは通常のbionetと同じように使用
+   # Use it the same way as regular bionet
    net = NetworkBuilder('v1')
    net.add_nodes(...)
    net.build()

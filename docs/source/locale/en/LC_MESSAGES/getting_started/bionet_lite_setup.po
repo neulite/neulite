@@ -193,23 +193,23 @@ msgid "**<network_name>_population.csv** - ニューロンのポピュレーシ�
 msgstr "**<network_name>_population.csv** - Neuron population information"
 
 #: ../../source/getting_started/bionet_lite_setup.rst:212
-msgid "``#n_cell``: ポピュレーション内のセル数"
+msgid "``#n_cell``: Number of cells in the population"
 msgstr "``#n_cell``: Number of cells in the population"
 
 #: ../../source/getting_started/bionet_lite_setup.rst:213
-msgid "``n_comp``: コンパートメント数"
+msgid "``n_comp``: Number of compartments"
 msgstr "``n_comp``: Number of compartments"
 
 #: ../../source/getting_started/bionet_lite_setup.rst:214
-msgid "``name``: ポピュレーション名"
+msgid "``name``: Population name"
 msgstr "``name``: Population name"
 
 #: ../../source/getting_started/bionet_lite_setup.rst:215
-msgid "``swc_file``: 形態ファイルのパス"
+msgid "``swc_file``: Path to morphology file"
 msgstr "``swc_file``: Path to morphology file"
 
 #: ../../source/getting_started/bionet_lite_setup.rst:216
-msgid "``ion_file``: イオンチャネル設定ファイルのパス"
+msgid "``ion_file``: Path to ion channel configuration file"
 msgstr "``ion_file``: Path to ion channel configuration file"
 
 #: ../../source/getting_started/bionet_lite_setup.rst:218
@@ -217,39 +217,39 @@ msgid "**<src>_<trg>_connection.csv** - シナプス接続情報"
 msgstr "**<src>_<trg>_connection.csv** - Synapse connection information"
 
 #: ../../source/getting_started/bionet_lite_setup.rst:224
-msgid "``#pre nid``: シナプス前ニューロンID"
+msgid "``#pre nid``: Presynaptic neuron ID"
 msgstr "``#pre nid``: Presynaptic neuron ID"
 
 #: ../../source/getting_started/bionet_lite_setup.rst:225
-msgid "``post nid``: シナプス後ニューロンID"
+msgid "``post nid``: Postsynaptic neuron ID"
 msgstr "``post nid``: Postsynaptic neuron ID"
 
 #: ../../source/getting_started/bionet_lite_setup.rst:226
-msgid "``post cid``: シナプス後コンパートメントID"
+msgid "``post cid``: Postsynaptic compartment ID"
 msgstr "``post cid``: Postsynaptic compartment ID"
 
 #: ../../source/getting_started/bionet_lite_setup.rst:227
-msgid "``weight``: シナプス重み"
-msgstr "``weight``: Synapse weight"
+msgid "``weight``: Synaptic weight"
+msgstr "``weight``: Synaptic weight"
 
 #: ../../source/getting_started/bionet_lite_setup.rst:228
-msgid "``tau_decay``: 減衰時定数（ms）"
+msgid "``tau_decay``: Decay time constant (ms)"
 msgstr "``tau_decay``: Decay time constant (ms)"
 
 #: ../../source/getting_started/bionet_lite_setup.rst:229
-msgid "``tau_rise``: 上昇時定数（ms）"
+msgid "``tau_rise``: Rise time constant (ms)"
 msgstr "``tau_rise``: Rise time constant (ms)"
 
 #: ../../source/getting_started/bionet_lite_setup.rst:230
-msgid "``erev``: 逆転電位（mV）"
+msgid "``erev``: Reversal potential (mV)"
 msgstr "``erev``: Reversal potential (mV)"
 
 #: ../../source/getting_started/bionet_lite_setup.rst:231
-msgid "``delay``: 伝達遅延（ms）"
+msgid "``delay``: Transmission delay (ms)"
 msgstr "``delay``: Transmission delay (ms)"
 
 #: ../../source/getting_started/bionet_lite_setup.rst:232
-msgid "``e/i``: 興奮性(e)または抑制性(i)"
+msgid "``e/i``: Excitatory (e) or inhibitory (i)"
 msgstr "``e/i``: Excitatory (e) or inhibitory (i)"
 
 #: ../../source/getting_started/bionet_lite_setup.rst:235

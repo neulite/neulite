@@ -324,7 +324,7 @@ msgid "**カラム:**"
 msgstr "**Columns:**"
 
 #: ../../source/api_reference/file_formats.rst:176
-msgid "``#id`` - コンパートメント番号（0から始まる）"
+msgid "``#id`` - Compartment number (0-based)"
 msgstr "``#id`` - Compartment number (0-based)"
 
 #: ../../source/api_reference/file_formats.rst:177
@@ -332,15 +332,15 @@ msgid "``type`` - 1=soma, 2=axon, 3=basal dendrite, 4=apical dendrite"
 msgstr "``type`` - 1=soma, 2=axon, 3=basal dendrite, 4=apical dendrite"
 
 #: ../../source/api_reference/file_formats.rst:178
-msgid "``x, y, z`` - 3D座標（μm）"
+msgid "``x, y, z`` - 3D coordinates (μm)"
 msgstr "``x, y, z`` - 3D coordinates (μm)"
 
 #: ../../source/api_reference/file_formats.rst:179
-msgid "``r`` - 半径（μm）"
+msgid "``r`` - Radius (μm)"
 msgstr "``r`` - Radius (μm)"
 
 #: ../../source/api_reference/file_formats.rst:180
-msgid "``parent`` - 親のコンパートメント番号（-1はルート）"
+msgid "``parent`` - Parent compartment number (-1 for root)"
 msgstr "``parent`` - Parent compartment number (-1 for root)"
 
 #: ../../source/api_reference/file_formats.rst:182

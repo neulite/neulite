@@ -96,11 +96,11 @@ mcortex_population.csv
    #n_cell,n_comp,name,swc_file,ion_file
    1,3682,Scnn1a_100,data/Scnn1a_473845048_m.swc,data/472363762_fit.csv
 
-* ``#n_cell``: 細胞数
-* ``n_comp``: コンパートメント数
-* ``name``: ポピュレーション名
-* ``swc_file``: SWCモーフォロジファイルのパス
-* ``ion_file``: イオンチャネルパラメータファイルのパス
+* ``#n_cell``: Number of cells
+* ``n_comp``: Number of compartments
+* ``name``: Population name
+* ``swc_file``: Path to SWC morphology file
+* ``ion_file``: Path to ion channel parameter file
 
 .. note::
    Virtual cellは出力されないため、``mcortex_mcortex_connection.csv`` はヘッダーのみのファイルとなります。

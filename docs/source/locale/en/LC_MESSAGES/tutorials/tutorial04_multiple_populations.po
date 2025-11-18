@@ -21,8 +21,8 @@ msgstr ""
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:3
-msgid "Tutorial 4: 複数ポピュレーションネットワーク"
-msgstr "Tutorial 4: Multiple Population Network"
+msgid "Tutorial 4: 複数のポピュレーションからなるネットワーク"
+msgstr "Tutorial 4: Network with Multiple Populations"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:6
 msgid "概要"
@@ -133,23 +133,23 @@ msgid "各行は以下の情報を含みます："
 msgstr "Each row contains the following information:"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:96
-msgid "``#n_cell``: 細胞数（80個の興奮性、20個の抑制性）"
+msgid "``#n_cell``: Number of cells (80 excitatory, 20 inhibitory)"
 msgstr "``#n_cell``: Number of cells (80 excitatory, 20 inhibitory)"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:97
-msgid "``n_comp``: コンパートメント数（Scnn1a: 3682、PV: 1900）"
+msgid "``n_comp``: Number of compartments (Scnn1a: 3682, PV: 1900)"
 msgstr "``n_comp``: Number of compartments (Scnn1a: 3682, PV: 1900)"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:98
-msgid "``name``: ポピュレーション名"
+msgid "``name``: Population name"
 msgstr "``name``: Population name"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:99
-msgid "``swc_file``: SWCモーフォロジファイルのパス"
+msgid "``swc_file``: Path to SWC morphology file"
 msgstr "``swc_file``: Path to SWC morphology file"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:100
-msgid "``ion_file``: イオンチャネルパラメータファイルのパス"
+msgid "``ion_file``: Path to ion channel parameter file"
 msgstr "``ion_file``: Path to ion channel parameter file"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:103
@@ -165,39 +165,39 @@ msgid "各カラムの意味："
 msgstr "Meaning of each column:"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:117
-msgid "``#pre nid``: シナプス前ニューロンID"
+msgid "``#pre nid``: Presynaptic neuron ID"
 msgstr "``#pre nid``: Presynaptic neuron ID"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:118
-msgid "``post nid``: シナプス後ニューロンID"
+msgid "``post nid``: Postsynaptic neuron ID"
 msgstr "``post nid``: Postsynaptic neuron ID"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:119
-msgid "``post cid``: シナプス後コンパートメントID"
+msgid "``post cid``: Postsynaptic compartment ID"
 msgstr "``post cid``: Postsynaptic compartment ID"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:120
-msgid "``weight``: シナプス重み"
+msgid "``weight``: Synaptic weight"
 msgstr "``weight``: Synaptic weight"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:121
-msgid "``tau_decay``: 減衰時定数"
+msgid "``tau_decay``: Decay time constant"
 msgstr "``tau_decay``: Decay time constant"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:122
-msgid "``tau_rise``: 上昇時定数"
+msgid "``tau_rise``: Rise time constant"
 msgstr "``tau_rise``: Rise time constant"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:123
-msgid "``erev``: 逆転電位"
+msgid "``erev``: Reversal potential"
 msgstr "``erev``: Reversal potential"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:124
-msgid "``delay``: シナプス遅延（ms）"
+msgid "``delay``: Synaptic delay (ms)"
 msgstr "``delay``: Synaptic delay (ms)"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:125
-msgid "``e/i``: 興奮性(e)または抑制性(i)"
+msgid "``e/i``: Excitatory (e) or inhibitory (i)"
 msgstr "``e/i``: Excitatory (e) or inhibitory (i)"
 
 #: ../../source/tutorials/tutorial04_multiple_populations.rst:128
@@ -295,10 +295,10 @@ msgstr "Data for excitatory (0-79) and inhibitory (80-99) neurons are contained 
 msgid "LIFモデルとの混在について"
 msgstr "About Mixing with LIF Models"
 
-#: ../../source/tutorials/tutorial04_multiple_populations.rst:225
+#: ../../source/tutorials/tutorial04_multiple_populations.rst:223
 msgid ""
 "Tutorial "
-"4には元々LIFモデルのニューロンも含まれていましたが、bionet_liteならびにNeuliteは現在biophysicalニューロンのみに対応しています。"
+"4には元々LIFモデルのニューロンも含まれますが、bionet_liteならびにNeuliteは現在biophysicalニューロンのみに対応しています。"
 msgstr ""
 "Tutorial 4 originally included LIF model neurons as well, but bionet_lite and Neulite currently support only biophysical neurons."
 
