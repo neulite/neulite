@@ -1,0 +1,289 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Yamazaki Lab.
+# This file is distributed under the same license as the Bionet_lite
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Bionet_lite \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-15 18:02+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../source/faq.rst:3
+msgid "よくある質問（FAQ）"
+msgstr "Frequently Asked Questions (FAQ)"
+
+#: ../../source/faq.rst:6
+msgid "一般的な質問"
+msgstr "General Questions"
+
+#: ../../source/faq.rst:9
+msgid "bionet_liteとは何ですか？"
+msgstr "What is bionet_lite?"
+
+#: ../../source/faq.rst:11
+msgid "bionet_liteは、BMTKのbionetモジュールを拡張し、新しい生物物理学的ニューロンシミュレータ「Neulite」のためのネットワークデータを生成するPythonパッケージです。"
+msgstr "bionet_lite is a Python package that extends the bionet module of BMTK and generates network data for the new biophysical neuron simulator \"Neulite\"."
+
+#: ../../source/faq.rst:14
+msgid "なぜbionet_liteが必要なのですか？"
+msgstr "Why is bionet_lite necessary?"
+
+#: ../../source/faq.rst:16
+msgid "bionet_liteは、Neuliteカーネルを使って生物物理学的ニューロンシミュレーションを実行するために必要です。"
+msgstr "bionet_lite is necessary to run biophysical neuron simulations using the Neulite kernel."
+
+#: ../../source/faq.rst:18
+msgid "Neuliteは軽量で高性能なシミュレータで、スーパーコンピュータでの大規模シミュレーションに最適化されています。bionet_liteは、BMTKのネットワーク構築機能を活用しながら、Neulite用のネットワークファイルを生成します。"
+msgstr "Neulite is a lightweight and high-performance simulator optimized for large-scale simulations on supercomputers. bionet_lite generates network files for Neulite while leveraging BMTK's network construction capabilities."
+
+#: ../../source/faq.rst:20
+msgid "詳細は以下を参照してください："
+msgstr "For details, see the following:"
+
+#: ../../source/faq.rst:22
+msgid ":doc:`neulite` - Neuliteカーネルについて"
+msgstr ":doc:`neulite` - About Neulite Kernel"
+
+#: ../../source/faq.rst:23
+msgid ":doc:`bionet_lite` - bionet_liteについて"
+msgstr ":doc:`bionet_lite` - About bionet_lite"
+
+#: ../../source/faq.rst:24
+msgid ":doc:`architecture/design_and_implementation` - BMTKとBioNetの背景"
+msgstr ":doc:`architecture/design_and_implementation` - Background of BMTK and BioNet"
+
+#: ../../source/faq.rst:27
+msgid "bionetとbionet_liteの違いは何ですか？"
+msgstr "What is the difference between bionet and bionet_lite?"
+
+#: ../../source/faq.rst:29
+msgid "主な違いは以下の通りです："
+msgstr "The main differences are as follows:"
+
+#: ../../source/faq.rst:31
+msgid "**ターゲットシミュレータ**: bionet→NEURON、bionet_lite→Neulite"
+msgstr "**Target simulator**: bionet→NEURON, bionet_lite→Neulite"
+
+#: ../../source/faq.rst:32
+msgid "**接続位置の決定**: bionetはシミュレータ実行時、bionet_liteはネットワーク構築時"
+msgstr "**Connection position determination**: bionet at simulator runtime, bionet_lite at network construction time"
+
+#: ../../source/faq.rst:33
+msgid "**出力ファイル**: bionet_liteはNeulite用のCSVファイルを追加生成"
+msgstr "**Output files**: bionet_lite additionally generates CSV files for Neulite"
+
+#: ../../source/faq.rst:36
+msgid "インストールと環境"
+msgstr "Installation and Environment"
+
+#: ../../source/faq.rst:39
+msgid "必要なPythonバージョンは？"
+msgstr "What Python version is required?"
+
+#: ../../source/faq.rst:41
+msgid "Python 3.7以上が必要です。"
+msgstr "Python 3.7 or higher is required."
+
+#: ../../source/faq.rst:43
+msgid "詳細なセットアップ手順については、:doc:`getting_started/bionet_lite_setup` を参照してください。"
+msgstr "For detailed setup instructions, see :doc:`getting_started/bionet_lite_setup`."
+
+#: ../../source/faq.rst:46
+msgid "どのOSで動作しますか？"
+msgstr "What operating systems are supported?"
+
+#: ../../source/faq.rst:48
+msgid "Linux（推奨）"
+msgstr "Linux (recommended)"
+
+#: ../../source/faq.rst:49
+msgid "macOS"
+msgstr "macOS"
+
+#: ../../source/faq.rst:52
+msgid "スーパーコンピュータで実行できますか？"
+msgstr "Can it run on supercomputers?"
+
+#: ../../source/faq.rst:54
+msgid ""
+"はい、Neuliteはスーパーコンピュータでの実行を想定して設計されています。特に `富岳 "
+"<https://www.r-ccs.riken.jp/en/fugaku/>`_ での実行実績があります。"
+msgstr ""
+"Yes, Neulite is designed for execution on supercomputers. In particular, it has been successfully run on `Fugaku "
+"<https://www.r-ccs.riken.jp/en/fugaku/>`_."
+
+#: ../../source/faq.rst:56
+msgid "一方で、bionet_liteはPythonの複数のライブラリに依存しているため、bionet_liteを用いたネットワーク構築はクラスタマシン等の環境で実行することを推奨しています。"
+msgstr "On the other hand, bionet_lite depends on multiple Python libraries, so it is recommended to run network construction using bionet_lite in environments such as cluster machines."
+
+#: ../../source/faq.rst:59
+msgid "使用方法"
+msgstr "Usage"
+
+#: ../../source/faq.rst:62
+msgid "既存のbionetコードをbionet_liteに変換するには？"
+msgstr "How to convert existing bionet code to bionet_lite?"
+
+#: ../../source/faq.rst:64
+msgid "import文を変更するだけです："
+msgstr "Simply change the import statement:"
+
+#: ../../source/faq.rst:74
+msgid "残りのコードはそのまま使用できます。"
+msgstr "The rest of the code can be used as-is."
+
+#: ../../source/faq.rst:77
+msgid "Point neuronやVirtual neuronは使えますか？"
+msgstr "Can I use Point neuron or Virtual neuron?"
+
+#: ../../source/faq.rst:79
+msgid "いいえ、現在bionet_liteはbiophysicalニューロンのみをサポートしています。"
+msgstr "No, bionet_lite currently supports only biophysical neurons."
+
+#: ../../source/faq.rst:82
+msgid "なぜexp2syn以外のシナプスモデルは使えないのですか？"
+msgstr "Why can't I use synapse models other than exp2syn?"
+
+#: ../../source/faq.rst:84
+msgid "現在のNeuliteの実装がexp2synのみをサポートしているためです。他のシナプスモデルのサポートは今後の開発課題です。"
+msgstr "This is because the current implementation of Neulite supports only exp2syn. Support for other synapse models is a future development goal."
+
+#: ../../source/faq.rst:87
+msgid "スパイク入力は使えますか？"
+msgstr "Can I use spike input?"
+
+#: ../../source/faq.rst:89
+msgid "現在、bionet_liteとNeuliteは定常電流入力のみをサポートしています。スパイク入力機能は、Neulite側での実装が必要です。"
+msgstr "Currently, bionet_lite and Neulite support only constant current input. Spike input functionality requires implementation on the Neulite side."
+
+#: ../../source/faq.rst:92
+msgid "並列実行"
+msgstr "Parallel Execution"
+
+#: ../../source/faq.rst:95
+msgid "並列実行の方法は？"
+msgstr "How to run in parallel?"
+
+#: ../../source/faq.rst:97
+msgid "mpirunを使用するだけです："
+msgstr "Simply use mpirun:"
+
+#: ../../source/faq.rst:103
+msgid "コードの変更は不要です。詳細は :doc:`user_guide/parallel_execution` を参照してください。"
+msgstr "No code changes are required. For details, see :doc:`user_guide/parallel_execution`."
+
+#: ../../source/faq.rst:107
+msgid "トラブルシューティング"
+msgstr "Troubleshooting"
+
+#: ../../source/faq.rst:110
+msgid "\"Module not found\" エラーが出ます"
+msgstr "\"Module not found\" error"
+
+#: ../../source/faq.rst:112
+msgid "bionet_liteが正しくセットアップされているか確認してください："
+msgstr "Check if bionet_lite is correctly set up:"
+
+#: ../../source/faq.rst:119
+msgid "セットアップされていない場合は、:doc:`getting_started/bionet_lite_setup` を参照してください。"
+msgstr "If not set up, see :doc:`getting_started/bionet_lite_setup`."
+
+#: ../../source/faq.rst:122
+msgid "メモリ不足エラーが出ます"
+msgstr "Out of memory error"
+
+#: ../../source/faq.rst:124
+msgid "以下を試してください："
+msgstr "Try the following:"
+
+#: ../../source/faq.rst:126
+msgid "プロセス数を増やしてメモリを分散"
+msgstr "Increase the number of processes to distribute memory"
+
+#: ../../source/faq.rst:127
+msgid "ノード数を増やす（スーパーコンピュータの場合）"
+msgstr "Increase the number of nodes (for supercomputers)"
+
+#: ../../source/faq.rst:128
+msgid "ネットワークサイズを小さくしてテスト"
+msgstr "Test with a smaller network size"
+
+#: ../../source/faq.rst:131
+msgid "接続位置がbionetと異なります"
+msgstr "Connection positions are different from bionet"
+
+#: ../../source/faq.rst:133
+msgid "これは仕様です。bionet_liteは接続位置をネットワーク構築時にランダムに決定します。bionetとは異なるシード値を使用するため、完全に同一の接続位置にはなりません。"
+msgstr "This is by specification. bionet_lite randomly determines connection positions at network construction time. Since different seed values are used than bionet, the connection positions will not be exactly the same."
+
+#: ../../source/faq.rst:135
+msgid "ただし、一度生成した<src>_<trg>_connection.csvを使用すれば、確実に同じネットワークでシミュレーションを実行できます。"
+msgstr "However, by using the <src>_<trg>_connection.csv generated once, you can reliably run simulations on the same network."
+
+#: ../../source/faq.rst:138
+msgid "delay値が整数しか受け付けられません"
+msgstr "Delay value accepts only integers"
+
+#: ../../source/faq.rst:140
+msgid "これはNeuliteの現在の制限です。delay値はint型のみをサポートしています。小数点以下のdelay値が必要な場合は、時間刻み幅を調整するか、Neulite側の修正が必要です。"
+msgstr "This is a current limitation of Neulite. Delay values support only int type. If you need delay values with decimal places, you need to adjust the time step or modify Neulite."
+
+#: ../../source/faq.rst:144
+msgid "その他"
+msgstr "Others"
+
+#: ../../source/faq.rst:147
+msgid "ドキュメントに誤りを見つけました"
+msgstr "I found an error in the documentation"
+
+#: ../../source/faq.rst:149
+msgid "GitHubのIssueまたはプルリクエストで報告してください。ドキュメントの改善も歓迎します。"
+msgstr "Please report it via GitHub Issues or Pull Requests. Documentation improvements are also welcome."
+
+#: ../../source/faq.rst:153
+msgid "質問が解決しない場合"
+msgstr "If your question is not resolved"
+
+#: ../../source/faq.rst:155
+msgid "以下の方法で質問してください："
+msgstr "Ask using the following methods:"
+
+#: ../../source/faq.rst:157
+msgid "GitHubのDiscussion"
+msgstr "GitHub Discussions"
+
+#: ../../source/faq.rst:158
+msgid "Issue"
+msgstr "Issue"
+
+#: ../../source/faq.rst:159
+msgid "[連絡先情報]"
+msgstr "[Contact Information]"
+
+#: ../../source/faq.rst:162
+msgid "関連リソース"
+msgstr "Related Resources"
+
+#: ../../source/faq.rst:164
+msgid ":doc:`getting_started/index` - 入門ガイド"
+msgstr ":doc:`getting_started/index` - Getting Started Guide"
+
+#: ../../source/faq.rst:165
+msgid ":doc:`user_guide/basic_usage` - ユーザーガイド"
+msgstr ":doc:`user_guide/basic_usage` - User Guide"
+
+#: ../../source/faq.rst:166
+msgid ":doc:`advanced/specification` - 詳細な仕様"
+msgstr ":doc:`advanced/specification` - Detailed Specification"

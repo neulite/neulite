@@ -1,0 +1,120 @@
+Running Sphinx v8.2.3
+loading translations [ja]... done
+making output directory... done
+loading intersphinx inventory 'python' from https://docs.python.org/3/objects.inv ...
+loading intersphinx inventory 'numpy' from https://numpy.org/doc/stable/objects.inv ...
+building [mo]: targets for 0 po files that are out of date
+writing output... 
+building [html]: targets for 38 source files that are out of date
+updating environment: [new config] 38 added, 0 changed, 0 removed
+reading sources... [  3%] advanced/allen_v1_model
+reading sources... [  5%] advanced/extending_neulite
+reading sources... [  8%] advanced/index
+reading sources... [ 11%] advanced/large_scale
+reading sources... [ 13%] advanced/specification
+reading sources... [ 16%] api_reference/file_formats
+reading sources... [ 18%] api_reference/index
+reading sources... [ 21%] api_reference/neulite_builder
+reading sources... [ 24%] api_reference/utilities
+reading sources... [ 26%] architecture/bionet_lite_design
+reading sources... [ 29%] architecture/bmtk_bionet
+reading sources... [ 32%] architecture/data_flow
+reading sources... [ 34%] architecture/implementation
+reading sources... [ 37%] architecture/index
+reading sources... [ 39%] architecture/overview
+reading sources... [ 42%] bionet_lite
+reading sources... [ 45%] changelog
+reading sources... [ 47%] contributing
+reading sources... [ 50%] faq
+reading sources... [ 53%] getting_started/bionet_lite_setup
+reading sources... [ 55%] getting_started/index
+reading sources... [ 58%] getting_started/neulite_build
+reading sources... [ 61%] getting_started/quickstart
+reading sources... [ 63%] how_to_cite
+reading sources... [ 66%] index
+reading sources... [ 68%] neulite
+reading sources... [ 71%] overview
+reading sources... [ 74%] publication
+reading sources... [ 76%] tutorials/index
+reading sources... [ 79%] tutorials/tutorial01_single_cell
+reading sources... [ 82%] tutorials/tutorial02_spike_input
+reading sources... [ 84%] tutorials/tutorial03_single_population
+reading sources... [ 87%] tutorials/tutorial04_multiple_populations
+reading sources... [ 89%] user_guide/basic_usage
+reading sources... [ 92%] user_guide/configuration
+reading sources... [ 95%] user_guide/index
+reading sources... [ 97%] user_guide/output_files
+reading sources... [100%] user_guide/parallel_execution
+
+/Users/kaaya/lab/neulite_bionetlite_docs/docs/source/changelog.rst:192: WARNING: Explicit markup ends without a blank line; unexpected unindent. [docutils]
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... done
+preparing documents... done
+copying assets... 
+copying static files... 
+Writing evaluated template result to /Users/kaaya/lab/neulite_bionetlite_docs/docs/build/html/_static/basic.css
+Writing evaluated template result to /Users/kaaya/lab/neulite_bionetlite_docs/docs/build/html/_static/language_data.js
+Writing evaluated template result to /Users/kaaya/lab/neulite_bionetlite_docs/docs/build/html/_static/documentation_options.js
+Writing evaluated template result to /Users/kaaya/lab/neulite_bionetlite_docs/docs/build/html/_static/js/versions.js
+copying static files: done
+copying extra files... 
+copying extra files: done
+copying assets: done
+writing output... [  3%] advanced/allen_v1_model
+writing output... [  5%] advanced/extending_neulite
+writing output... [  8%] advanced/index
+writing output... [ 11%] advanced/large_scale
+writing output... [ 13%] advanced/specification
+writing output... [ 16%] api_reference/file_formats
+writing output... [ 18%] api_reference/index
+writing output... [ 21%] api_reference/neulite_builder
+writing output... [ 24%] api_reference/utilities
+writing output... [ 26%] architecture/bionet_lite_design
+writing output... [ 29%] architecture/bmtk_bionet
+writing output... [ 32%] architecture/data_flow
+writing output... [ 34%] architecture/implementation
+writing output... [ 37%] architecture/index
+writing output... [ 39%] architecture/overview
+writing output... [ 42%] bionet_lite
+writing output... [ 45%] changelog
+writing output... [ 47%] contributing
+writing output... [ 50%] faq
+writing output... [ 53%] getting_started/bionet_lite_setup
+writing output... [ 55%] getting_started/index
+writing output... [ 58%] getting_started/neulite_build
+writing output... [ 61%] getting_started/quickstart
+writing output... [ 63%] how_to_cite
+writing output... [ 66%] index
+writing output... [ 68%] neulite
+writing output... [ 71%] overview
+writing output... [ 74%] publication
+writing output... [ 76%] tutorials/index
+writing output... [ 79%] tutorials/tutorial01_single_cell
+writing output... [ 82%] tutorials/tutorial02_spike_input
+writing output... [ 84%] tutorials/tutorial03_single_population
+writing output... [ 87%] tutorials/tutorial04_multiple_populations
+writing output... [ 89%] user_guide/basic_usage
+writing output... [ 92%] user_guide/configuration
+writing output... [ 95%] user_guide/index
+writing output... [ 97%] user_guide/output_files
+writing output... [100%] user_guide/parallel_execution
+
+/Users/kaaya/lab/neulite_bionetlite_docs/docs/source/advanced/specification.rst:194: WARNING: unknown document: 'performance' [ref.doc]
+/Users/kaaya/lab/neulite_bionetlite_docs/docs/source/user_guide/parallel_execution.rst:73: WARNING: unknown document: '../advanced/performance' [ref.doc]
+generating indices... genindex done
+highlighting module code... 
+writing additional pages... search done
+copying images... [ 14%] _static/v1_stride_50_transparent.png
+copying images... [ 29%] _static/767369966-bionet_lite_flow.png
+copying images... [ 43%] _static/767339839-bmtk_flow.png
+copying images... [ 57%] _static/763493290-bionet_lite.png
+copying images... [ 71%] _static/teaser.png
+copying images... [ 86%] _static/763493463-bmtk.png
+copying images... [100%] _static/767369955-bionet_lite_overview.png
+
+dumping search index in Japanese (code: ja)... done
+dumping object inventory... done
+build succeeded, 3 warnings.
+
+The HTML pages are in build/html.

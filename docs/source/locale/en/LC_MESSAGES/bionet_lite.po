@@ -1,0 +1,206 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Yamazaki Lab.
+# This file is distributed under the same license as the Bionet_lite
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Bionet_lite \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-15 18:02+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../source/bionet_lite.rst:3
+msgid "Bionet_liteとは"
+msgstr "What is Bionet_lite?"
+
+#: ../../source/bionet_lite.rst:6
+msgid "概要"
+msgstr "Overview"
+
+#: ../../source/bionet_lite.rst:8
+msgid ""
+"Bionet_liteは、`Brain Modeling Toolkit (BMTK) "
+"<https://github.com/AllenInstitute/bmtk>`_ "
+"のbionetモジュールを拡張したPythonパッケージです。Neuliteカーネル用のネットワークデータを生成し、既存のBMTKコードを最小限の変更で再利用できます。"
+msgstr ""
+"Bionet_lite is a Python package that extends the bionet module of `Brain Modeling Toolkit (BMTK) "
+"<https://github.com/AllenInstitute/bmtk>`_. "
+"It generates network data for the Neulite kernel and allows existing BMTK code to be reused with minimal modifications."
+
+#: ../../source/bionet_lite.rst:11
+msgid "特徴"
+msgstr "Features"
+
+#: ../../source/bionet_lite.rst:14
+msgid "既存コードの再利用"
+msgstr "Reuse of Existing Code"
+
+#: ../../source/bionet_lite.rst:16
+msgid "BMTKで記述されたネットワーク構築コードのimport文を変更するだけで、Neulite用のデータを生成できます。"
+msgstr "You can generate data for Neulite by simply changing the import statements of network construction code written in BMTK."
+
+#: ../../source/bionet_lite.rst:40
+msgid "技術的詳細"
+msgstr "Technical Details"
+
+#: ../../source/bionet_lite.rst:42
+msgid "BMTKのNetworkBuilderクラスを拡張し、bionetの全機能を維持しながらNeulite用の出力を追加します。"
+msgstr "It extends the BMTK NetworkBuilder class, maintaining all bionet functionality while adding output for Neulite."
+
+#: ../../source/bionet_lite.rst:55
+msgid "主な処理"
+msgstr "Main Processing"
+
+#: ../../source/bionet_lite.rst:57
+msgid ""
+"**SWCファイルの前処理**: `Perisomatic model <https://brain-map.org/our-research"
+"/computational-modeling/perisomatic-biophysical-single-neuron-models>`_ "
+"への変換、DFSソート"
+msgstr ""
+"**SWC File Preprocessing**: Conversion to `Perisomatic model <https://brain-map.org/our-research"
+"/computational-modeling/perisomatic-biophysical-single-neuron-models>`_, "
+"DFS sorting"
+
+#: ../../source/bionet_lite.rst:58
+msgid "**イオンチャネル設定の変換**: JSON形式からCSV形式へ"
+msgstr "**Ion Channel Configuration Conversion**: From JSON to CSV format"
+
+#: ../../source/bionet_lite.rst:59
+msgid ""
+"**ネットワークファイルの生成**: "
+"<network_name>_population.csv、<src>_<trg>_connection.csv"
+msgstr ""
+"**Network File Generation**: "
+"<network_name>_population.csv, <src>_<trg>_connection.csv"
+
+#: ../../source/bionet_lite.rst:61
+msgid "詳細は :doc:`architecture/design_and_implementation` を参照してください。"
+msgstr "See :doc:`architecture/design_and_implementation` for details."
+
+#: ../../source/bionet_lite.rst:64 ../../source/bionet_lite.rst:68
+msgid "出力ファイルの比較"
+msgstr "Comparison of Output Files"
+
+#: ../../source/bionet_lite.rst:66
+msgid "bionetとbionet_liteでは、生成されるファイルが異なります。"
+msgstr "bionet and bionet_lite generate different files."
+
+#: ../../source/bionet_lite.rst:72
+msgid "ファイルの種類"
+msgstr "File Type"
+
+#: ../../source/bionet_lite.rst:73
+msgid "bionet（BMTK）"
+msgstr "bionet (BMTK)"
+
+#: ../../source/bionet_lite.rst:74
+msgid "bionet_lite"
+msgstr "bionet_lite"
+
+#: ../../source/bionet_lite.rst:75
+msgid "ネットワークデータ"
+msgstr "Network Data"
+
+#: ../../source/bionet_lite.rst
+msgid "``<network>_nodes.h5``"
+msgstr "``<network>_nodes.h5``"
+
+#: ../../source/bionet_lite.rst
+msgid "``<network>_node_types.csv``"
+msgstr "``<network>_node_types.csv``"
+
+#: ../../source/bionet_lite.rst
+msgid "``<src>_<trg>_edges.h5``"
+msgstr "``<src>_<trg>_edges.h5``"
+
+#: ../../source/bionet_lite.rst
+msgid "``<src>_<trg>_edge_types.csv``"
+msgstr "``<src>_<trg>_edge_types.csv``"
+
+#: ../../source/bionet_lite.rst
+msgid "**+** ``<network>_population.csv``"
+msgstr "**+** ``<network>_population.csv``"
+
+#: ../../source/bionet_lite.rst
+msgid "**+** ``<src>_<trg>_connection.csv``"
+msgstr "**+** ``<src>_<trg>_connection.csv``"
+
+#: ../../source/bionet_lite.rst:86
+msgid "形態ファイル"
+msgstr "Morphology Files"
+
+#: ../../source/bionet_lite.rst:87
+msgid "元のSWCファイル（変更なし）"
+msgstr "Original SWC files (unchanged)"
+
+#: ../../source/bionet_lite.rst:88
+msgid "**処理済みSWCファイル** （Perisomatic model変換、DFSソート済み）"
+msgstr "**Processed SWC files** (Perisomatic model conversion, DFS sorted)"
+
+#: ../../source/bionet_lite.rst:89
+msgid "イオンチャネル"
+msgstr "Ion Channels"
+
+#: ../../source/bionet_lite.rst ../../source/bionet_lite.rst:90
+msgid "JSON形式（``*_fit.json``）"
+msgstr "JSON format (``*_fit.json``)"
+
+#: ../../source/bionet_lite.rst
+msgid "**+** CSV形式（Neulite用に変換）"
+msgstr "**+** CSV format (converted for Neulite)"
+
+#: ../../source/bionet_lite.rst:94
+msgid "bionet_liteは、BMTKの標準出力（H5/CSV）を完全に維持しながら、Neulite用の追加ファイル（<network_name>_population.csv、<src>_<trg>_connection.csv）を生成します。これにより、同じネットワークデータで両方のシミュレータを実行できます。"
+msgstr "bionet_lite maintains full compatibility with BMTK's standard output (H5/CSV) while generating additional files for Neulite (<network_name>_population.csv, <src>_<trg>_connection.csv). This allows you to run both simulators on the same network data."
+
+#: ../../source/bionet_lite.rst:99
+msgid "使用例"
+msgstr "Usage Example"
+
+#: ../../source/bionet_lite.rst:118
+msgid "データ標準化の自動サポート"
+msgstr "Automatic Support for Data Standardization"
+
+#: ../../source/bionet_lite.rst:120
+msgid ""
+"このアプローチによって、BMTKが対応する `SONATA "
+"<https://github.com/AllenInstitute/sonata/tree/master>`_ や `Allen Cell "
+"Types Database <https://celltypes.brain-map.org/>`_ などの標準形式を自動的にサポートします。"
+msgstr ""
+"This approach automatically supports standard formats such as `SONATA "
+"<https://github.com/AllenInstitute/sonata/tree/master>`_ and `Allen Cell "
+"Types Database <https://celltypes.brain-map.org/>`_ that BMTK supports."
+
+#: ../../source/bionet_lite.rst:124
+msgid "関連リンク"
+msgstr "Related Links"
+
+#: ../../source/bionet_lite.rst:126
+msgid "Neuliteシミュレータ: :doc:`neulite`"
+msgstr "Neulite Simulator: :doc:`neulite`"
+
+#: ../../source/bionet_lite.rst:127
+msgid "セットアップガイド: :doc:`getting_started/bionet_lite_setup`"
+msgstr "Setup Guide: :doc:`getting_started/bionet_lite_setup`"
+
+#: ../../source/bionet_lite.rst:128
+msgid "チュートリアル: :doc:`tutorials/tutorial01_single_cell`"
+msgstr "Tutorial: :doc:`tutorials/tutorial01_single_cell`"
+
+#: ../../source/bionet_lite.rst:131
+msgid ""
+"Bionet_liteの設計詳細や実装、BMTKとBioNetの背景については、:doc:`architecture/design_and_implementation`"
+" を参照してください。"
+msgstr ""
+"For design details, implementation, and background on BMTK and BioNet, please refer to :doc:`architecture/design_and_implementation`."

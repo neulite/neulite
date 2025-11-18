@@ -1,0 +1,818 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bionet_liteのセットアップ &mdash; Bionet_lite 0.1.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=98e9f989"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=4755f45a"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="Neuliteカーネルのビルド" href="neulite_build.html" />
+    <link rel="prev" title="Getting Started" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Bionet_lite
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+<div class="language-switcher" style="margin-top: 10px; padding: 8px 0; border-top: 1px solid #4e4a4a;">
+  <span style="font-size: 0.9em; color: #999;">Language:</span>
+  
+    
+      <strong style="margin-left: 5px;">日本語</strong>
+    
+  
+    
+      <a href="../en/getting_started/bionet_lite_setup.html" style="margin-left: 5px;">English</a>
+    
+  
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">概要</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#id2">このドキュメントについて</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#id3">システム構成</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#bionet-lite">Bionet_liteとは</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#neulite">Neuliteカーネルとは</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#id6">使用の流れ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#id7">次のステップ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../bionet_lite.html">Bionet_liteとは</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../bionet_lite.html#id1">概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bionet_lite.html#id2">特徴</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../bionet_lite.html#id3">既存コードの再利用</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../bionet_lite.html#id4">技術的詳細</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../bionet_lite.html#id5">主な処理</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../bionet_lite.html#id6">出力ファイルの比較</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bionet_lite.html#id7">使用例</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../bionet_lite.html#id8">データ標準化の自動サポート</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../bionet_lite.html#id9">関連リンク</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../neulite.html">Neuliteカーネルとは</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../neulite.html#id1">概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../neulite.html#id2">特徴</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../neulite.html#id3">軽量設計</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../neulite.html#id4">高い可搬性</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../neulite.html#id5">技術的詳細</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../neulite.html#id6">設計思想</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../neulite.html#id7">対象ニューロンモデル</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../neulite.html#id8">使用環境</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../neulite.html#id9">推奨環境</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../neulite.html#id10">富岳での実績</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../neulite.html#id12">関連リンク</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Getting Started</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">bionet_liteのセットアップ</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">前提条件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">セットアップ手順</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id3">ステップ1: 仮想環境の作成（推奨）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bmtkneuron">ステップ2: BMTKとNEURONのインストール</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">ステップ3: 必要なパッケージのインストール</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">ステップ4: bionet_liteのダウンロード</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">ステップ5: bionet_liteの配置</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">ステップ6: 動作確認</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">基本的な使い方</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#import">importの変更</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">ネットワークの構築</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">出力ファイルの確認</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">オプション設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">依存パッケージの詳細</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id13">bionet_liteの主要な依存パッケージ</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">次のステップ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">参考資料</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="neulite_build.html">Neuliteカーネルのビルド</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="neulite_build.html#id1">前提条件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neulite_build.html#id2">ビルド手順</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="neulite_build.html#id3">ステップ1: ソースコードのダウンロード</a></li>
+<li class="toctree-l4"><a class="reference internal" href="neulite_build.html#id4">ステップ2: ソースコードの展開</a></li>
+<li class="toctree-l4"><a class="reference internal" href="neulite_build.html#id5">ステップ3: ビルド</a></li>
+<li class="toctree-l4"><a class="reference internal" href="neulite_build.html#id6">ステップ4: 実行</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="neulite_build.html#id7">ビルドの確認</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neulite_build.html#id8">トラブルシューティング</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="neulite_build.html#id9">コンパイルエラー</a></li>
+<li class="toctree-l4"><a class="reference internal" href="neulite_build.html#id10">実行ファイルが見つからない</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="neulite_build.html#id11">次のステップ</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">チュートリアル</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html">Tutorial 1: 単一細胞の定常電流入力</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#id1">概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#id2">目的</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#bmtk">前提条件: BMTKチュートリアルの実行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#bionetbionet-lite">bionetからbionet_liteへの変更</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#id3">コード例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#id4">生成されるファイル</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#network-name-population-csv">&lt;network_name&gt;_population.csv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#src-trg-connection-csv">&lt;src&gt;_&lt;trg&gt;_connection.csv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#swc">処理済みswcファイル</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#neulite">Neuliteが生成するファイル</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#mcortex-population-csv">mcortex_population.csv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#mcortex-mcortex-connection-csv">mcortex_mcortex_connection.csv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#kernel-config-h">kernel/config.h</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#id5">Neuliteカーネルの実行</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#id6">シミュレーション結果ファイル</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#id7">BMTKとの実行結果の比較</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#id9">次のステップ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html">Tutorial 2: スパイク入力シミュレーション</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html#id1">概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html#bmtk">前提条件: BMTKチュートリアルの実行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html#bmtkbionet-lite">BMTKからbionet_liteへの変更</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html#id2">コード例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html#id3">生成されるファイル</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html#mcortex-population-csv">mcortex_population.csv</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html#id4">制限事項</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html#id5">次のステップ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial03_single_population.html">Tutorial 3: 単一ポピュレーションネットワーク</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial03_single_population.html#id1">概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial03_single_population.html#bmtk">前提条件: BMTKチュートリアルの実行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial03_single_population.html#bmtkbionet-lite">BMTKからbionet_liteへの変更</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial03_single_population.html#id2">生成されるファイル</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial03_single_population.html#mcortex-population-csv">mcortex_population.csv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial03_single_population.html#mcortex-mcortex-connection-csv">mcortex_mcortex_connection.csv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial03_single_population.html#id3">仕様</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial03_single_population.html#id4">次のステップ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html">Tutorial 4: 複数のポピュレーションからなるネットワーク</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#id1">概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#bmtk">前提条件: BMTKチュートリアルの実行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#bionetbionet-lite">bionetからbionet_liteへの変更</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#id2">生成されるファイル</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#population-csv">population.csv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#connection-csv">connection.csv</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#neulite">Neuliteが生成するファイル</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#v1-population-csv">V1_population.csv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#v1-v1-connection-csv">V1_V1_connection.csv</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#id3">Neuliteカーネルの実行</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#id4">前提条件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#id5">ファイルの配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#id6">実行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#id7">シミュレーション結果ファイル</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#lif">LIFモデルとの混在について</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#id8">次のステップ</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ユーザーガイド</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/basic_usage.html">基本的な使い方</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/basic_usage.html#bionet-lite">bionet_liteを使用したネットワーク構築</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/basic_usage.html#neulitebuilder">NeuliteBuilderの初期化</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user_guide/basic_usage.html#id2">パラメータの説明</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/basic_usage.html#id3">ノードの追加</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user_guide/basic_usage.html#id4">サポートされているモデルタイプ</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/basic_usage.html#id5">エッジ（シナプス接続）の追加</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user_guide/basic_usage.html#id6">基本的な接続の定義</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user_guide/basic_usage.html#id7">サポートされているシナプスモデル</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/basic_usage.html#id8">ネットワークの保存</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/basic_usage.html#id9">実行の流れ</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/basic_usage.html#id10">制限事項</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/basic_usage.html#id11">次のステップ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/configuration.html">設定</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/configuration.html#id2">概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/configuration.html#id3">設定ファイルの役割</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/configuration.html#config-json">config.jsonの構造</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/configuration.html#id4">基本的な実行設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/configuration.html#id5">入力設定（電流注入）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/configuration.html#id6">コンポーネント設定</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/configuration.html#config-h">config.hの自動生成</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/configuration.html#bionet-lite">bionet_liteの使用方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/configuration.html#id7">生成されるconfig.h</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/configuration.html#id8">出力場所</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/configuration.html#id9">高度な使用方法</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/configuration.html#simulation-config">simulation_configパラメータの使用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/configuration.html#id10">config.h生成の無効化</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/configuration.html#bmtk-config">既存のBMTK configとの互換性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/configuration.html#id11">次のステップ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/parallel_execution.html">並列実行</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/parallel_execution.html#id2">並列実行について</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/parallel_execution.html#id3">基本的な使い方</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/parallel_execution.html#id4">コードの変更は不要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/parallel_execution.html#id5">並列実行のしくみ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/parallel_execution.html#id6">次のステップ</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">アーキテクチャ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../architecture/overview.html">概要</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/overview.html#id2">システム構成</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../architecture/overview.html#id3">全体像</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/overview.html#id4">詳細度に応じたインターフェース</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/overview.html#bionet-lite">bionet_liteの位置づけ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/overview.html#id6">設計哲学</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../architecture/overview.html#id7">ネットワーク構築とシミュレーションの分離</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../architecture/overview.html#id8">軽量化の実現</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/overview.html#id9">次のステップ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture/design_and_implementation.html">設計と実装</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/design_and_implementation.html#bmtk">BMTKについて</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../architecture/design_and_implementation.html#id2">モジュラー設計</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../architecture/design_and_implementation.html#id3">データ標準化</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/design_and_implementation.html#bionet">BioNetについて</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../architecture/design_and_implementation.html#bionet-builder">BioNet Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../architecture/design_and_implementation.html#bionet-simulator">BioNet Simulator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/design_and_implementation.html#bionet-lite">bionet_liteの設計</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../architecture/design_and_implementation.html#networkbuilder">NetworkBuilderのオーバーライド</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/design_and_implementation.html#id4">処理フロー</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/design_and_implementation.html#id5">並列実行のサポート</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/design_and_implementation.html#id6">次のステップ</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">APIリファレンス</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/index.html">APIリファレンス</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/index.html#id1">概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/index.html#neulitebuilder">NeuliteBuilderクラス</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/index.html#id2">初期化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/index.html#id3">主要メソッド</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api_reference/index.html#add-nodes">add_nodes()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_reference/index.html#add-edges">add_edges()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_reference/index.html#build">build()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_reference/index.html#save-nodes">save_nodes()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_reference/index.html#save-edges">save_edges()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/index.html#id4">設定メソッド</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api_reference/index.html#set-config-path">set_config_path()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_reference/index.html#set-dir">set_dir()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/index.html#id5">基本的な使用例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/index.html#id6">並列実行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/index.html#id7">次のステップ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/file_formats.html">ファイル形式</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#id2">概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#id3">SONATA形式ファイル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#neulite">Neulite形式ファイル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#network-name-population-csv">&lt;network_name&gt;_population.csv</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id4">ヘッダー</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id5">カラム</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id6">例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#src-trg-connection-csv">&lt;src&gt;_&lt;trg&gt;_connection.csv</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id7">ヘッダー</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id8">カラム</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id9">例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#swc">swcファイル（処理済み）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id10">処理内容</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id11">形式</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#csv">イオンチャネル設定CSV</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id12">ヘッダー</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id13">行の意味</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id14">主要パラメータ</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#config-h">config.h</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id15">生成されるマクロ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id16">パラメータ</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#id17">ディレクトリ構造</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#id18">次のステップ</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">高度なトピック</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/allen_v1_model.html">Allen V1 Model: 大規模ネットワーク</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/allen_v1_model.html#id1">概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/allen_v1_model.html#id2">目的</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/allen_v1_model.html#id3">モデルの概要</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/allen_v1_model.html#id4">モデルの出典</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/allen_v1_model.html#bionet-lite">bionet_liteでの対応範囲</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/allen_v1_model.html#id5">コード例</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/allen_v1_model.html#bmtk">既存のBMTKコードの変更</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/allen_v1_model.html#id6">並列実行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/allen_v1_model.html#id7">生成されるファイル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/allen_v1_model.html#id8">結果の確認</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/allen_v1_model.html#id9">次のステップ</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/allen_v1_model.html#id10">関連リンク</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/specification.html">仕様と制限事項</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/specification.html#id3">サポートされている機能</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id4">ニューロンモデル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id5">シナプスモデル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id6">入力方式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id7">形態モデル</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../advanced/specification.html#id9">Perisomatic Modelとは</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/specification.html#id10">制限事項の詳細</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id11">1. ニューロンモデルの制限</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../advanced/specification.html#bionetbionet-lite">bionetでは可能だが、bionet_liteで未対応のこと</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id12">2. 入力方式の制限</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id13">3. シナプスモデルの制限</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id14">4. シナプス接続位置の制限</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id15">5. データ型の制限</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id16">6. Perisomatic modelの注意点</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/specification.html#id17">対応状況のまとめ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/specification.html#id18">今後の発展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/specification.html#id19">次のステップ</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">その他</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">よくある質問（FAQ）</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#id1">一般的な質問</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#bionet-lite">bionet_liteとは何ですか？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#id2">なぜbionet_liteが必要なのですか？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#bionetbionet-lite">bionetとbionet_liteの違いは何ですか？</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#id3">インストールと環境</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#python">必要なPythonバージョンは？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#os">どのOSで動作しますか？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#id4">スーパーコンピュータで実行できますか？</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#id6">使用方法</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#id7">既存のbionetコードをbionet_liteに変換するには？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#point-neuronvirtual-neuron">Point neuronやVirtual neuronは使えますか？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#exp2syn">なぜexp2syn以外のシナプスモデルは使えないのですか？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#id8">スパイク入力は使えますか？</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#id9">並列実行</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#id10">並列実行の方法は？</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#id11">トラブルシューティング</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#module-not-found">&quot;Module not found&quot; エラーが出ます</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#bionet">接続位置がbionetと異なります</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#delay">delay値が整数しか受け付けられません</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#id12">関連リソース</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../publication.html">Publication</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../publication.html#id1">主要論文</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../publication.html#id3">論文の概要</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../publication.html#id5">主な成果</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../publication.html#id6">技術的貢献</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../how_to_cite.html">How to Cite</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../how_to_cite.html#bibtex">BibTeX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_to_cite.html#id1">論文情報</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">変更履歴</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#id2">バージョン 1.0.0</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#id4">主な成果</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#id5">対応環境</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#id6">既知の制限</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#id7">今後の予定</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Bionet_lite</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Getting Started</a></li>
+      <li class="breadcrumb-item active">bionet_liteのセットアップ</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/getting_started/bionet_lite_setup.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bionet-lite">
+<h1>bionet_liteのセットアップ<a class="headerlink" href="#bionet-lite" title="Link to this heading"></a></h1>
+<p>このページでは、ネットワーク構築用のPythonパッケージである <strong>bionet_lite</strong> のセットアップ手順を説明します。</p>
+<section id="id1">
+<h2>前提条件<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>以下のソフトウェアが必要です：</p>
+<ul class="simple">
+<li><p>Python 3.7以上</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>セットアップ手順<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<section id="id3">
+<h3>ステップ1: 仮想環境の作成（推奨）<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p>Python仮想環境の作成を推奨します：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create virtual environment</span>
+python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>neulite_env
+
+<span class="c1"># Activate virtual environment (Linux/Mac)</span>
+<span class="nb">source</span><span class="w"> </span>neulite_env/bin/activate
+</pre></div>
+</div>
+</section>
+<section id="bmtkneuron">
+<h3>ステップ2: BMTKとNEURONのインストール<a class="headerlink" href="#bmtkneuron" title="Link to this heading"></a></h3>
+<p>bionet_liteは`Brain Modeling Toolkit (BMTK) &lt;<a class="reference external" href="https://alleninstitute.github.io/bmtk/">https://alleninstitute.github.io/bmtk/</a>&gt;`__と <a class="reference external" href="https://www.neuron.yale.edu/neuron/">NEURON</a> に依存しています。</p>
+<p><strong>BMTKのインストール:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>bmtk
+</pre></div>
+</div>
+<p><strong>NEURONのインストール:</strong></p>
+<p>NEURON（生物物理学的ニューロンシミュレータ）をインストールします：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>neuron
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>BMTK、NEURONについては公式サイトを参照してください：<a class="reference external" href="https://alleninstitute.github.io/bmtk/">BMTK</a> / <a class="reference external" href="https://www.neuron.yale.edu/neuron/">NEURON</a></p>
+</div>
+</section>
+<section id="id4">
+<h3>ステップ3: 必要なパッケージのインストール<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p><strong>scikit-learnのインストール:</strong></p>
+<p>bionet_liteは軸索方向推定にPCA（主成分分析）を使用するため、scikit-learnが必要です：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>scikit-learn
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3>ステップ4: bionet_liteのダウンロード<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<p>bionet_liteのパッケージをダウンロードします：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Download file from download link</span>
+wget<span class="w"> </span><span class="o">[</span>bionet_lite<span class="w"> </span>download<span class="w"> </span>URL<span class="o">]</span>
+
+<span class="c1"># Or use curl</span>
+curl<span class="w"> </span>-L<span class="w"> </span>-O<span class="w"> </span><span class="o">[</span>bionet_lite<span class="w"> </span>download<span class="w"> </span>URL<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3>ステップ5: bionet_liteの配置<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<p>ダウンロードしたファイルを展開し、 <code class="docutils literal notranslate"><span class="pre">bionetlite.py</span></code> をネットワーク構築コードと同じディレクトリに配置します：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Extract tarball</span>
+tar<span class="w"> </span>-xzf<span class="w"> </span>bionet_lite-X.Y.Z.tar.gz
+
+<span class="c1"># Copy bionetlite.py to working directory</span>
+cp<span class="w"> </span>bionet_lite-X.Y.Z/bionetlite.py<span class="w"> </span>/path/to/your/network/code/
+</pre></div>
+</div>
+<p><strong>ディレクトリ構成：</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">bionetlite.py</span></code> をネットワーク構築スクリプトと同じ階層に配置します：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>your_project/
+├── bionetlite.py           # Copy here
+├── build_network.py        # Your network construction script
+└── config.json             # Configuration file (if needed)
+</pre></div>
+</div>
+<p>この配置により、 <code class="docutils literal notranslate"><span class="pre">build_network.py</span></code> 内で以下のようにimportできます：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># build_network.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bionetlite</span><span class="w"> </span><span class="kn">import</span> <span class="n">NeuliteBuilder</span> <span class="k">as</span> <span class="n">NetworkBuilder</span>
+
+<span class="n">net</span> <span class="o">=</span> <span class="n">NetworkBuilder</span><span class="p">(</span><span class="s1">&#39;my_network&#39;</span><span class="p">)</span>
+<span class="n">net</span><span class="o">.</span><span class="n">add_nodes</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">net</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="n">net</span><span class="o">.</span><span class="n">save_nodes</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;network&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3>ステップ6: 動作確認<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<p>配置が正しく完了したことを確認します：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Move to network construction code directory</span>
+<span class="nb">cd</span><span class="w"> </span>/path/to/your/network/code/
+
+<span class="c1"># Verify that bionetlite.py exists</span>
+ls<span class="w"> </span>bionetlite.py
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Start Python interpreter to verify</span>
+<span class="n">python</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">bionetlite</span><span class="w"> </span><span class="kn">import</span> <span class="n">NeuliteBuilder</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bionet_lite is ready to use!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>エラーが表示されなければ、セットアップは成功です。</p>
+</section>
+</section>
+<section id="id8">
+<h2>基本的な使い方<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<p>既存のbionetコードをbionet_liteに変換するのは非常に簡単です。import文を変更するだけで、残りのコードはそのまま使用できます。</p>
+<section id="import">
+<h3>importの変更<a class="headerlink" href="#import" title="Link to this heading"></a></h3>
+<p><strong>変更前（bionet）:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bmtk.builder.networks</span><span class="w"> </span><span class="kn">import</span> <span class="n">NetworkBuilder</span>
+</pre></div>
+</div>
+<p><strong>変更後（bionet_lite）:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bionetlite</span><span class="w"> </span><span class="kn">import</span> <span class="n">NeuliteBuilder</span> <span class="k">as</span> <span class="n">NetworkBuilder</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h3>ネットワークの構築<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<p>以降のコードはbionetと全く同じです：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create network</span>
+<span class="n">net</span> <span class="o">=</span> <span class="n">NetworkBuilder</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">)</span>
+
+<span class="c1"># Add nodes</span>
+<span class="n">net</span><span class="o">.</span><span class="n">add_nodes</span><span class="p">(</span>
+    <span class="n">N</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">pop_name</span><span class="o">=</span><span class="s1">&#39;Scnn1a&#39;</span><span class="p">,</span>
+    <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;biophysical&#39;</span><span class="p">,</span>
+    <span class="n">model_template</span><span class="o">=</span><span class="s1">&#39;ctdb:Biophys1.hoc&#39;</span><span class="p">,</span>
+    <span class="n">dynamics_params</span><span class="o">=</span><span class="s1">&#39;472363762_fit.json&#39;</span><span class="p">,</span>
+    <span class="n">morphology</span><span class="o">=</span><span class="s1">&#39;Scnn1a_473845048_m.swc&#39;</span>
+<span class="p">)</span>
+
+<span class="c1"># Build network</span>
+<span class="n">net</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="c1"># Save to files</span>
+<span class="n">net</span><span class="o">.</span><span class="n">save_nodes</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;network&#39;</span><span class="p">)</span>
+<span class="n">net</span><span class="o">.</span><span class="n">save_edges</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;network&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h3>出力ファイルの確認<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<p>bionet_liteは、<code class="docutils literal notranslate"><span class="pre">neulite/</span></code> ディレクトリ内にNeulite用のファイルを生成します：</p>
+<p><strong>ディレクトリ構造</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>neulite/
+├── v1_population.csv              # Population information
+├── v1_v1_connection.csv           # Connection information
+└── data/
+    ├── *.swc                       # Processed morphology files
+    └── *.csv                       # Ion channel settings
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>ファイル名は <code class="docutils literal notranslate"><span class="pre">NetworkBuilder</span></code> で指定した名前（この例では <code class="docutils literal notranslate"><span class="pre">'v1'</span></code>）に基づいて生成されます。</p>
+</div>
+<p>各ファイルの詳細：</p>
+<p><strong>&lt;network_name&gt;_population.csv</strong> - ニューロンのポピュレーション情報</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>#n_cell,n_comp,name,swc_file,ion_file
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">#n_cell</span></code>: ポピュレーション内のセル数</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_comp</span></code>: コンパートメント数</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: ポピュレーション名</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">swc_file</span></code>: 形態ファイルのパス</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ion_file</span></code>: イオンチャネル設定ファイルのパス</p></li>
+</ul>
+<p><strong>&lt;src&gt;_&lt;trg&gt;_connection.csv</strong> - シナプス接続情報</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>#pre nid,post nid,post cid,weight,tau_decay,tau_rise,erev,delay,e/i
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">#pre</span> <span class="pre">nid</span></code>: シナプス前ニューロンID</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">post</span> <span class="pre">nid</span></code>: シナプス後ニューロンID</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">post</span> <span class="pre">cid</span></code>: シナプス後コンパートメントID</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weight</span></code>: シナプス重み</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tau_decay</span></code>: 減衰時定数（ms）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tau_rise</span></code>: 上昇時定数（ms）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">erev</span></code>: 逆転電位（mV）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delay</span></code>: 伝達遅延（ms）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">e/i</span></code>: 興奮性(e)または抑制性(i)</p></li>
+</ul>
+</section>
+</section>
+<section id="id11">
+<h2>オプション設定<a class="headerlink" href="#id11" title="Link to this heading"></a></h2>
+<p>NeuliteBuilderは、以下のオプションパラメータを受け取ることができます：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">NetworkBuilder</span><span class="p">(</span>
+    <span class="s1">&#39;v1&#39;</span><span class="p">,</span>
+    <span class="n">convert_morphologies</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Whether to convert SWC files</span>
+    <span class="n">convert_ion_channels</span><span class="o">=</span><span class="kc">True</span>   <span class="c1"># Whether to convert ion channel settings</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">convert_morphologies</span></code> と <code class="docutils literal notranslate"><span class="pre">convert_ion_channels</span></code> はデフォルトでTrueです。2回目以降の実行では、これらをFalseに設定することで変換をスキップできます。</p>
+</section>
+<section id="id12">
+<h2>依存パッケージの詳細<a class="headerlink" href="#id12" title="Link to this heading"></a></h2>
+<section id="id13">
+<h3>bionet_liteの主要な依存パッケージ<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<p>bionet_liteは以下のPythonパッケージに依存しています：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>bmtk&gt;=1.0.0                    # Brain Modeling Toolkit
+neuron&gt;=8.0.0                  # NEURON simulator (required)
+numpy&gt;=1.19.0                  # Numerical computing
+pandas&gt;=1.2.0                  # Data manipulation
+h5py&gt;=3.0.0                    # HDF5 file support
+scikit-learn&gt;=0.24.0           # PCA for axon direction estimation (required)
+mpi4py&gt;=3.0.0                  # MPI parallel processing (optional)
+</pre></div>
+</div>
+<p><strong>必須パッケージ:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>bmtk<span class="w"> </span>neuron<span class="w"> </span>scikit-learn
+</pre></div>
+</div>
+<p><strong>オプションパッケージ:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># When using MPI parallel processing</span>
+pip<span class="w"> </span>install<span class="w"> </span>mpi4py
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id14">
+<h2>次のステップ<a class="headerlink" href="#id14" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="neulite_build.html"><span class="doc">Neuliteカーネルのビルド</span></a> - Neuliteカーネルのビルド</p></li>
+<li><p><a class="reference internal" href="../tutorials/tutorial01_single_cell.html"><span class="doc">Tutorial 1: 単一細胞の定常電流入力</span></a> - 実践的なチュートリアル</p></li>
+<li><p><a class="reference internal" href="../user_guide/basic_usage.html"><span class="doc">基本的な使い方</span></a> - 詳細な使い方</p></li>
+</ul>
+</section>
+<section id="id15">
+<h2>参考資料<a class="headerlink" href="#id15" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.neuron.yale.edu/neuron/">NEURON公式サイト</a></p></li>
+<li><p><a class="reference external" href="https://alleninstitute.github.io/bmtk/installation.html">BMTK Installation Guide</a></p></li>
+<li><p><a class="reference external" href="https://scikit-learn.org/">scikit-learn Documentation</a></p></li>
+<li><p><a class="reference external" href="https://mpi4py.readthedocs.io/">mpi4py Documentation</a></p></li>
+<li><p>Neulite公式サイト: <a class="reference external" href="https://numericalbrain.org/neulite/">https://numericalbrain.org/neulite/</a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="neulite_build.html" class="btn btn-neutral float-right" title="Neuliteカーネルのビルド" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Yamazaki Lab..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

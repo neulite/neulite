@@ -1,0 +1,181 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Yamazaki Lab.
+# This file is distributed under the same license as the Bionet_lite
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Bionet_lite \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-15 18:02+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../source/api_reference/index.rst:3
+msgid "APIリファレンス"
+msgstr "API Reference"
+
+#: ../../source/api_reference/index.rst:5
+msgid "このセクションでは、bionet_liteの主要なAPIについて説明します。"
+msgstr "This section describes the main APIs of bionet_lite."
+
+#: ../../source/api_reference/index.rst:8
+msgid "概要"
+msgstr "Overview"
+
+#: ../../source/api_reference/index.rst:10
+msgid ""
+"bionet_liteは、BMTKのネットワークビルダーを拡張したPythonライブラリです。 "
+"BMTKコードのimport文を変更するだけで、Neuliteシミュレータ用のファイルを生成できます。"
+msgstr ""
+"bionet_lite is a Python library that extends BMTK's network builder. By changing only the import statement in BMTK code, you can generate files for the Neulite simulator."
+
+#: ../../source/api_reference/index.rst:14
+msgid "NeuliteBuilderクラス"
+msgstr "NeuliteBuilder Class"
+
+#: ../../source/api_reference/index.rst:16
+msgid "bionet_liteのメインインターフェースです。BMTKの ``NetworkBuilder`` を継承しています。"
+msgstr "This is the main interface of bionet_lite. It inherits from BMTK's ``NetworkBuilder``."
+
+#: ../../source/api_reference/index.rst:19
+msgid "初期化"
+msgstr "Initialization"
+
+#: ../../source/api_reference/index.rst:54
+msgid "主要メソッド"
+msgstr "Main Methods"
+
+#: ../../source/api_reference/index.rst:37
+msgid "add_nodes()"
+msgstr "add_nodes()"
+
+#: ../../source/api_reference/index.rst:39
+msgid "ネットワークにノード（ニューロン）を追加します。"
+msgstr "Add nodes (neurons) to the network."
+
+#: ../../source/api_reference/index.rst:52
+msgid "**対応モデル**: 現在は ``model_type='biophysical'`` のみ対応"
+msgstr "**Supported models**: Currently only ``model_type='biophysical'`` is supported"
+
+#: ../../source/api_reference/index.rst:55
+msgid "add_edges()"
+msgstr "add_edges()"
+
+#: ../../source/api_reference/index.rst:57
+msgid "ネットワークにエッジ（シナプス接続）を追加します。"
+msgstr "Add edges (synaptic connections) to the network."
+
+#: ../../source/api_reference/index.rst:71
+msgid "**対応モデル**: 現在は ``exp2syn`` のみ対応"
+msgstr "**Supported models**: Currently only ``exp2syn`` is supported"
+
+#: ../../source/api_reference/index.rst:74
+msgid "build()"
+msgstr "build()"
+
+#: ../../source/api_reference/index.rst:76
+msgid "ネットワークをビルドします。"
+msgstr "Build the network."
+
+#: ../../source/api_reference/index.rst:83
+msgid "save_nodes()"
+msgstr "save_nodes()"
+
+#: ../../source/api_reference/index.rst:85
+msgid ""
+"ノード情報を保存します（`SONATA "
+"<https://github.com/AllenInstitute/sonata/tree/master>`_ 形式 + Neulite形式）。"
+msgstr ""
+"Save node information (`SONATA <https://github.com/AllenInstitute/sonata/tree/master>`_ format + Neulite format)."
+
+#: ../../source/api_reference/index.rst:91
+#: ../../source/api_reference/index.rst:105
+msgid "**生成されるファイル**:"
+msgstr "**Generated files**:"
+
+#: ../../source/api_reference/index.rst:93
+msgid "SONATA形式: ``<name>_nodes.h5``, ``<name>_node_types.csv``"
+msgstr "SONATA format: ``<name>_nodes.h5``, ``<name>_node_types.csv``"
+
+#: ../../source/api_reference/index.rst:94
+msgid "Neulite形式: ``<name>_population.csv``, SWCファイル、イオンチャネルCSV"
+msgstr "Neulite format: ``<name>_population.csv``, SWC files, ion channel CSV"
+
+#: ../../source/api_reference/index.rst:97
+msgid "save_edges()"
+msgstr "save_edges()"
+
+#: ../../source/api_reference/index.rst:99
+msgid "エッジ情報を保存します（SONATA形式 + Neulite形式）。"
+msgstr "Save edge information (SONATA format + Neulite format)."
+
+#: ../../source/api_reference/index.rst:107
+msgid "SONATA形式: ``<src>_<trg>_edges.h5``, ``<src>_<trg>_edge_types.csv``"
+msgstr "SONATA format: ``<src>_<trg>_edges.h5``, ``<src>_<trg>_edge_types.csv``"
+
+#: ../../source/api_reference/index.rst:108
+msgid "Neulite形式: ``<src>_<trg>_connection.csv``"
+msgstr "Neulite format: ``<src>_<trg>_connection.csv``"
+
+#: ../../source/api_reference/index.rst:111
+msgid "設定メソッド"
+msgstr "Configuration Methods"
+
+#: ../../source/api_reference/index.rst:114
+msgid "set_config_path()"
+msgstr "set_config_path()"
+
+#: ../../source/api_reference/index.rst:116
+msgid "config.jsonのパスを設定します。"
+msgstr "Set the path to config.json."
+
+#: ../../source/api_reference/index.rst:123
+msgid "set_dir()"
+msgstr "set_dir()"
+
+#: ../../source/api_reference/index.rst:125
+msgid "Neuliteファイルのディレクトリパスを設定します。"
+msgstr "Set the directory path for Neulite files."
+
+#: ../../source/api_reference/index.rst:132
+msgid "基本的な使用例"
+msgstr "Basic Usage Example"
+
+#: ../../source/api_reference/index.rst:169
+msgid "並列実行"
+msgstr "Parallel Execution"
+
+#: ../../source/api_reference/index.rst:171
+msgid "大規模ネットワークの構築は、MPIで並列実行できます。"
+msgstr "Large network construction can be performed in parallel with MPI."
+
+#: ../../source/api_reference/index.rst:178
+msgid "次のステップ"
+msgstr "Next Steps"
+
+#: ../../source/api_reference/index.rst:180
+msgid ":doc:`file_formats` - 生成されるファイル形式の詳細"
+msgstr ":doc:`file_formats` - Details of generated file formats"
+
+#: ../../source/api_reference/index.rst:181
+msgid ":doc:`../user_guide/basic_usage` - 実践的な使用例"
+msgstr ":doc:`../user_guide/basic_usage` - Practical usage examples"
+
+#: ../../source/api_reference/index.rst:182
+msgid ":doc:`../tutorials/tutorial01_single_cell` - チュートリアル"
+msgstr ":doc:`../tutorials/tutorial01_single_cell` - Tutorial"
+
+#: ../../source/api_reference/index.rst:183
+msgid ":doc:`../advanced/specification` - 仕様と制限事項"
+msgstr ":doc:`../advanced/specification` - Specifications and limitations"
+

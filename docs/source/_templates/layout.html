@@ -1,0 +1,17 @@
+{% extends "!layout.html" %}
+
+{% block sidebartitle %}
+{{ super() }}
+{% if languages %}
+<div class="language-switcher" style="margin-top: 10px; padding: 8px 0; border-top: 1px solid #4e4a4a;">
+  <span style="font-size: 0.9em; color: #999;">Language:</span>
+  {% for code, name, url in languages %}
+    {% if code == current_language %}
+      <strong style="margin-left: 5px;">{{ name }}</strong>
+    {% else %}
+      <a href="{{ url }}{{ pagename }}.html" style="margin-left: 5px;">{{ name }}</a>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

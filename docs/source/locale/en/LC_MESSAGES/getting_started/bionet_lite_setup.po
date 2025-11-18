@@ -1,0 +1,333 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Yamazaki Lab.
+# This file is distributed under the same license as the Bionet_lite
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Bionet_lite \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-15 18:02+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:3
+msgid "bionet_liteのセットアップ"
+msgstr "bionet_lite Setup"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:5
+msgid "このページでは、ネットワーク構築用のPythonパッケージである **bionet_lite** のセットアップ手順を説明します。"
+msgstr "This page explains the setup procedure for **bionet_lite**, a Python package for network construction."
+
+#: ../../source/getting_started/bionet_lite_setup.rst:8
+msgid "前提条件"
+msgstr "Prerequisites"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:10
+msgid "以下のソフトウェアが必要です："
+msgstr "The following software is required:"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:12
+msgid "Python 3.7以上"
+msgstr "Python 3.7 or higher"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:15
+msgid "セットアップ手順"
+msgstr "Setup Procedure"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:18
+msgid "ステップ1: 仮想環境の作成（推奨）"
+msgstr "Step 1: Create Virtual Environment (Recommended)"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:20
+msgid "Python仮想環境の作成を推奨します："
+msgstr "It is recommended to create a Python virtual environment:"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:32
+msgid "ステップ2: BMTKとNEURONのインストール"
+msgstr "Step 2: Install BMTK and NEURON"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:34
+msgid ""
+"bionet_liteは`Brain Modeling Toolkit (BMTK) "
+"<https://alleninstitute.github.io/bmtk/>`__と `NEURON "
+"<https://www.neuron.yale.edu/neuron/>`_ に依存しています。"
+msgstr ""
+"bionet_lite depends on `Brain Modeling Toolkit (BMTK) "
+"<https://alleninstitute.github.io/bmtk/>`__ and `NEURON "
+"<https://www.neuron.yale.edu/neuron/>`_."
+
+#: ../../source/getting_started/bionet_lite_setup.rst:36
+msgid "**BMTKのインストール:**"
+msgstr "**Installing BMTK:**"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:43
+msgid "**NEURONのインストール:**"
+msgstr "**Installing NEURON:**"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:45
+msgid "NEURON（生物物理学的ニューロンシミュレータ）をインストールします："
+msgstr "Install NEURON (biophysical neuron simulator):"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:52
+msgid ""
+"BMTK、NEURONについては公式サイトを参照してください：`BMTK "
+"<https://alleninstitute.github.io/bmtk/>`__ / `NEURON "
+"<https://www.neuron.yale.edu/neuron/>`__"
+msgstr ""
+"For more information on BMTK and NEURON, refer to their official sites: `BMTK "
+"<https://alleninstitute.github.io/bmtk/>`__ / `NEURON "
+"<https://www.neuron.yale.edu/neuron/>`__"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:55
+msgid "ステップ3: 必要なパッケージのインストール"
+msgstr "Step 3: Install Required Packages"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:57
+msgid "**scikit-learnのインストール:**"
+msgstr "**Installing scikit-learn:**"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:59
+msgid "bionet_liteは軸索方向推定にPCA（主成分分析）を使用するため、scikit-learnが必要です："
+msgstr "bionet_lite requires scikit-learn because it uses PCA (Principal Component Analysis) for axon orientation estimation:"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:66
+msgid "ステップ4: bionet_liteのダウンロード"
+msgstr "Step 4: Download bionet_lite"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:68
+msgid "bionet_liteのパッケージをダウンロードします："
+msgstr "Download the bionet_lite package:"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:80
+msgid "ステップ5: bionet_liteの配置"
+msgstr "Step 5: Place bionet_lite"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:82
+msgid "ダウンロードしたファイルを展開し、 ``bionetlite.py`` をネットワーク構築コードと同じディレクトリに配置します："
+msgstr "Extract the downloaded file and place ``bionetlite.py`` in the same directory as your network construction code:"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:92
+msgid "**ディレクトリ構成：**"
+msgstr "**Directory Structure:**"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:94
+msgid "``bionetlite.py`` をネットワーク構築スクリプトと同じ階層に配置します："
+msgstr "Place ``bionetlite.py`` in the same directory level as your network construction script:"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:103
+msgid "この配置により、 ``build_network.py`` 内で以下のようにimportできます："
+msgstr "With this arrangement, you can import in ``build_network.py`` as follows:"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:116
+msgid "ステップ6: 動作確認"
+msgstr "Step 6: Verification"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:118
+msgid "配置が正しく完了したことを確認します："
+msgstr "Verify that the placement is correct:"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:136
+msgid "エラーが表示されなければ、セットアップは成功です。"
+msgstr "If no errors are displayed, the setup is successful."
+
+#: ../../source/getting_started/bionet_lite_setup.rst:139
+msgid "基本的な使い方"
+msgstr "Basic Usage"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:141
+msgid "既存のbionetコードをbionet_liteに変換するのは非常に簡単です。import文を変更するだけで、残りのコードはそのまま使用できます。"
+msgstr "Converting existing bionet code to bionet_lite is very simple. Just change the import statement, and the rest of the code can be used as-is."
+
+#: ../../source/getting_started/bionet_lite_setup.rst:144
+msgid "importの変更"
+msgstr "Changing the Import"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:146
+msgid "**変更前（bionet）:**"
+msgstr "**Before (bionet):**"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:152
+msgid "**変更後（bionet_lite）:**"
+msgstr "**After (bionet_lite):**"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:159
+msgid "ネットワークの構築"
+msgstr "Network Construction"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:161
+msgid "以降のコードはbionetと全く同じです："
+msgstr "The rest of the code is exactly the same as bionet:"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:186
+msgid "出力ファイルの確認"
+msgstr "Confirming Output Files"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:188
+msgid "bionet_liteは、``neulite/`` ディレクトリ内にNeulite用のファイルを生成します："
+msgstr "bionet_lite generates files for Neulite in the ``neulite/`` directory:"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:190
+msgid "**ディレクトリ構造**"
+msgstr "**Directory Structure**"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:202
+msgid "ファイル名は ``NetworkBuilder`` で指定した名前（この例では ``'v1'``）に基づいて生成されます。"
+msgstr "Filenames are generated based on the name specified in ``NetworkBuilder`` (in this example, ``'v1'``)."
+
+#: ../../source/getting_started/bionet_lite_setup.rst:204
+msgid "各ファイルの詳細："
+msgstr "Details of each file:"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:206
+msgid "**<network_name>_population.csv** - ニューロンのポピュレーション情報"
+msgstr "**<network_name>_population.csv** - Neuron population information"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:212
+msgid "``#n_cell``: ポピュレーション内のセル数"
+msgstr "``#n_cell``: Number of cells in the population"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:213
+msgid "``n_comp``: コンパートメント数"
+msgstr "``n_comp``: Number of compartments"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:214
+msgid "``name``: ポピュレーション名"
+msgstr "``name``: Population name"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:215
+msgid "``swc_file``: 形態ファイルのパス"
+msgstr "``swc_file``: Path to morphology file"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:216
+msgid "``ion_file``: イオンチャネル設定ファイルのパス"
+msgstr "``ion_file``: Path to ion channel configuration file"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:218
+msgid "**<src>_<trg>_connection.csv** - シナプス接続情報"
+msgstr "**<src>_<trg>_connection.csv** - Synapse connection information"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:224
+msgid "``#pre nid``: シナプス前ニューロンID"
+msgstr "``#pre nid``: Presynaptic neuron ID"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:225
+msgid "``post nid``: シナプス後ニューロンID"
+msgstr "``post nid``: Postsynaptic neuron ID"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:226
+msgid "``post cid``: シナプス後コンパートメントID"
+msgstr "``post cid``: Postsynaptic compartment ID"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:227
+msgid "``weight``: シナプス重み"
+msgstr "``weight``: Synapse weight"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:228
+msgid "``tau_decay``: 減衰時定数（ms）"
+msgstr "``tau_decay``: Decay time constant (ms)"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:229
+msgid "``tau_rise``: 上昇時定数（ms）"
+msgstr "``tau_rise``: Rise time constant (ms)"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:230
+msgid "``erev``: 逆転電位（mV）"
+msgstr "``erev``: Reversal potential (mV)"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:231
+msgid "``delay``: 伝達遅延（ms）"
+msgstr "``delay``: Transmission delay (ms)"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:232
+msgid "``e/i``: 興奮性(e)または抑制性(i)"
+msgstr "``e/i``: Excitatory (e) or inhibitory (i)"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:235
+msgid "オプション設定"
+msgstr "Optional Settings"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:237
+msgid "NeuliteBuilderは、以下のオプションパラメータを受け取ることができます："
+msgstr "NeuliteBuilder can accept the following optional parameters:"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:247
+msgid ""
+"``convert_morphologies`` と ``convert_ion_channels`` "
+"はデフォルトでTrueです。2回目以降の実行では、これらをFalseに設定することで変換をスキップできます。"
+msgstr ""
+"``convert_morphologies`` and ``convert_ion_channels`` "
+"are True by default. In subsequent runs, you can skip conversion by setting these to False."
+
+#: ../../source/getting_started/bionet_lite_setup.rst:250
+msgid "依存パッケージの詳細"
+msgstr "Details of Dependent Packages"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:253
+msgid "bionet_liteの主要な依存パッケージ"
+msgstr "Major Dependent Packages of bionet_lite"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:255
+msgid "bionet_liteは以下のPythonパッケージに依存しています："
+msgstr "bionet_lite depends on the following Python packages:"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:267
+msgid "**必須パッケージ:**"
+msgstr "**Required Packages:**"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:273
+msgid "**オプションパッケージ:**"
+msgstr "**Optional Packages:**"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:281
+msgid "次のステップ"
+msgstr "Next Steps"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:283
+msgid ":doc:`neulite_build` - Neuliteカーネルのビルド"
+msgstr ":doc:`neulite_build` - Building Neulite Kernel"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:285
+msgid ":doc:`../tutorials/tutorial01_single_cell` - 実践的なチュートリアル"
+msgstr ":doc:`../tutorials/tutorial01_single_cell` - Practical Tutorial"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:286
+msgid ":doc:`../user_guide/basic_usage` - 詳細な使い方"
+msgstr ":doc:`../user_guide/basic_usage` - Detailed Usage"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:289
+msgid "参考資料"
+msgstr "References"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:291
+msgid "`NEURON公式サイト <https://www.neuron.yale.edu/neuron/>`__"
+msgstr "`NEURON Official Site <https://www.neuron.yale.edu/neuron/>`__"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:292
+msgid ""
+"`BMTK Installation Guide "
+"<https://alleninstitute.github.io/bmtk/installation.html>`__"
+msgstr ""
+"`BMTK Installation Guide "
+"<https://alleninstitute.github.io/bmtk/installation.html>`__"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:293
+msgid "`scikit-learn Documentation <https://scikit-learn.org/>`_"
+msgstr "`scikit-learn Documentation <https://scikit-learn.org/>`_"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:294
+msgid "`mpi4py Documentation <https://mpi4py.readthedocs.io/>`_"
+msgstr "`mpi4py Documentation <https://mpi4py.readthedocs.io/>`_"
+
+#: ../../source/getting_started/bionet_lite_setup.rst:295
+msgid "Neulite公式サイト: https://numericalbrain.org/neulite/"
+msgstr "Neulite Official Site: https://numericalbrain.org/neulite/"

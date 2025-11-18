@@ -1,0 +1,429 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Yamazaki Lab.
+# This file is distributed under the same license as the Bionet_lite
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Bionet_lite \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-15 18:02+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../source/advanced/specification.rst:3
+msgid "仕様と制限事項"
+msgstr "Specifications and Limitations"
+
+#: ../../source/advanced/specification.rst:5
+msgid ""
+"bionet_liteとNeuliteは、現在最小の実装と `富岳 "
+"<https://www.r-ccs.riken.jp/en/fugaku/>`_ 向けの報告が行われていますが、以下の仕様と制限事項があります。"
+msgstr ""
+"bionet_lite and Neulite currently have minimal implementation and reports targeting `Fugaku "
+"<https://www.r-ccs.riken.jp/en/fugaku/>`_, but have the following specifications and limitations."
+
+#: ../../source/advanced/specification.rst:8
+msgid "サポートされている機能"
+msgstr "Supported Features"
+
+#: ../../source/advanced/specification.rst:11
+msgid "ニューロンモデル"
+msgstr "Neuron Models"
+
+#: ../../source/advanced/specification.rst:13
+msgid ""
+"✅ **Biophysical neurons**: 形状を持つ生物物理学的ニューロン（`Perisomatic model <https"
+"://brain-map.org/our-research/computational-modeling/perisomatic-"
+"biophysical-single-neuron-models>`_）"
+msgstr ""
+"✅ **Biophysical neurons**: Morphologically detailed biophysical neurons (`Perisomatic model <https"
+"://brain-map.org/our-research/computational-modeling/perisomatic-"
+"biophysical-single-neuron-models>`_)"
+
+#: ../../source/advanced/specification.rst:14
+msgid "❌ **Point neurons**: ポイントニューロン（LIF、IAFなど） - 非対応"
+msgstr "❌ **Point neurons**: Point neurons (LIF, IAF, etc.) - Not supported"
+
+#: ../../source/advanced/specification.rst:15
+msgid "❌ **Virtual neurons**: バーチャルニューロン（入力用） - 非対応"
+msgstr "❌ **Virtual neurons**: Virtual neurons (for input) - Not supported"
+
+#: ../../source/advanced/specification.rst:18
+msgid "シナプスモデル"
+msgstr "Synapse Models"
+
+#: ../../source/advanced/specification.rst:20
+msgid "✅ **exp2syn**: Double exponential synapse model"
+msgstr "✅ **exp2syn**: Double exponential synapse model"
+
+#: ../../source/advanced/specification.rst:21
+msgid "❌ その他のシナプスモデル - 非対応"
+msgstr "❌ Other synapse models - Not supported"
+
+#: ../../source/advanced/specification.rst:23
+msgid "ただし、exp2synであればconfigで設定されたディレクトリにあるシナプスモデルパラメータを利用可能です。"
+msgstr "However, if using exp2syn, you can use synapse model parameters in the directory specified in config."
+
+#: ../../source/advanced/specification.rst:26
+msgid "入力方式"
+msgstr "Input Methods"
+
+#: ../../source/advanced/specification.rst:28
+msgid "✅ **定常電流入力**: デフォルトでサポート"
+msgstr "✅ **Constant current input**: Supported by default"
+
+#: ../../source/advanced/specification.rst:29
+msgid "❌ **ファイルからのスパイク列入力**: 非対応（Neulite側での実装が必要）"
+msgstr "❌ **Spike input from file**: Not supported (requires implementation on Neulite side)"
+
+#: ../../source/advanced/specification.rst:30
+msgid "❌ **Virtual cellによる入力**: 非対応"
+msgstr "❌ **Input via Virtual cell**: Not supported"
+
+#: ../../source/advanced/specification.rst:35
+msgid "形態モデル"
+msgstr "Morphology Models"
+
+#: ../../source/advanced/specification.rst:37
+msgid "現在bionet_liteは **Perisomatic model** に対応しています。"
+msgstr "Currently, bionet_lite supports the **Perisomatic model**."
+
+#: ../../source/advanced/specification.rst:40
+msgid "Perisomatic Modelとは"
+msgstr "What is the Perisomatic Model?"
+
+#: ../../source/advanced/specification.rst:42
+msgid ""
+"Perisomatic modelは、`Allen Cell Types Database <https://celltypes.brain-"
+"map.org/>`_ で採用されている生物物理学的ニューロンモデルの一種です。このモデルには以下の特徴があります："
+msgstr ""
+"Perisomatic model is a type of biophysical neuron model used in `Allen Cell Types Database <https://celltypes.brain-"
+"map.org/>`_. This model has the following characteristics:"
+
+#: ../../source/advanced/specification.rst:44
+msgid "**定義と構造:**"
+msgstr "**Definition and Structure:**"
+
+#: ../../source/advanced/specification.rst:46
+msgid "**イオン伝導度の配置**: 主要なイオンチャネルは細胞体（soma）周辺に配置されます"
+msgstr "**Ion conductance placement**: Major ion channels are placed around the cell body (soma)"
+
+#: ../../source/advanced/specification.rst:47
+msgid "**詳細な形態**: 実際のニューロンから再構築された形態データを使用"
+msgstr "**Detailed morphology**: Uses morphological data reconstructed from actual neurons"
+
+#: ../../source/advanced/specification.rst:48
+msgid "**簡略化された軸索**: 実際の軸索形態の代わりに、人工的な簡易軸索が付与されます"
+msgstr "**Simplified axon**: An artificial simplified axon is given instead of the actual axon morphology"
+
+#: ../../source/advanced/specification.rst:50
+msgid "**モデルの目的:**"
+msgstr "**Model Purpose:**"
+
+#: ../../source/advanced/specification.rst:52
+msgid "**発火特性の再現**: マウス視覚野や人間の皮質における異なる細胞タイプの発火特性を正確に再現"
+msgstr "**Reproduction of firing properties**: Accurately reproduce the firing properties of different cell types in mouse visual cortex and human cortex"
+
+#: ../../source/advanced/specification.rst:53
+msgid "**多様性の理解**: ニューロンの多様性を計算モデルで表現し、理解を深める"
+msgstr "**Understanding diversity**: Express and deepen understanding of neuronal diversity through computational models"
+
+#: ../../source/advanced/specification.rst:54
+msgid "**汎化性能**: 抽象的なモデルよりも、異なるタイプの入力に対してより自然に汎化できる"
+msgstr "**Generalization performance**: Generalizes more naturally to different types of inputs than abstract models"
+
+#: ../../source/advanced/specification.rst:56
+msgid "**技術的詳細:**"
+msgstr "**Technical Details:**"
+
+#: ../../source/advanced/specification.rst:58
+msgid "**最適化手法**: 遺伝的アルゴリズムを用いてパラメータを最適化"
+msgstr "**Optimization method**: Parameters are optimized using genetic algorithms"
+
+#: ../../source/advanced/specification.rst:59
+msgid "**訓練データ**: 段階電流刺激（step current injection）への応答に基づいて訓練"
+msgstr "**Training data**: Trained based on response to step current injection"
+
+#: ../../source/advanced/specification.rst:60
+msgid "**実装**: `NEURON <https://www.neuron.yale.edu/>`_ 環境で実装され、Allen SDKを通じて利用可能"
+msgstr "**Implementation**: Implemented in `NEURON <https://www.neuron.yale.edu/>`_ environment and available through Allen SDK"
+
+#: ../../source/advanced/specification.rst:63
+msgid ""
+"このモデルはBMTKでの定義同様に、**人工的な簡易軸索が付与される** "
+"ことに注意してください。これは計算効率とモデルの安定性を保つための設計上の選択です。"
+msgstr ""
+"Please note that **an artificial simplified axon is provided** as in BMTK definitions. "
+"This is a design choice to maintain computational efficiency and model stability."
+
+#: ../../source/advanced/specification.rst:66
+msgid ""
+"Allen Instituteの公式ドキュメント: `Perisomatic Single Neurons <https://brain-"
+"map.org/our-research/computational-modeling/perisomatic-biophysical-"
+"single-neuron-models>`_"
+msgstr ""
+"Allen Institute official documentation: `Perisomatic Single Neurons <https://brain-"
+"map.org/our-research/computational-modeling/perisomatic-biophysical-"
+"single-neuron-models>`_"
+
+#: ../../source/advanced/specification.rst:69
+msgid "制限事項の詳細"
+msgstr "Detailed Limitations"
+
+#: ../../source/advanced/specification.rst:72
+msgid "1. ニューロンモデルの制限"
+msgstr "1. Neuron Model Limitations"
+
+#: ../../source/advanced/specification.rst:75
+msgid "bionetでは可能だが、bionet_liteで未対応のこと"
+msgstr "Possible in bionet but not yet supported in bionet_lite"
+
+#: ../../source/advanced/specification.rst:77
+msgid "**Point neuronとVirtual neuronは非対応**"
+msgstr "**Point neurons and Virtual neurons are not supported**"
+
+#: ../../source/advanced/specification.rst:79
+msgid ""
+"BMTKやbionetには、形状を持たないpoint neuronや、実態は持たず入力元として利用されるVirtual "
+"neuronを定義することが可能ですが、bionet_liteならびにNeuliteはこれに対応していません。"
+msgstr ""
+"BMTK and bionet can define point neurons without morphology and Virtual neurons that are used as input sources without substance, but bionet_lite and Neulite do not support these."
+
+#: ../../source/advanced/specification.rst:81
+msgid "bionet_liteは以下のニューロンタイプのみに対応："
+msgstr "bionet_lite supports only the following neuron types:"
+
+#: ../../source/advanced/specification.rst:83
+msgid "✅ ``model_type='biophysical'``"
+msgstr "✅ ``model_type='biophysical'``"
+
+#: ../../source/advanced/specification.rst:84
+msgid "❌ ``model_type='point_neuron'``"
+msgstr "❌ ``model_type='point_neuron'``"
+
+#: ../../source/advanced/specification.rst:85
+msgid "❌ ``model_type='virtual'``"
+msgstr "❌ ``model_type='virtual'``"
+
+#: ../../source/advanced/specification.rst:88
+msgid "2. 入力方式の制限"
+msgstr "2. Input Method Limitations"
+
+#: ../../source/advanced/specification.rst:90
+msgid "**スパイク入力は非対応**"
+msgstr "**Spike input is not supported**"
+
+#: ../../source/advanced/specification.rst:92
+msgid "bionet_liteは入力方式のデフォルトとして、ニューロンへの定常電流入力のみを受け付けています。"
+msgstr "By default, bionet_lite only accepts constant current input to neurons."
+
+#: ../../source/advanced/specification.rst:94
+msgid "BMTKはH5ファイルなどの形式で保存されたスパイク列をシミュレーションの入力として利用可能ですが、bionet_liteはこれに対応していません。これはNeuliteが定常電流入力のみが定義可能であることに由来します。"
+msgstr "BMTK can use spike trains saved in formats such as H5 files as simulation inputs, but bionet_lite does not support this. This is because Neulite can only define constant current input."
+
+#: ../../source/advanced/specification.rst:97
+msgid "スパイク入力機能が必要な場合は、Neulite側での実装が必要です。"
+msgstr "If spike input functionality is needed, implementation on the Neulite side is required."
+
+#: ../../source/advanced/specification.rst:100
+msgid "3. シナプスモデルの制限"
+msgstr "3. Synapse Model Limitations"
+
+#: ../../source/advanced/specification.rst:102
+msgid "**exp2syn以外は非対応**"
+msgstr "**Only exp2syn is supported**"
+
+#: ../../source/advanced/specification.rst:104
+msgid "シナプス接続については、現在は **double exponential synapse model (exp2syn)** にのみ対応しています。"
+msgstr "For synaptic connections, we currently support only the **double exponential synapse model (exp2syn)**."
+
+#: ../../source/advanced/specification.rst:106
+msgid "exp2syn以外のシナプスモデルには非対応ですが、exp2synであればconfigで設定されたディレクトリにあるシナプスモデルを利用可能です。"
+msgstr "Synapse models other than exp2syn are not supported, but if using exp2syn, you can use synapse models in the directory specified in config."
+
+#: ../../source/advanced/specification.rst:109
+msgid "4. シナプス接続位置の制限"
+msgstr "4. Synapse Connection Position Limitations"
+
+#: ../../source/advanced/specification.rst:111
+msgid "**詳細な接続位置の手動指定は非対応**"
+msgstr "**Manual specification of detailed connection positions is not supported**"
+
+#: ../../source/advanced/specification.rst:113
+msgid "現在のbionet_liteは、細胞間のシナプス接続位置を詳細に設定することはできません。"
+msgstr "Current bionet_lite cannot set detailed synaptic connection positions between cells."
+
+#: ../../source/advanced/specification.rst:115
+msgid "bionetはネットワーク構築時にシナプス接続のルール（特定のポピュレーションからポピュレーションへ、など）を設定することでネットワークを構築します。"
+msgstr "bionet constructs networks by setting synapse connection rules (from specific populations to populations, etc.) during network construction."
+
+#: ../../source/advanced/specification.rst:117
+msgid ""
+"しかし、実際にニューロン上のセクションaにおけるsegmentのbにおける距離xの位置、といった詳細度で接続位置が決定されるのは "
+"**bionet.simulatorモジュールが実行されたタイミング** となります。"
+msgstr ""
+"However, the detailed connection position (such as distance x in segment b of section a on a neuron) is determined "
+"**when the bionet.simulator module is executed**."
+
+#: ../../source/advanced/specification.rst:119
+msgid "現在のbionet_liteは、ネットワーク構築時に設定されたルールに該当する接続の位置を **ランダムに決定** します。"
+msgstr "Current bionet_lite **randomly determines** the positions of connections that match the rules set during network construction."
+
+#: ../../source/advanced/specification.rst:121
+msgid "したがって："
+msgstr "Therefore:"
+
+#: ../../source/advanced/specification.rst:123
+msgid "❌ bionetと全く同じシナプス接続を取得することは現在できない"
+msgstr "❌ Currently cannot obtain exactly the same synaptic connections as bionet"
+
+#: ../../source/advanced/specification.rst:124
+msgid ""
+"✅ "
+"一度生成したNeulite用のbionet_liteによる出力は、本来シミュレーション実行時に決める詳細な位置情報を含み、確実に同じネットワークに対してシミュレーションを実行できる"
+msgstr ""
+"✅ "
+"The output from bionet_lite for Neulite generated once includes the detailed position information that would normally be determined at simulation runtime, and can reliably execute simulations on the same network"
+
+#: ../../source/advanced/specification.rst:127
+msgid "5. データ型の制限"
+msgstr "5. Data Type Limitations"
+
+#: ../../source/advanced/specification.rst:129
+msgid "**Delay値はint型のみ**"
+msgstr "**Delay values must be int type only**"
+
+#: ../../source/advanced/specification.rst:132
+msgid "BMTKのdelay値はdouble型ですが、**Neuliteはint型のみを受け付けます**。"
+msgstr "BMTK delay values are double type, but **Neulite only accepts int type**."
+
+#: ../../source/advanced/specification.rst:134
+msgid "小数点以下のdelay値を使用する場合は、適切に変換する必要があります。"
+msgstr "If using delay values with decimals, appropriate conversion is needed."
+
+#: ../../source/advanced/specification.rst:137
+msgid "6. Perisomatic modelの注意点"
+msgstr "6. Notes on Perisomatic Model"
+
+#: ../../source/advanced/specification.rst:139
+msgid "bionet_liteが採用しているPerisomatic modelについては、:ref:`形態モデル` セクションを参照してください。"
+msgstr "For information on the Perisomatic model used by bionet_lite, see the :ref:`Morphology Models` section."
+
+#: ../../source/advanced/specification.rst:141
+msgid "特に、実際の軸索形態が簡略化された人工軸索に置き換えられることに注意が必要です。"
+msgstr "It is important to note that actual axon morphology is replaced with a simplified artificial axon."
+
+#: ../../source/advanced/specification.rst:144
+msgid "対応状況のまとめ"
+msgstr "Summary of Support Status"
+
+#: ../../source/advanced/specification.rst:150
+msgid "機能"
+msgstr "Feature"
+
+#: ../../source/advanced/specification.rst:151
+msgid "対応状況"
+msgstr "Support Status"
+
+#: ../../source/advanced/specification.rst:152
+msgid "備考"
+msgstr "Notes"
+
+#: ../../source/advanced/specification.rst:153
+msgid "Biophysical neurons"
+msgstr "Biophysical neurons"
+
+#: ../../source/advanced/specification.rst:154
+#: ../../source/advanced/specification.rst:163
+#: ../../source/advanced/specification.rst:169
+#: ../../source/advanced/specification.rst:175
+#: ../../source/advanced/specification.rst:178
+#: ../../source/advanced/specification.rst:181
+msgid "✅ 対応"
+msgstr "✅ Supported"
+
+#: ../../source/advanced/specification.rst:155
+msgid "Perisomatic modelのみ"
+msgstr "Perisomatic model only"
+
+#: ../../source/advanced/specification.rst:156
+msgid "Point neurons"
+msgstr "Point neurons"
+
+#: ../../source/advanced/specification.rst:157
+#: ../../source/advanced/specification.rst:160
+#: ../../source/advanced/specification.rst:166
+#: ../../source/advanced/specification.rst:172
+msgid "❌ 非対応"
+msgstr "❌ Not supported"
+
+#: ../../source/advanced/specification.rst:159
+msgid "Virtual neurons"
+msgstr "Virtual neurons"
+
+#: ../../source/advanced/specification.rst:162
+msgid "定常電流入力"
+msgstr "Constant current input"
+
+#: ../../source/advanced/specification.rst:165
+msgid "スパイク列入力"
+msgstr "Spike train input"
+
+#: ../../source/advanced/specification.rst:167
+msgid "Neulite側実装が必要"
+msgstr "Implementation on Neulite side required"
+
+#: ../../source/advanced/specification.rst:168
+msgid "exp2synシナプス"
+msgstr "exp2syn synapse"
+
+#: ../../source/advanced/specification.rst:171
+msgid "その他のシナプス"
+msgstr "Other synapses"
+
+#: ../../source/advanced/specification.rst:174
+msgid "並列実行"
+msgstr "Parallel execution"
+
+#: ../../source/advanced/specification.rst:177
+msgid "Allen Cell Types Databaseモデル"
+msgstr "Allen Cell Types Database models"
+
+#: ../../source/advanced/specification.rst:180
+msgid "`SONATA <https://github.com/AllenInstitute/sonata/tree/master>`_ 形式"
+msgstr "`SONATA <https://github.com/AllenInstitute/sonata/tree/master>`_ format"
+
+#: ../../source/advanced/specification.rst:182
+msgid "bionet経由"
+msgstr "Via bionet"
+
+#: ../../source/advanced/specification.rst:185
+msgid "今後の発展"
+msgstr "Future Development"
+
+#: ../../source/advanced/specification.rst:187
+msgid "bionet_lite、Neuliteは現在最小の実装と富岳向けの報告が行われていますが、今後の発展に伴いこれらの仕様は変更される可能性があります。"
+msgstr "bionet_lite and Neulite currently have minimal implementation and are being reported for Fugaku, but these specifications may change with future development."
+
+#: ../../source/advanced/specification.rst:189
+msgid "最新の情報については、公式ドキュメント（URL）をご覧ください。"
+msgstr "For the latest information, please refer to the official documentation (URL)."
+
+#: ../../source/advanced/specification.rst:192
+msgid "次のステップ"
+msgstr "Next Steps"
+
+#: ../../source/advanced/specification.rst:194
+msgid ":doc:`../tutorials/tutorial01_single_cell` - 実践的な使用例"
+msgstr ":doc:`../tutorials/tutorial01_single_cell` - Practical usage examples"
+

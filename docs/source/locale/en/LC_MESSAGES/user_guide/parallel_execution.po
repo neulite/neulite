@@ -1,0 +1,82 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Yamazaki Lab.
+# This file is distributed under the same license as the Bionet_lite
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Bionet_lite \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-15 18:02+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../source/user_guide/parallel_execution.rst:3
+msgid "並列実行"
+msgstr "Parallel Execution"
+
+#: ../../source/user_guide/parallel_execution.rst:6
+msgid "並列実行について"
+msgstr "About Parallel Execution"
+
+#: ../../source/user_guide/parallel_execution.rst:8
+msgid "大規模なネットワークの構築は、それだけで計算量と時間がかかる操作です。BMTKがそうであるように、bionet_liteも並列実行に対応しています。"
+msgstr "Building large networks is a computationally intensive and time-consuming operation. Like BMTK, bionet_lite supports parallel execution."
+
+#: ../../source/user_guide/parallel_execution.rst:11
+msgid "基本的な使い方"
+msgstr "Basic Usage"
+
+#: ../../source/user_guide/parallel_execution.rst:13
+msgid "bionet_liteをインポートしたネットワーク構築コードを、mpirunなどのコマンドで実行するだけで自動的に並列実行が行われます。"
+msgstr "Parallel execution is automatically performed by running network construction code that imports bionet_lite with commands like mpirun."
+
+#: ../../source/user_guide/parallel_execution.rst:26
+msgid "コードの変更は不要"
+msgstr "No Code Changes Required"
+
+#: ../../source/user_guide/parallel_execution.rst:28
+msgid "並列実行のために特別なコードの変更は必要ありません。bionetと全く同じように、単にmpirunで実行するだけです："
+msgstr "No special code changes are needed for parallel execution. Like bionet, simply run with mpirun:"
+
+#: ../../source/user_guide/parallel_execution.rst:43
+msgid "このファイルをmpirunで実行："
+msgstr "Run this file with mpirun:"
+
+#: ../../source/user_guide/parallel_execution.rst:50
+msgid "並列実行のしくみ"
+msgstr "How Parallel Execution Works"
+
+#: ../../source/user_guide/parallel_execution.rst:52
+msgid "bionet_liteは、bionetの並列実行機構をそのまま利用しています："
+msgstr "bionet_lite uses bionet's parallel execution mechanism as is:"
+
+#: ../../source/user_guide/parallel_execution.rst:54
+msgid "各MPIプロセスがネットワークの一部を担当"
+msgstr "Each MPI process handles part of the network"
+
+#: ../../source/user_guide/parallel_execution.rst:55
+msgid "ノードとエッジの生成が分散処理される"
+msgstr "Generation of nodes and edges is distributed"
+
+#: ../../source/user_guide/parallel_execution.rst:56
+msgid "最終的に結果が統合されてファイルに出力される"
+msgstr "Results are finally integrated and output to files"
+
+#: ../../source/user_guide/parallel_execution.rst:59
+msgid "次のステップ"
+msgstr "Next Steps"
+
+#: ../../source/user_guide/parallel_execution.rst:61
+msgid ":doc:`../advanced/allen_v1_model` - 大規模ネットワークの実例"
+msgstr ":doc:`../advanced/allen_v1_model` - Example of large-scale networks"
+

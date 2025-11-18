@@ -1,0 +1,114 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Yamazaki Lab.
+# This file is distributed under the same license as the Bionet_lite
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Bionet_lite \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-15 18:02+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../source/publication.rst:3
+msgid "Publication"
+msgstr "Publication"
+
+#: ../../source/publication.rst:5
+msgid "このページでは、Neuliteとbionet_liteに関する主要な論文を紹介します。"
+msgstr "This page introduces key papers related to Neulite and bionet_lite."
+
+#: ../../source/publication.rst:8
+msgid "主要論文"
+msgstr "Key Papers"
+
+#: ../../source/publication.rst:10
+msgid ""
+"Kuriyama, R.*, Akira, K.*, Green, L., Herrera, B., Dai, K., Iura, M., "
+"Gouaillardet, G., Terasawa, A., Kobayashi, T., Igarashi, Jun., Arkhipov, "
+"A., & Yamazaki, T. (2025). **Microscopic-Level Mouse Whole Cortex "
+"Simulation Composed of 9 Million Biophysical Neurons and 26 Billion "
+"Synapses on the Supercomputer Fugaku.** In *Proceedings of the "
+"International Conference for High Performance Computing, Networking, "
+"Storage and Analysis (SC '25)*, November 16–21, 2025, St Louis, MO, USA. "
+"ACM, New York, NY, USA, 11 pages."
+msgstr ""
+"Kuriyama, R.*, Akira, K.*, Green, L., Herrera, B., Dai, K., Iura, M., "
+"Gouaillardet, G., Terasawa, A., Kobayashi, T., Igarashi, Jun., Arkhipov, "
+"A., & Yamazaki, T. (2025). **Microscopic-Level Mouse Whole Cortex "
+"Simulation Composed of 9 Million Biophysical Neurons and 26 Billion "
+"Synapses on the Supercomputer Fugaku.** In *Proceedings of the "
+"International Conference for High Performance Computing, Networking, "
+"Storage and Analysis (SC '25)*, November 16–21, 2025, St Louis, MO, USA. "
+"ACM, New York, NY, USA, 11 pages."
+
+#: ../../source/publication.rst:14
+msgid "DOI: `10.1145/3712285.3759819 <https://doi.org/10.1145/3712285.3759819>`_"
+msgstr "DOI: `10.1145/3712285.3759819 <https://doi.org/10.1145/3712285.3759819>`_"
+
+#: ../../source/publication.rst:16
+msgid "\\* 共同第一著者"
+msgstr "\\* Co-first authors"
+
+#: ../../source/publication.rst:19
+msgid "論文の概要"
+msgstr "Paper Abstract"
+
+#: ../../source/publication.rst:21
+msgid ""
+"この論文では、スーパーコンピュータ「`富岳 "
+"<https://www.r-ccs.riken.jp/en/fugaku/>`_」を使用して、マウス全皮質の顕微鏡レベルでのシミュレーションを実現した研究を報告しています。"
+msgstr ""
+"This paper reports on research that achieved microscopic-level simulation of whole mouse cortex using the supercomputer `Fugaku "
+"<https://www.r-ccs.riken.jp/en/fugaku/>`_."
+
+#: ../../source/publication.rst:24
+msgid "主な成果"
+msgstr "Key Achievements"
+
+#: ../../source/publication.rst:26
+msgid "**900万個の生物物理学的ニューロン** を含むマウス全皮質モデル"
+msgstr "**Whole mouse cortex model containing 9 million biophysical neurons**"
+
+#: ../../source/publication.rst:27
+msgid "**2600億個のシナプス** による複雑な接続構造"
+msgstr "**Complex connection structure with 26 billion synapses**"
+
+#: ../../source/publication.rst:28
+msgid "「富岳」での効率的な並列実行"
+msgstr "Efficient parallel execution on Fugaku"
+
+#: ../../source/publication.rst:29
+msgid ""
+"`Perisomatic model <https://brain-map.org/our-research/computational-"
+"modeling/perisomatic-biophysical-single-neuron-models>`_ "
+"を用いた詳細な生物物理学的シミュレーション"
+msgstr ""
+"Detailed biophysical simulation using `Perisomatic model <https://brain-map.org/our-research/computational-"
+"modeling/perisomatic-biophysical-single-neuron-models>`_"
+
+#: ../../source/publication.rst:32
+msgid "技術的貢献"
+msgstr "Technical Contributions"
+
+#: ../../source/publication.rst:34
+msgid "**bionet_lite**: BMTKを拡張したネットワーク構築フレームワーク"
+msgstr "**bionet_lite**: Network construction framework extending BMTK"
+
+#: ../../source/publication.rst:35
+msgid "**Neulite**: 軽量で高性能な生物物理学的ニューロンシミュレータ"
+msgstr "**Neulite**: Lightweight and high-performance biophysical neuron simulator"
+
+#: ../../source/publication.rst:36
+msgid "**最適化技術**: SVE（Scalable Vector Extensions）を活用したSIMD計算"
+msgstr "**Optimization technology**: SIMD computation leveraging SVE (Scalable Vector Extensions)"

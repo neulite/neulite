@@ -1,0 +1,817 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bionet_lite Setup &mdash; Bionet_lite 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Building Neulite Kernel" href="neulite_build.html" />
+    <link rel="prev" title="Getting Started" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Bionet_lite
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+<div class="language-switcher" style="margin-top: 10px; padding: 8px 0; border-top: 1px solid #4e4a4a;">
+  <span style="font-size: 0.9em; color: #999;">Language:</span>
+  
+    
+      <strong style="margin-left: 5px;">日本語</strong>
+    
+  
+    
+      <a href="../en/getting_started/bionet_lite_setup.html" style="margin-left: 5px;">English</a>
+    
+  
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#id2">About This Document</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#id3">System Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#bionet-lite">What is Bionet_lite?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#neulite">What is Neulite Kernel?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#id6">Usage Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#id7">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../bionet_lite.html">What is Bionet_lite?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../bionet_lite.html#id1">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bionet_lite.html#id2">Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../bionet_lite.html#id3">Reuse of Existing Code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../bionet_lite.html#id4">Technical Details</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../bionet_lite.html#id5">Main Processing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../bionet_lite.html#id6">Comparison of Output Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bionet_lite.html#id7">Usage Example</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../bionet_lite.html#id8">Automatic Support for Data Standardization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../bionet_lite.html#id9">Related Links</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../neulite.html">What is Neulite Kernel?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../neulite.html#id1">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../neulite.html#id2">Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../neulite.html#id3">Lightweight Design</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../neulite.html#id4">High Portability</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../neulite.html#id5">Technical Details</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../neulite.html#id6">Design Philosophy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../neulite.html#id7">Target Neuron Model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../neulite.html#id8">Supported Environments</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../neulite.html#id9">Recommended Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../neulite.html#id10">Achievements on Fugaku</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../neulite.html#id12">Related Links</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Getting Started</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">bionet_lite Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Setup Procedure</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Step 1: Create Virtual Environment (Recommended)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bmtkneuron">Step 2: Install BMTK and NEURON</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Step 3: Install Required Packages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">Step 4: Download bionet_lite</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">Step 5: Place bionet_lite</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Step 6: Verification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Basic Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#import">Changing the Import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">Network Construction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">Confirming Output Files</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">Optional Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">Details of Dependent Packages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id13">Major Dependent Packages of bionet_lite</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">Next Steps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="neulite_build.html">Building Neulite Kernel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="neulite_build.html#id1">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neulite_build.html#id2">Build Procedure</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="neulite_build.html#id3">Step 1: Download Source Code</a></li>
+<li class="toctree-l4"><a class="reference internal" href="neulite_build.html#id4">Step 2: Extract Source Code</a></li>
+<li class="toctree-l4"><a class="reference internal" href="neulite_build.html#id5">Step 3: Build</a></li>
+<li class="toctree-l4"><a class="reference internal" href="neulite_build.html#id6">Step 4: Execution</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="neulite_build.html#id7">Verification of Build</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neulite_build.html#id8">Troubleshooting</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="neulite_build.html#id9">Compilation Error</a></li>
+<li class="toctree-l4"><a class="reference internal" href="neulite_build.html#id10">Executable not found</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="neulite_build.html#id11">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html">Tutorial 1: Steady-State Current Injection in a Single Cell</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#id1">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#id2">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#bmtk">Prerequisites: Running the BMTK Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#bionetbionet-lite">bionetからbionet_liteへの変更</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#id3">Code Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#id4">Generated Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#network-name-population-csv">&lt;network_name&gt;_population.csv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#src-trg-connection-csv">&lt;src&gt;_&lt;trg&gt;_connection.csv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#swc">Processed SWC File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#neulite">Files Generated by Neulite</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#mcortex-population-csv">mcortex_population.csv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#mcortex-mcortex-connection-csv">mcortex_mcortex_connection.csv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#kernel-config-h">kernel/config.h</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#id5">Running the Neulite Kernel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#id6">Simulation Result Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#id7">Comparison of Execution Results with BMTK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial01_single_cell.html#id9">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html">Tutorial 2: Spike Input Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html#id1">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html#bmtk">Prerequisites: Running the BMTK Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html#bmtkbionet-lite">Changes from BMTK to bionet_lite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html#id2">Code Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html#id3">Generated Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html#mcortex-population-csv">mcortex_population.csv</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html#id4">Limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial02_spike_input.html#id5">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial03_single_population.html">Tutorial 3: Single Population Network</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial03_single_population.html#id1">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial03_single_population.html#bmtk">Prerequisites: Running the BMTK Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial03_single_population.html#bmtkbionet-lite">Changes from BMTK to bionet_lite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial03_single_population.html#id2">Generated Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial03_single_population.html#mcortex-population-csv">mcortex_population.csv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial03_single_population.html#mcortex-mcortex-connection-csv">mcortex_mcortex_connection.csv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial03_single_population.html#id3">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial03_single_population.html#id4">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html">Tutorial 4: 複数のポピュレーションからなるネットワーク</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#id1">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#bmtk">Prerequisites: Running the BMTK Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#bionetbionet-lite">Changes from BMTK to bionet_lite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#id2">Generated Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#population-csv">population.csv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#connection-csv">connection.csv</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#neulite">Files Generated by Neulite</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#v1-population-csv">V1_population.csv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#v1-v1-connection-csv">V1_V1_connection.csv</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#id3">Running the Neulite Kernel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#id4">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#id5">File Placement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#id6">Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#id7">Simulation Result Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#lif">About Mixing with LIF Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial04_multiple_populations.html#id8">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/basic_usage.html">Basic Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/basic_usage.html#bionet-lite">Building Networks with bionet_lite</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/basic_usage.html#neulitebuilder">Initializing NeuliteBuilder</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user_guide/basic_usage.html#id2">Parameter Description</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/basic_usage.html#id3">Adding Nodes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user_guide/basic_usage.html#id4">Supported Model Types</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/basic_usage.html#id5">Adding Edges (Synaptic Connections)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user_guide/basic_usage.html#id6">Defining Basic Connections</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user_guide/basic_usage.html#id7">Supported Synapse Models</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/basic_usage.html#id8">Saving the Network</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/basic_usage.html#id9">Execution Flow</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/basic_usage.html#id10">Limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/basic_usage.html#id11">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/configuration.html#id2">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/configuration.html#id3">Role of Configuration Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/configuration.html#config-json">Structure of config.json</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/configuration.html#id4">Basic Execution Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/configuration.html#id5">Input Configuration (Current Injection)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/configuration.html#id6">Component Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/configuration.html#config-h">Automatic Generation of config.h</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/configuration.html#bionet-lite">How to Use bionet_lite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/configuration.html#id7">Generated config.h</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/configuration.html#id8">Output Location</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/configuration.html#id9">Advanced Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/configuration.html#simulation-config">Using the simulation_config Parameter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/configuration.html#id10">Disabling config.h Generation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/configuration.html#bmtk-config">Compatibility with Existing BMTK config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/configuration.html#id11">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/parallel_execution.html">Parallel Execution</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/parallel_execution.html#id2">About Parallel Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/parallel_execution.html#id3">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/parallel_execution.html#id4">No Code Changes Required</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/parallel_execution.html#id5">How Parallel Execution Works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/parallel_execution.html#id6">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../architecture/overview.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/overview.html#id2">System Architecture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../architecture/overview.html#id3">Overall Picture</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/overview.html#id4">Interfaces Based on Level of Detail</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/overview.html#bionet-lite">Positioning of bionet_lite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/overview.html#id6">Design Philosophy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../architecture/overview.html#id7">Separation of Network Construction and Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../architecture/overview.html#id8">Lightweight Implementation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/overview.html#id9">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture/design_and_implementation.html">Design and Implementation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/design_and_implementation.html#bmtk">About BMTK</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../architecture/design_and_implementation.html#id2">Modular Design</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../architecture/design_and_implementation.html#id3">Data Standardization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/design_and_implementation.html#bionet">About BioNet</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../architecture/design_and_implementation.html#bionet-builder">BioNet Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../architecture/design_and_implementation.html#bionet-simulator">BioNet Simulator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/design_and_implementation.html#bionet-lite">Design of bionet_lite</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../architecture/design_and_implementation.html#networkbuilder">NetworkBuilder Override</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/design_and_implementation.html#id4">Processing Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/design_and_implementation.html#id5">Parallel Execution Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/design_and_implementation.html#id6">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/index.html#id1">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/index.html#neulitebuilder">NeuliteBuilder Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/index.html#id2">Initialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/index.html#id3">Main Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api_reference/index.html#add-nodes">add_nodes()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_reference/index.html#add-edges">add_edges()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_reference/index.html#build">build()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_reference/index.html#save-nodes">save_nodes()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_reference/index.html#save-edges">save_edges()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/index.html#id4">Configuration Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api_reference/index.html#set-config-path">set_config_path()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_reference/index.html#set-dir">set_dir()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/index.html#id5">Basic Usage Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/index.html#id6">Parallel Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/index.html#id7">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/file_formats.html">File Formats</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#id2">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#id3">SONATA Format Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#neulite">Neulite Format Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#network-name-population-csv">&lt;network_name&gt;_population.csv</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id4">Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id5">Columns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id6">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#src-trg-connection-csv">&lt;src&gt;_&lt;trg&gt;_connection.csv</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id7">Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id8">Columns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id9">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#swc">SWC File (Processed)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id10">Processing Details</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id11">Format</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#csv">Ion Channel Configuration CSV</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id12">Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id13">Meaning of Rows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id14">Main Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#config-h">config.h</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id15">Generated Macros</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api_reference/file_formats.html#id16">Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#id17">Directory Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference/file_formats.html#id18">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Advanced Topics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/allen_v1_model.html">Allen V1 Model: Large-scale Network</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/allen_v1_model.html#id1">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/allen_v1_model.html#id2">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/allen_v1_model.html#id3">Model Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/allen_v1_model.html#id4">Model Source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/allen_v1_model.html#bionet-lite">bionet_lite Coverage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/allen_v1_model.html#id5">Code Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/allen_v1_model.html#bmtk">Modifying Existing BMTK Code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/allen_v1_model.html#id6">Parallel Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/allen_v1_model.html#id7">Generated Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/allen_v1_model.html#id8">Verifying Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/allen_v1_model.html#id9">Next Steps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/allen_v1_model.html#id10">Related Links</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/specification.html">Specifications and Limitations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/specification.html#id3">Supported Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id4">Neuron Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id5">Synapse Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id6">Input Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id7">Morphology Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../advanced/specification.html#id9">What is the Perisomatic Model?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/specification.html#id10">Detailed Limitations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id11">1. Neuron Model Limitations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../advanced/specification.html#bionetbionet-lite">Possible in bionet but not yet supported in bionet_lite</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id12">2. Input Method Limitations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id13">3. Synapse Model Limitations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id14">4. Synapse Connection Position Limitations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id15">5. Data Type Limitations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advanced/specification.html#id16">6. Notes on Perisomatic Model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/specification.html#id17">Summary of Support Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/specification.html#id18">Future Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced/specification.html#id19">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Others</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions (FAQ)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#id1">General Questions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#bionet-lite">What is bionet_lite?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#id2">Why is bionet_lite necessary?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#bionetbionet-lite">What is the difference between bionet and bionet_lite?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#id3">Installation and Environment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#python">What Python version is required?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#os">What operating systems are supported?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#id4">Can it run on supercomputers?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#id6">Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#id7">How to convert existing bionet code to bionet_lite?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#point-neuronvirtual-neuron">Can I use Point neuron or Virtual neuron?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#exp2syn">Why can’t I use synapse models other than exp2syn?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#id8">Can I use spike input?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#id9">Parallel Execution</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#id10">How to run in parallel?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#id11">Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#module-not-found">“Module not found” error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#bionet">Connection positions are different from bionet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#delay">Delay value accepts only integers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#id12">Related Resources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../publication.html">Publication</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../publication.html#id1">Key Papers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../publication.html#id3">Paper Abstract</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../publication.html#id5">Key Achievements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../publication.html#id6">Technical Contributions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../how_to_cite.html">How to Cite</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../how_to_cite.html#bibtex">BibTeX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_to_cite.html#id1">Paper Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#id2">Version 1.0.0</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#id4">Key Achievements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#id5">Supported Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#id6">Known Limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#id7">Future Plans</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Bionet_lite</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Getting Started</a></li>
+      <li class="breadcrumb-item active">bionet_lite Setup</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/getting_started/bionet_lite_setup.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bionet-lite">
+<h1>bionet_lite Setup<a class="headerlink" href="#bionet-lite" title="Link to this heading"></a></h1>
+<p>This page explains the setup procedure for <strong>bionet_lite</strong>, a Python package for network construction.</p>
+<section id="id1">
+<h2>Prerequisites<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>The following software is required:</p>
+<ul class="simple">
+<li><p>Python 3.7 or higher</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>Setup Procedure<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<section id="id3">
+<h3>Step 1: Create Virtual Environment (Recommended)<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p>It is recommended to create a Python virtual environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create virtual environment</span>
+python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>neulite_env
+
+<span class="c1"># Activate virtual environment (Linux/Mac)</span>
+<span class="nb">source</span><span class="w"> </span>neulite_env/bin/activate
+</pre></div>
+</div>
+</section>
+<section id="bmtkneuron">
+<h3>Step 2: Install BMTK and NEURON<a class="headerlink" href="#bmtkneuron" title="Link to this heading"></a></h3>
+<p>bionet_lite depends on <a class="reference external" href="https://alleninstitute.github.io/bmtk/">Brain Modeling Toolkit (BMTK)</a> and <a class="reference external" href="https://www.neuron.yale.edu/neuron/">NEURON</a>.</p>
+<p><strong>Installing BMTK:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>bmtk
+</pre></div>
+</div>
+<p><strong>Installing NEURON:</strong></p>
+<p>Install NEURON (biophysical neuron simulator):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>neuron
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For more information on BMTK and NEURON, refer to their official sites: <a class="reference external" href="https://alleninstitute.github.io/bmtk/">BMTK</a> / <a class="reference external" href="https://www.neuron.yale.edu/neuron/">NEURON</a></p>
+</div>
+</section>
+<section id="id4">
+<h3>Step 3: Install Required Packages<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p><strong>Installing scikit-learn:</strong></p>
+<p>bionet_lite requires scikit-learn because it uses PCA (Principal Component Analysis) for axon orientation estimation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>scikit-learn
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3>Step 4: Download bionet_lite<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<p>Download the bionet_lite package:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Download file from download link</span>
+wget<span class="w"> </span><span class="o">[</span>bionet_lite<span class="w"> </span>download<span class="w"> </span>URL<span class="o">]</span>
+
+<span class="c1"># Or use curl</span>
+curl<span class="w"> </span>-L<span class="w"> </span>-O<span class="w"> </span><span class="o">[</span>bionet_lite<span class="w"> </span>download<span class="w"> </span>URL<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3>Step 5: Place bionet_lite<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<p>Extract the downloaded file and place <code class="docutils literal notranslate"><span class="pre">bionetlite.py</span></code> in the same directory as your network construction code:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Extract tarball</span>
+tar<span class="w"> </span>-xzf<span class="w"> </span>bionet_lite-X.Y.Z.tar.gz
+
+<span class="c1"># Copy bionetlite.py to working directory</span>
+cp<span class="w"> </span>bionet_lite-X.Y.Z/bionetlite.py<span class="w"> </span>/path/to/your/network/code/
+</pre></div>
+</div>
+<p><strong>Directory Structure:</strong></p>
+<p>Place <code class="docutils literal notranslate"><span class="pre">bionetlite.py</span></code> in the same directory level as your network construction script:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>your_project/
+├── bionetlite.py           # Copy here
+├── build_network.py        # Your network construction script
+└── config.json             # Configuration file (if needed)
+</pre></div>
+</div>
+<p>With this arrangement, you can import in <code class="docutils literal notranslate"><span class="pre">build_network.py</span></code> as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># build_network.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bionetlite</span><span class="w"> </span><span class="kn">import</span> <span class="n">NeuliteBuilder</span> <span class="k">as</span> <span class="n">NetworkBuilder</span>
+
+<span class="n">net</span> <span class="o">=</span> <span class="n">NetworkBuilder</span><span class="p">(</span><span class="s1">&#39;my_network&#39;</span><span class="p">)</span>
+<span class="n">net</span><span class="o">.</span><span class="n">add_nodes</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">net</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="n">net</span><span class="o">.</span><span class="n">save_nodes</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;network&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3>Step 6: Verification<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<p>Verify that the placement is correct:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Move to network construction code directory</span>
+<span class="nb">cd</span><span class="w"> </span>/path/to/your/network/code/
+
+<span class="c1"># Verify that bionetlite.py exists</span>
+ls<span class="w"> </span>bionetlite.py
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Start Python interpreter to verify</span>
+<span class="n">python</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">bionetlite</span><span class="w"> </span><span class="kn">import</span> <span class="n">NeuliteBuilder</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bionet_lite is ready to use!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If no errors are displayed, the setup is successful.</p>
+</section>
+</section>
+<section id="id8">
+<h2>Basic Usage<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<p>Converting existing bionet code to bionet_lite is very simple. Just change the import statement, and the rest of the code can be used as-is.</p>
+<section id="import">
+<h3>Changing the Import<a class="headerlink" href="#import" title="Link to this heading"></a></h3>
+<p><strong>Before (bionet):</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bmtk.builder.networks</span><span class="w"> </span><span class="kn">import</span> <span class="n">NetworkBuilder</span>
+</pre></div>
+</div>
+<p><strong>After (bionet_lite):</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bionetlite</span><span class="w"> </span><span class="kn">import</span> <span class="n">NeuliteBuilder</span> <span class="k">as</span> <span class="n">NetworkBuilder</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h3>Network Construction<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<p>The rest of the code is exactly the same as bionet:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create network</span>
+<span class="n">net</span> <span class="o">=</span> <span class="n">NetworkBuilder</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">)</span>
+
+<span class="c1"># Add nodes</span>
+<span class="n">net</span><span class="o">.</span><span class="n">add_nodes</span><span class="p">(</span>
+    <span class="n">N</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">pop_name</span><span class="o">=</span><span class="s1">&#39;Scnn1a&#39;</span><span class="p">,</span>
+    <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;biophysical&#39;</span><span class="p">,</span>
+    <span class="n">model_template</span><span class="o">=</span><span class="s1">&#39;ctdb:Biophys1.hoc&#39;</span><span class="p">,</span>
+    <span class="n">dynamics_params</span><span class="o">=</span><span class="s1">&#39;472363762_fit.json&#39;</span><span class="p">,</span>
+    <span class="n">morphology</span><span class="o">=</span><span class="s1">&#39;Scnn1a_473845048_m.swc&#39;</span>
+<span class="p">)</span>
+
+<span class="c1"># Build network</span>
+<span class="n">net</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="c1"># Save to files</span>
+<span class="n">net</span><span class="o">.</span><span class="n">save_nodes</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;network&#39;</span><span class="p">)</span>
+<span class="n">net</span><span class="o">.</span><span class="n">save_edges</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;network&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h3>Confirming Output Files<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<p>bionet_lite generates files for Neulite in the <code class="docutils literal notranslate"><span class="pre">neulite/</span></code> directory:</p>
+<p><strong>Directory Structure</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>neulite/
+├── v1_population.csv              # Population information
+├── v1_v1_connection.csv           # Connection information
+└── data/
+    ├── *.swc                       # Processed morphology files
+    └── *.csv                       # Ion channel settings
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Filenames are generated based on the name specified in <code class="docutils literal notranslate"><span class="pre">NetworkBuilder</span></code> (in this example, <code class="docutils literal notranslate"><span class="pre">'v1'</span></code>).</p>
+</div>
+<p>Details of each file:</p>
+<p><strong>&lt;network_name&gt;_population.csv</strong> - Neuron population information</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>#n_cell,n_comp,name,swc_file,ion_file
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">#n_cell</span></code>: Number of cells in the population</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_comp</span></code>: Number of compartments</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: Population name</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">swc_file</span></code>: Path to morphology file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ion_file</span></code>: Path to ion channel configuration file</p></li>
+</ul>
+<p><strong>&lt;src&gt;_&lt;trg&gt;_connection.csv</strong> - Synapse connection information</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>#pre nid,post nid,post cid,weight,tau_decay,tau_rise,erev,delay,e/i
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">#pre</span> <span class="pre">nid</span></code>: Presynaptic neuron ID</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">post</span> <span class="pre">nid</span></code>: Postsynaptic neuron ID</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">post</span> <span class="pre">cid</span></code>: Postsynaptic compartment ID</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weight</span></code>: Synapse weight</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tau_decay</span></code>: Decay time constant (ms)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tau_rise</span></code>: Rise time constant (ms)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">erev</span></code>: Reversal potential (mV)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delay</span></code>: Transmission delay (ms)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">e/i</span></code>: Excitatory (e) or inhibitory (i)</p></li>
+</ul>
+</section>
+</section>
+<section id="id11">
+<h2>Optional Settings<a class="headerlink" href="#id11" title="Link to this heading"></a></h2>
+<p>NeuliteBuilder can accept the following optional parameters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">NetworkBuilder</span><span class="p">(</span>
+    <span class="s1">&#39;v1&#39;</span><span class="p">,</span>
+    <span class="n">convert_morphologies</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Whether to convert SWC files</span>
+    <span class="n">convert_ion_channels</span><span class="o">=</span><span class="kc">True</span>   <span class="c1"># Whether to convert ion channel settings</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">convert_morphologies</span></code> and <code class="docutils literal notranslate"><span class="pre">convert_ion_channels</span></code> are True by default. In subsequent runs, you can skip conversion by setting these to False.</p>
+</section>
+<section id="id12">
+<h2>Details of Dependent Packages<a class="headerlink" href="#id12" title="Link to this heading"></a></h2>
+<section id="id13">
+<h3>Major Dependent Packages of bionet_lite<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<p>bionet_lite depends on the following Python packages:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>bmtk&gt;=1.0.0                    # Brain Modeling Toolkit
+neuron&gt;=8.0.0                  # NEURON simulator (required)
+numpy&gt;=1.19.0                  # Numerical computing
+pandas&gt;=1.2.0                  # Data manipulation
+h5py&gt;=3.0.0                    # HDF5 file support
+scikit-learn&gt;=0.24.0           # PCA for axon direction estimation (required)
+mpi4py&gt;=3.0.0                  # MPI parallel processing (optional)
+</pre></div>
+</div>
+<p><strong>Required Packages:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>bmtk<span class="w"> </span>neuron<span class="w"> </span>scikit-learn
+</pre></div>
+</div>
+<p><strong>Optional Packages:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># When using MPI parallel processing</span>
+pip<span class="w"> </span>install<span class="w"> </span>mpi4py
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id14">
+<h2>Next Steps<a class="headerlink" href="#id14" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="neulite_build.html"><span class="doc">Building Neulite Kernel</span></a> - Building Neulite Kernel</p></li>
+<li><p><a class="reference internal" href="../tutorials/tutorial01_single_cell.html"><span class="doc">Tutorial 1: Steady-State Current Injection in a Single Cell</span></a> - Practical Tutorial</p></li>
+<li><p><a class="reference internal" href="../user_guide/basic_usage.html"><span class="doc">Basic Usage</span></a> - Detailed Usage</p></li>
+</ul>
+</section>
+<section id="id15">
+<h2>References<a class="headerlink" href="#id15" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.neuron.yale.edu/neuron/">NEURON Official Site</a></p></li>
+<li><p><a class="reference external" href="https://alleninstitute.github.io/bmtk/installation.html">BMTK Installation Guide</a></p></li>
+<li><p><a class="reference external" href="https://scikit-learn.org/">scikit-learn Documentation</a></p></li>
+<li><p><a class="reference external" href="https://mpi4py.readthedocs.io/">mpi4py Documentation</a></p></li>
+<li><p>Neulite Official Site: <a class="reference external" href="https://numericalbrain.org/neulite/">https://numericalbrain.org/neulite/</a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="neulite_build.html" class="btn btn-neutral float-right" title="Building Neulite Kernel" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Yamazaki Lab..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,353 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Yamazaki Lab.
+# This file is distributed under the same license as the Bionet_lite
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Bionet_lite \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-15 18:02+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:3
+msgid "Tutorial 1: 単一細胞の定常電流入力"
+msgstr "Tutorial 1: Steady-State Current Injection in a Single Cell"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:6
+msgid "概要"
+msgstr "Overview"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:8
+msgid "このチュートリアルでは、単一の生物物理学的ニューロンに対して定常電流入力を行う最もシンプルな例を示します。"
+msgstr "This tutorial demonstrates the simplest example of applying steady-state current injection to a single biophysical neuron."
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:11
+msgid "目的"
+msgstr "Objectives"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:13
+msgid "bionet_liteの基本的な使い方を理解する"
+msgstr "Understand the basic usage of bionet_lite"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:14
+msgid "NeuliteBuilderの初期化方法を学ぶ"
+msgstr "Learn how to initialize NeuliteBuilder"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:15
+msgid "単一ニューロンのネットワークを構築する"
+msgstr "Build a network with a single neuron"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:16
+msgid "生成されるファイルの構造を理解する"
+msgstr "Understand the structure of generated files"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:19
+msgid "前提条件: BMTKチュートリアルの実行"
+msgstr "Prerequisites: Running the BMTK Tutorial"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:22
+msgid "**このチュートリアルを始める前に、必ずBMTKの対応するチュートリアルを先に実行してください**"
+msgstr "**Before starting this tutorial, you must first run the corresponding BMTK tutorial**"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:24
+msgid "BMTKのチュートリアルを実行することで、必要なデータファイル（SWCファイル、JSONファイル等）が自動的にダウンロードされます。bionet_liteの実行には、BMTKのコード・データファイルが必要です。"
+msgstr "Running the BMTK tutorial will automatically download the necessary data files (SWC files, JSON files, etc.). The execution of bionet_lite requires BMTK code and data files."
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:26
+msgid "**実行手順：**"
+msgstr "**Execution Steps:**"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:28
+msgid "**BMTKチュートリアルを実行**"
+msgstr "**Run the BMTK Tutorial**"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:30
+msgid "まず、以下のBMTKチュートリアルを最後まで実行してください："
+msgstr "First, run the following BMTK tutorial to completion:"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:32
+msgid ""
+"`Tutorial: Single Cell Simulation with Current Injection (with BioNet) "
+"<https://alleninstitute.github.io/bmtk/tutorials/tutorial_01_single_cell_clamped.html>`_"
+msgstr ""
+"`Tutorial: Single Cell Simulation with Current Injection (with BioNet) "
+"<https://alleninstitute.github.io/bmtk/tutorials/tutorial_01_single_cell_clamped.html>`_"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:35
+msgid "**bionet_liteのコード例を実行**"
+msgstr "**Run the bionet_lite Code Example**"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:37
+msgid "BMTKチュートリアルが完了したら、次のセクションに進んでください。"
+msgstr "Once the BMTK tutorial is complete, proceed to the next section."
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:40
+msgid "BMTKからbionet_liteへの変更"
+msgstr "Changes from BMTK to bionet_lite"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:42
+msgid "**変更が必要なのはimport文だけです。** それ以外のコードは完全に同じです。"
+msgstr "**Only the import statement needs to be changed.** All other code remains exactly the same."
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:44
+msgid "**変更前（BMTK）:**"
+msgstr "**Before (BMTK):**"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:50
+msgid "**変更後（bionet_lite）:**"
+msgstr "**After (bionet_lite):**"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:57
+msgid "コード例"
+msgstr "Code Example"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:83
+msgid "生成されるファイル"
+msgstr "Generated Files"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:85
+msgid "このシミュレーションでは以下のファイルが生成されます："
+msgstr "The following files are generated in this simulation:"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:88
+msgid "<network_name>_population.csv"
+msgstr "<network_name>_population.csv"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:90
+msgid "ポピュレーション情報を含むファイル。単一のニューロンの生物物理学的特性を定義します。"
+msgstr "A file containing population information that defines the biophysical properties of a single neuron."
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:98
+msgid "<src>_<trg>_connection.csv"
+msgstr "<src>_<trg>_connection.csv"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:100
+msgid "シナプス接続情報を含むファイル。このチュートリアルではシナプス接続は定義されていないため、ファイルの中身は空です（ヘッダーのみ）。"
+msgstr "A file containing synaptic connection information. Since no synaptic connections are defined in this tutorial, the file is empty (header only)."
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:103
+msgid "Neuliteカーネルの実行のためにはconnectionファイルが必要です。接続が存在しない場合、空のファイルが生成されます。"
+msgstr "A connection file is required to run the Neulite kernel. If no connections exist, an empty file is generated."
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:106
+msgid "処理済みswcファイル"
+msgstr "Processed SWC File"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:108
+msgid "Neulite用に前処理された形態ファイルが生成されます。"
+msgstr "A preprocessed morphology file for Neulite is generated."
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:110
+msgid ""
+"このファイルは `Perisomatic model <https://brain-map.org/our-research"
+"/computational-modeling/perisomatic-biophysical-single-neuron-models>`_ "
+"に従って処理されており、以下の変更が加えられています："
+msgstr ""
+"This file is processed according to the `Perisomatic model <https://brain-map.org/our-research"
+"/computational-modeling/perisomatic-biophysical-single-neuron-models>`_ "
+"and the following modifications are made:"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:112
+msgid "実際の軸索形態を簡略化された人工軸索に置き換え"
+msgstr "Replace actual axon morphology with a simplified artificial axon"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:113
+msgid "ゼロベースのインデックスへの変換"
+msgstr "Convert to zero-based indexing"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:114
+msgid "深さ優先探索によるソート"
+msgstr "Sorting by depth-first search"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:117
+msgid "Perisomatic modelの詳細については、:doc:`../advanced/specification` を参照してください。"
+msgstr "For details on the Perisomatic model, see :doc:`../advanced/specification`."
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:120
+msgid "Neuliteが生成するファイル"
+msgstr "Files Generated by Neulite"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:122
+msgid "bionet_liteは以下のディレクトリ内にファイルを生成します："
+msgstr "bionet_lite generates files in the following directory:"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:124
+#, python-brace-format
+msgid "スクリプトに ``base_dir`` が設定されている場合: ``{base_dir}_nl/``"
+msgstr "If ``base_dir`` is set in the script: ``{base_dir}_nl/``"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:125
+msgid "``base_dir`` が設定されていない場合: ``neulite/``"
+msgstr "If ``base_dir`` is not set: ``neulite/``"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:127
+msgid "**ディレクトリ構造**"
+msgstr "**Directory Structure**"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:141
+msgid "mcortex_population.csv"
+msgstr "mcortex_population.csv"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:143
+msgid "Neulite用のポピュレーションファイル。カラム構成は以下の通りです："
+msgstr "A population file for Neulite. The column structure is as follows:"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:150
+msgid "``#n_cell``: 細胞数"
+msgstr "``#n_cell``: Number of cells"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:151
+msgid "``n_comp``: コンパートメント数"
+msgstr "``n_comp``: Number of compartments"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:152
+msgid "``name``: ポピュレーション名"
+msgstr "``name``: Population name"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:153
+msgid "``swc_file``: SWCモーフォロジファイルのパス"
+msgstr "``swc_file``: Path to SWC morphology file"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:154
+msgid "``ion_file``: イオンチャネルパラメータファイルのパス"
+msgstr "``ion_file``: Path to ion channel parameter file"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:157
+msgid "mcortex_mcortex_connection.csv"
+msgstr "mcortex_mcortex_connection.csv"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:159
+msgid "Neulite用の接続ファイル。このチュートリアルでは接続がないため、ヘッダーのみのファイルが生成されます："
+msgstr "A connection file for Neulite. Since there are no connections in this tutorial, a file with only the header is generated:"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:166
+msgid "kernel/config.h"
+msgstr "kernel/config.h"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:168
+msgid "Neuliteカーネル用のコンパイル時設定ファイル。BMTKのconfig.jsonから自動生成されます："
+msgstr "A compilation-time configuration file for the Neulite kernel. It is automatically generated from BMTK's config.json:"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:190
+msgid "このファイルには以下のパラメータが含まれます："
+msgstr "This file contains the following parameters:"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:192
+msgid "``TSTOP``: シミュレーション時間（ms）"
+msgstr "``TSTOP``: Simulation time (ms)"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:193
+msgid "``DT``: タイムステップ（ms）"
+msgstr "``DT``: Time step (ms)"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:194
+msgid "``INV_DT``: 1ミリ秒あたりのステップ数"
+msgstr "``INV_DT``: Number of steps per millisecond"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:195
+msgid "``SPIKE_THRESHOLD``: スパイク検出閾値（mV）"
+msgstr "``SPIKE_THRESHOLD``: Spike detection threshold (mV)"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:196
+msgid "``I_AMP``: 電流注入の振幅（nA）"
+msgstr "``I_AMP``: Amplitude of current injection (nA)"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:197
+msgid "``I_DELAY``: 電流注入開始時刻（ms）"
+msgstr "``I_DELAY``: Current injection start time (ms)"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:198
+msgid "``I_DURATION``: 電流注入の持続時間（ms）"
+msgstr "``I_DURATION``: Duration of current injection (ms)"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:201
+msgid "config.hはNeuliteカーネルのビルド時に使用されるため、このファイルを変更した場合はカーネルの再ビルドが必要です。"
+msgstr "Since config.h is used when building the Neulite kernel, recompiling the kernel is necessary if you modify this file."
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:204
+msgid "Neuliteカーネルの実行"
+msgstr "Running the Neulite Kernel"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:206
+msgid "生成されたファイルを使用してNeuliteカーネルを実行します："
+msgstr "Run the Neulite kernel using the generated files:"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:217
+msgid "シミュレーション結果ファイル"
+msgstr "Simulation Result Files"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:219
+msgid "Neuliteカーネル実行後、以下のテキストファイルが生成されます："
+msgstr "The following text files are generated after running the Neulite kernel:"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:221
+msgid "**s.dat** - スパイク時刻データ"
+msgstr "**s.dat** - Spike Time Data"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:223
+msgid "スペース区切りのテキスト形式で、各行に1つのスパイクイベントを記録："
+msgstr "Space-delimited text format recording one spike event per line:"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:232
+msgid "1列目: スパイクが発生した時刻（ms）"
+msgstr "Column 1: Time at which spike occurred (ms)"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:233
+msgid "2列目: スパイクを発生させたニューロンのID"
+msgstr "Column 2: ID of the neuron that generated the spike"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:235
+msgid "**v.dat** - 膜電位データ"
+msgstr "**v.dat** - Membrane Potential Data"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:237
+msgid "スペース区切りのテキスト形式で、各行に全ニューロンの膜電位を記録："
+msgstr "Space-delimited text format recording membrane potential of all neurons per line:"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:246
+msgid "1列目: 時刻（ms）"
+msgstr "Column 1: Time (ms)"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:247
+msgid "2列目以降: 各ニューロンのソーマ膜電位（mV）"
+msgstr "Column 2 onwards: Soma membrane potential of each neuron (mV)"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:250
+msgid "これらのファイルはテキスト形式（ASCII）なので、Pythonのnumpyやpandasで簡単に読み込めます。"
+msgstr "These files are in text format (ASCII), so they can be easily loaded with Python's numpy or pandas."
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:253
+msgid "次のステップ"
+msgstr "Next Steps"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:255
+msgid ":doc:`tutorial02_spike_input` - スパイク入力を使用したシミュレーション"
+msgstr ":doc:`tutorial02_spike_input` - Simulation using spike input"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:256
+msgid ":doc:`../user_guide/basic_usage` - より詳細な使用方法"
+msgstr ":doc:`../user_guide/basic_usage` - More detailed usage instructions"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:252
+msgid "BMTKとの実行結果の比較"
+msgstr "Comparison of Execution Results with BMTK"
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:260
+msgid "dt=0.025での `BMTK <https://alleninstitute.github.io/bmtk/>`_ と Neulite の実行結果を比較したプロット。"
+msgstr "Comparison plot of execution results between `BMTK <https://alleninstitute.github.io/bmtk/>`_ and Neulite at dt=0.025."
+
+#: ../../source/tutorials/tutorial01_single_cell.rst:267
+msgid "このチュートリアルの完全なコード例とデータファイルは、リポジトリのexamplesディレクトリにあります。"
+msgstr "Complete code examples and data files for this tutorial are available in the examples directory of the repository."
+
