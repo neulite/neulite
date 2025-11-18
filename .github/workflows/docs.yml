@@ -1,19 +1,20 @@
-name: Deploy Docs
+name: Deploy Sphinx Docs
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  build-deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -23,8 +24,9 @@ jobs:
       - name: Install dependencies
         run: |
           pip install sphinx sphinx-rtd-theme sphinx-intl
+          pip install -r requirements.txt || true
 
-      - name: Build docs
+      - name: Build HTML
         working-directory: docs
         run: |
           make html
@@ -35,8 +37,18 @@ jobs:
           echo '<meta http-equiv="refresh" content="0;url=en/">' > build/pages/index.html
           touch build/pages/.nojekyll
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/build/pages
+          path: docs/build/pages
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
