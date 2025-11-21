@@ -7,6 +7,9 @@ This is the repository for Neulite, a light-weight neuron simulator. This reposi
 * test: Tests for kernels
 
 Enjoy!
+
 The Neulite Core Team
+
 (en) https://numericalbrain.org/en/neulite
+
 (ja) https://numericalbrain.org/ja/neulite
