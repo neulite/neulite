@@ -11,5 +11,4 @@ Enjoy!
 The Neulite Core Team
 
 (en) https://numericalbrain.org/en/neulite
-
 (ja) https://numericalbrain.org/ja/neulite
