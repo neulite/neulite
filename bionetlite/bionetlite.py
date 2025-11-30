@@ -34,7 +34,7 @@ class NeuliteNetwork(DenseNetwork):
     CONNECTION_CSV_HEADER = ["#pre nid", "post nid", "post cid", "weight",
                              "tau_decay", "tau_rise", "erev", "delay", "e/i"]
 
-    def __init__(self, name, convert_morphologies=True, convert_ion_channels=True, neulite_only=False,
+    def __init__(self, name, convert_morphologies=True, convert_ion_channels=True, neulite_only=True,
                  simulation_config=None, generate_config_h=True, **network_props):
         super(NeuliteNetwork, self).__init__(name, **network_props or {})
 
@@ -1137,7 +1137,7 @@ class NeuliteNetwork(DenseNetwork):
 
 class NeuliteBuilder(NetworkBuilder):
 
-    def __init__(self, name, adaptor_cls=NeuliteNetwork, convert_morphologies=True, convert_ion_channels=True, neulite_only=False,
+    def __init__(self, name, adaptor_cls=NeuliteNetwork, convert_morphologies=True, convert_ion_channels=True, neulite_only=True,
                  simulation_config=None, generate_config_h=True, **network_props):
         self.adaptor = adaptor_cls(name, convert_morphologies=convert_morphologies, convert_ion_channels=convert_ion_channels,
                                    neulite_only=neulite_only, simulation_config=simulation_config,
