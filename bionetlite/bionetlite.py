@@ -70,8 +70,23 @@ class NeuliteNetwork(DenseNetwork):
                 logger.info("Generating config.h from simulation configuration")
                 self.generate_config_h(simulation_config)
 
+        config_path = self._get_config_path()
+
+        # Auto-copy BMTK example files if config.json does not exist and base_dir is detected.
+        # This enables BMTK tutorials to work without running build_env_bionet first.
+        if self.my_base_dir and not os.path.exists(config_path):
+            if mpi_rank == 0:
+                logger.info(f"config.json not found. Auto-setting up environment in {self.my_base_dir}")
+                from bmtk.utils.sim_setup import build_env_bionet
+                build_env_bionet(
+                    base_dir=self.my_base_dir,
+                    include_examples=True,
+                    config_file='config.json'
+                )
+            barrier()
+
         try:
-            config = SonataConfig.from_json(self._get_config_path())
+            config = SonataConfig.from_json(config_path)
             self.morphologies_dir = config["components"]["morphologies_dir"]
             self.biophysical_neuron_models_dir = config["components"]["biophysical_neuron_models_dir"]
             if mpi_rank == 0:
@@ -79,7 +94,7 @@ class NeuliteNetwork(DenseNetwork):
                     logger.info("Converting morphology SWC files for Neulite")
                     self._convert_morphologies()
                 elif self.convert_morphologies_flag:
-                    logger.warning(f"Morphologies directory does not exists. [{self.morphologies_dir}]")
+                    logger.warning(f"Morphologies directory does not exist. [{self.morphologies_dir}]")
                 if self.convert_ion_channels_flag and self.biophysical_neuron_models_dir:
                     logger.info("Converting ion channel JSON files to CSV format")
                     self.convert_ion_channels()
