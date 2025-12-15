@@ -506,8 +506,8 @@ class NeuliteNetwork(DenseNetwork):
                 dynamics_params = edge_type.get('dynamics_params')
                 tau1, tau2, erev = self._extract_synapse_params(dynamics_params)
                 
-                # add all parameters to list
-                base_params.extend([tau1, tau2, erev])
+                # add all parameters to list (tau2=decay, tau1=rise order to match column names)
+                base_params.extend([tau2, tau1, erev])
                 edge_types_list.append(base_params)
             edge_types_data = pd.DataFrame(edge_types_list, columns=cols)
             edge_types_data["delay"] = edge_types_data["delay"].map(lambda x: Decimal(x).quantize(Decimal('1'), ROUND_HALF_UP))
