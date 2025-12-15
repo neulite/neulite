@@ -29,12 +29,51 @@ from bmtk.utils.sonata.config import SonataConfig
 
 logger = logging.getLogger(__name__)
 
+# Tutorial-specific simulation parameters
+# These are applied automatically based on base_dir pattern matching
+# to maintain "import-only change" design philosophy
+
+# Default parameters (used when no pattern matches, and for Tutorial2,3)
+BIONETLITE_DEFAULTS = {
+    'tstop': 1000.0,
+    'dt': 0.1,
+    'current_clamp': {
+        'amp': 0.1,
+        'delay': 500.0,
+        'duration': 500.0
+    }
+}
+
+TUTORIAL_PARAMS = {
+    'sim_ch01': {  # Tutorial1: Single cell with current injection
+        'tstop': 2000.0,
+        'dt': 0.1,
+        'current_clamp': {
+            'amp': 0.12,
+            'delay': 500.0,
+            'duration': 1000.0
+        }
+    },
+    'sim_ch02': BIONETLITE_DEFAULTS,  # Tutorial2: No current injection
+    'sim_ch03': BIONETLITE_DEFAULTS,  # Tutorial3: No current injection
+    'sim_ch04': {  # Tutorial4: E/I network
+        'tstop': 3000.0,
+        'dt': 0.1,
+        'current_clamp': {
+            'amp': 0.1,
+            'delay': 500.0,
+            'duration': 2000.0
+        }
+    },
+}
+
+
 class NeuliteNetwork(DenseNetwork):
     # Connection CSV header definition
     CONNECTION_CSV_HEADER = ["#pre nid", "post nid", "post cid", "weight",
                              "tau_decay", "tau_rise", "erev", "delay", "e/i"]
 
-    def __init__(self, name, convert_morphologies=True, convert_ion_channels=True, neulite_only=True,
+    def __init__(self, name, convert_morphologies=True, convert_ion_channels=True,
                  simulation_config=None, generate_config_h=True, **network_props):
         super(NeuliteNetwork, self).__init__(name, **network_props or {})
 
@@ -62,7 +101,6 @@ class NeuliteNetwork(DenseNetwork):
         self.swc_dir = "data"
         self.convert_morphologies_flag = convert_morphologies
         self.convert_ion_channels_flag = convert_ion_channels
-        self.neulite_only = neulite_only
 
         # Generate config.h if simulation_config is provided
         if simulation_config is not None and generate_config_h:
@@ -78,10 +116,17 @@ class NeuliteNetwork(DenseNetwork):
             if mpi_rank == 0:
                 logger.info(f"config.json not found. Auto-setting up environment in {self.my_base_dir}")
                 from bmtk.utils.sim_setup import build_env_bionet
+
+                # Get tutorial-specific parameters based on base_dir pattern
+                tutorial_params = self._get_tutorial_params(self.my_base_dir)
+
                 build_env_bionet(
                     base_dir=self.my_base_dir,
                     include_examples=True,
-                    config_file='config.json'
+                    config_file='config.json',
+                    tstop=tutorial_params['tstop'],
+                    dt=tutorial_params['dt'],
+                    current_clamp=tutorial_params['current_clamp']
                 )
             barrier()
 
@@ -108,16 +153,12 @@ class NeuliteNetwork(DenseNetwork):
             logger.warning(f"Initialization warning: {e}")
     
     def add_nodes(self, N=1, **properties):
-        """Override add_nodes to optionally filter non-biophysical nodes"""
-        if self.neulite_only:
-            # Neulite-only mode: only accept biophysical nodes
-            if properties.get('model_type') == 'biophysical':
-                super(NeuliteNetwork, self).add_nodes(N=N, **properties)
-            else:
-                logger.info(f"[Neulite-only mode] Skipping non-biophysical nodes: model_type={properties.get('model_type')}, N={N}")
-        else:
-            # Normal mode: accept all nodes
-            super(NeuliteNetwork, self).add_nodes(N=N, **properties)
+        """Add nodes to the network. Only biophysical nodes are supported."""
+        model_type = properties.get('model_type')
+        if model_type != 'biophysical':
+            logger.info(f"Skipping non-biophysical nodes: model_type={model_type}, N={N}")
+            return
+        super(NeuliteNetwork, self).add_nodes(N=N, **properties)
     
     def add_edges(self, source=None, target=None, connection_rule=None, connection_params=None, 
                   iterator='one_to_one', edge_type_properties=None, **properties):
@@ -167,6 +208,42 @@ class NeuliteNetwork(DenseNetwork):
         if self.my_base_dir:
             return f"{self.my_base_dir}/{config_file}"
         return config_file
+
+    def _get_tutorial_params(self, base_dir):
+        """Get simulation parameters based on base_dir pattern.
+
+        Automatically detects tutorial type from base_dir and returns
+        appropriate simulation parameters. This maintains the "import-only
+        change" design philosophy by not requiring users to specify parameters.
+
+        :param base_dir: Base directory path (e.g., 'sim_ch01', './sim_ch04')
+        :return: dict with tstop, dt, current_clamp parameters
+        """
+        if not base_dir:
+            logger.info("No base_dir specified. Using bionetlite defaults.")
+            return BIONETLITE_DEFAULTS.copy()
+
+        # Normalize path for matching
+        normalized = os.path.basename(os.path.normpath(base_dir))
+
+        # Also check full path for patterns
+        full_path = os.path.abspath(base_dir) if base_dir else ''
+
+        for pattern, params in TUTORIAL_PARAMS.items():
+            if pattern in normalized or pattern in full_path:
+                logger.info(
+                    f"Detected tutorial pattern '{pattern}' in base_dir '{base_dir}'. "
+                    f"Using parameters: tstop={params['tstop']}, dt={params['dt']}, "
+                    f"i_amp={params['current_clamp']['amp']}"
+                )
+                return params.copy()
+
+        logger.info(
+            f"No tutorial pattern matched for base_dir '{base_dir}'. "
+            f"Using bionetlite defaults: tstop={BIONETLITE_DEFAULTS['tstop']}, "
+            f"dt={BIONETLITE_DEFAULTS['dt']}"
+        )
+        return BIONETLITE_DEFAULTS.copy()
 
     def _convert_morphologies(self):
         # Create output directory if it doesn't exist
@@ -530,111 +607,164 @@ class NeuliteNetwork(DenseNetwork):
             # neulite end
 
             pop_name = '{}_to_{}'.format(src_network, trg_network) if pop_name is None else pop_name
-            with h5py.File(edges_file_name, 'w') as hf:
-                # Initialize the hdf5 groups and datasets
-                add_hdf5_attrs(hf)
-                pop_grp = hf.create_group('/edges/{}'.format(pop_name))
 
-                pop_grp.create_dataset('source_node_id', (n_total_conns,), dtype='uint64', compression=compression)
-                pop_grp['source_node_id'].attrs['node_population'] = src_network
-                pop_grp.create_dataset('target_node_id', (n_total_conns,), dtype='uint64', compression=compression)
-                pop_grp['target_node_id'].attrs['node_population'] = trg_network
-                pop_grp.create_dataset('edge_group_id', (n_total_conns,), dtype='uint16', compression=compression)
-                pop_grp.create_dataset('edge_group_index', (n_total_conns,), dtype='uint32', compression=compression)
-                pop_grp.create_dataset('edge_type_id', (n_total_conns,), dtype='uint32', compression=compression)
+            # === Step 1: Collect all chunks and filter biophysical edges ===
+            logger.info("Collecting and filtering biophysical edges for h5...")
+            all_source_ids = []
+            all_target_ids = []
+            all_edge_type_ids = []
+            all_edge_group_ids = []
+            all_edge_group_indices = []
 
-                for group_id in merged_edges.group_ids:
-                    # different model-groups will have different datasets/properties depending on what edge information
-                    # is being saved for each edges
-                    model_grp = pop_grp.create_group(str(group_id))
-                    for prop_mdata in merged_edges.get_group_metadata(group_id):
-                        model_grp.create_dataset(prop_mdata['name'], shape=prop_mdata['dim'], dtype=prop_mdata['type'], compression=compression)
+            # Get group metadata for property collection
+            group_metadata = {gid: merged_edges.get_group_metadata(gid) for gid in merged_edges.group_ids}
+            filtered_props = {
+                gid: {prop['name']: [] for prop in group_metadata[gid]}
+                for gid in merged_edges.group_ids
+            }
 
-                # neulite start
-                connections_list = []
-                # neulite end
+            # Track new indices per group (for edge_group_index re-assignment)
+            new_group_idx = {gid: 0 for gid in merged_edges.group_ids}
 
-                # Uses the collated edges (eg combined edges across all edge-types) to actually write the data to hdf5,
-                # potentially in multiple chunks. For small networks doing it this way isn't very effiecent, however
-                # this has the benefits:
-                #  * For very large networks it won't always be possible to store all the data in memory.
-                #  * When using MPI/multi-node the chunks can represent data from different ranks.
-                for chunk_id, idx_beg, idx_end in merged_edges.itr_chunks():
-                    pop_grp['source_node_id'][idx_beg:idx_end] = merged_edges.get_source_node_ids(chunk_id)
-                    pop_grp['target_node_id'][idx_beg:idx_end] = merged_edges.get_target_node_ids(chunk_id)
-                    pop_grp['edge_type_id'][idx_beg:idx_end] = merged_edges.get_edge_type_ids(chunk_id)
-                    pop_grp['edge_group_id'][idx_beg:idx_end] = merged_edges.get_edge_group_ids(chunk_id)
-                    pop_grp['edge_group_index'][idx_beg:idx_end] = merged_edges.get_edge_group_indices(chunk_id)
+            # Also collect data for CSV (connections_list)
+            connections_list = []
 
-                    for group_id, prop_name, grp_idx_beg, grp_idx_end in merged_edges.get_group_data(chunk_id):
-                        prop_array = merged_edges.get_group_property(prop_name, group_id, chunk_id)
-                        pop_grp[str(group_id)][prop_name][grp_idx_beg:grp_idx_end] = prop_array
+            for chunk_id, idx_beg, idx_end in merged_edges.itr_chunks():
+                source_ids = merged_edges.get_source_node_ids(chunk_id)
+                target_ids = merged_edges.get_target_node_ids(chunk_id)
+                edge_type_ids = merged_edges.get_edge_type_ids(chunk_id)
+                edge_group_ids = merged_edges.get_edge_group_ids(chunk_id)
+                old_edge_group_indices = merged_edges.get_edge_group_indices(chunk_id)
 
-                    # neulite start
-                    logger.info("Loading edge data...")
-                    edge_type_id = pd.DataFrame(pop_grp['edge_type_id'][idx_beg:idx_end], columns=["edge_type_id"])
-                    source_node_id = pd.DataFrame(pop_grp['source_node_id'][idx_beg:idx_end], columns=["pre nid"])
-                    target_node_id = pd.DataFrame(pop_grp['target_node_id'][idx_beg:idx_end], columns=["post nid"])
-                    nsyns_data = pd.DataFrame(pop_grp["0/nsyns"][idx_beg:idx_end], columns=["nsyns"], dtype="object")
+                # Biophysical filter: check if source is from this network (biophysical)
+                # If src_network != self.name, all sources are from external network
+                # NeuliteNetwork only accepts biophysical nodes, so external sources should be filtered
+                if src_network == self.name:
+                    # Same network: all sources are biophysical (NeuliteNetwork ensures this)
+                    mask = np.ones(len(source_ids), dtype=bool)
+                else:
+                    # External network: filter all edges (external sources may not be biophysical)
+                    mask = np.zeros(len(source_ids), dtype=bool)
 
-                    # Merging edge types data on edge_type_id
-                    logger.info("Merging edge types data...")
-                    connections = pd.merge(edge_type_id, edge_types_data, on='edge_type_id', how='left')
-                    logger.debug(f"afrer marge: {chunk_id=}, {len(connections)=}")
-                    connections = pd.concat([connections, nsyns_data], axis=1)
-                    logger.debug(f"after concat: {chunk_id=}, {len(connections)=}")
-                    connections.insert(0, "pre nid", source_node_id)
-                    connections.insert(1, "post nid", target_node_id)
-                    logger.debug(f"after insert: {chunk_id=}, {len(connections)=}")
-                    connections_list.append(connections)
+                # Collect filtered data
+                for i, (sid, tid, etid, gid, old_idx, keep) in enumerate(zip(
+                    source_ids, target_ids, edge_type_ids, edge_group_ids, old_edge_group_indices, mask
+                )):
+                    if keep:
+                        all_source_ids.append(sid)
+                        all_target_ids.append(tid)
+                        all_edge_type_ids.append(etid)
+                        all_edge_group_ids.append(gid)
+                        all_edge_group_indices.append(new_group_idx[gid])
+                        new_group_idx[gid] += 1
 
-                logger.debug(f"before concat: {len(connections_list)=}")
-                merged_connections = pd.concat(connections_list)
-                del connections_list
-                logger.debug(f"after concat: {len(merged_connections)=}")
-                merged_connections["target_sections"] = merged_connections["target_sections"].apply(self._str_to_list)
-                merged_connections["target_sections"] = merged_connections["target_sections"].apply(self._replace_strings)
-                merged_connections["post cid"] = -1
-                merged_connections["ei"] = ""
-                merged_connections["nsyns"] = merged_connections["nsyns"].apply(self._to_list)
-                merged_connections = merged_connections.explode("nsyns")
-                logger.info(f"Finished merging edge types data.")
+                        # Collect properties for this edge
+                        for prop_meta in group_metadata[gid]:
+                            prop_name = prop_meta['name']
+                            prop_array = merged_edges.get_group_property(prop_name, gid, chunk_id)
+                            # Calculate local index within this chunk for this group
+                            chunk_group_indices = old_edge_group_indices[edge_group_ids == gid]
+                            local_mask = chunk_group_indices <= old_idx
+                            local_idx = local_mask.sum() - 1
+                            if local_idx >= 0 and local_idx < len(prop_array):
+                                filtered_props[gid][prop_name].append(prop_array[local_idx])
 
-                # set chunk_size
-                chunk_size = (len(merged_connections) // mpi_size ) + 1
-                chunks = [merged_connections.iloc[i*chunk_size:(i+1)*chunk_size] for i in range(mpi_size)]
-                logger.debug(f"{mpi_size=}, {chunk_size=}, {len(chunks)=}")
-                # for MPI
-                serialized_chunks = [self._serialize_data(chunk) for chunk in chunks]
-                logger.info("Processing chunks...")
-                # neulite end
+                # Also collect for CSV (all edges, filtering will happen in _process_chunk)
+                logger.info("Loading edge data for CSV...")
+                edge_type_id_df = pd.DataFrame(edge_type_ids, columns=["edge_type_id"])
+                source_node_id_df = pd.DataFrame(source_ids, columns=["pre nid"])
+                target_node_id_df = pd.DataFrame(target_ids, columns=["post nid"])
 
-            if sort_on_disk:
-                logger.debug('Sorting {} by {} to {}'.format(edges_file_name, sort_by, edges_file_name_final))
-                sort_edges(
-                    input_edges_path=edges_file_name,
-                    output_edges_path=edges_file_name_final,
-                    edges_population='/edges/{}'.format(pop_name),
-                    sort_by=sort_by,
-                    compression=compression,
-                    # sort_on_disk=True,
-                )
-                try:
-                    logger.debug('Deleting intermediate edges file {}.'.format(edges_file_name))
-                    os.remove(edges_file_name)
-                except OSError as e:
-                    logger.warning('Unable to remove intermediate edges file {}.'.format(edges_file_name))
+                # Get nsyns from group properties
+                nsyns_array = merged_edges.get_group_property('nsyns', 0, chunk_id) if 0 in merged_edges.group_ids else np.ones(len(source_ids))
+                nsyns_data = pd.DataFrame(nsyns_array, columns=["nsyns"], dtype="object")
 
-            if index_by:
-                index_by = index_by if isinstance(index_by, (list, tuple)) else [index_by]
-                for index_type in index_by:
-                    logger.debug('Creating index {}'.format(index_type))
-                    create_index_in_memory(
-                        edges_file=edges_file_name_final,
+                connections = pd.merge(edge_type_id_df, edge_types_data, on='edge_type_id', how='left')
+                connections = pd.concat([connections, nsyns_data], axis=1)
+                connections.insert(0, "pre nid", source_node_id_df)
+                connections.insert(1, "post nid", target_node_id_df)
+                connections_list.append(connections)
+
+            n_filtered = len(all_source_ids)
+            logger.info(f"Filtered edges: {n_total_conns} -> {n_filtered} (removed {n_total_conns - n_filtered} non-biophysical source edges)")
+
+            # === Step 2: Write filtered data to h5 ===
+            h5_file_created = False
+            if n_filtered == 0:
+                logger.warning('No biophysical edges to save to h5.')
+            else:
+                h5_file_created = True
+                with h5py.File(edges_file_name, 'w') as hf:
+                    add_hdf5_attrs(hf)
+                    pop_grp = hf.create_group('/edges/{}'.format(pop_name))
+
+                    # Create datasets with filtered size
+                    pop_grp.create_dataset('source_node_id', data=np.array(all_source_ids, dtype='uint64'), compression=compression)
+                    pop_grp['source_node_id'].attrs['node_population'] = src_network
+                    pop_grp.create_dataset('target_node_id', data=np.array(all_target_ids, dtype='uint64'), compression=compression)
+                    pop_grp['target_node_id'].attrs['node_population'] = trg_network
+                    pop_grp.create_dataset('edge_group_id', data=np.array(all_edge_group_ids, dtype='uint16'), compression=compression)
+                    pop_grp.create_dataset('edge_group_index', data=np.array(all_edge_group_indices, dtype='uint32'), compression=compression)
+                    pop_grp.create_dataset('edge_type_id', data=np.array(all_edge_type_ids, dtype='uint32'), compression=compression)
+
+                    # Write group properties
+                    for gid in merged_edges.group_ids:
+                        if new_group_idx[gid] > 0:
+                            model_grp = pop_grp.create_group(str(gid))
+                            for prop_meta in group_metadata[gid]:
+                                prop_name = prop_meta['name']
+                                if filtered_props[gid][prop_name]:
+                                    prop_array = np.array(filtered_props[gid][prop_name])
+                                    model_grp.create_dataset(prop_name, data=prop_array, compression=compression)
+
+            # === Step 3: Prepare CSV data (merged_connections) ===
+            logger.debug(f"before concat: {len(connections_list)=}")
+            merged_connections = pd.concat(connections_list)
+            del connections_list
+            logger.debug(f"after concat: {len(merged_connections)=}")
+            merged_connections["target_sections"] = merged_connections["target_sections"].apply(self._str_to_list)
+            merged_connections["target_sections"] = merged_connections["target_sections"].apply(self._replace_strings)
+            merged_connections["ei"] = ""
+            merged_connections["nsyns"] = merged_connections["nsyns"].apply(self._to_list)
+            merged_connections = merged_connections.explode("nsyns")
+            logger.info(f"Finished merging edge types data.")
+
+            # set chunk_size
+            chunk_size = (len(merged_connections) // mpi_size ) + 1
+            chunks = [merged_connections.iloc[i*chunk_size:(i+1)*chunk_size] for i in range(mpi_size)]
+            logger.debug(f"{mpi_size=}, {chunk_size=}, {len(chunks)=}")
+            # for MPI
+            serialized_chunks = [self._serialize_data(chunk) for chunk in chunks]
+            logger.info("Processing chunks...")
+            # neulite end
+
+            if h5_file_created:
+                if sort_on_disk:
+                    logger.debug('Sorting {} by {} to {}'.format(edges_file_name, sort_by, edges_file_name_final))
+                    sort_edges(
+                        input_edges_path=edges_file_name,
+                        output_edges_path=edges_file_name_final,
                         edges_population='/edges/{}'.format(pop_name),
-                        index_type=index_type,
-                        compression=compression
+                        sort_by=sort_by,
+                        compression=compression,
+                        # sort_on_disk=True,
                     )
+                    try:
+                        logger.debug('Deleting intermediate edges file {}.'.format(edges_file_name))
+                        os.remove(edges_file_name)
+                    except OSError as e:
+                        logger.warning('Unable to remove intermediate edges file {}.'.format(edges_file_name))
+
+                if index_by:
+                    index_by = index_by if isinstance(index_by, (list, tuple)) else [index_by]
+                    for index_type in index_by:
+                        logger.debug('Creating index {}'.format(index_type))
+                        create_index_in_memory(
+                            edges_file=edges_file_name_final,
+                            edges_population='/edges/{}'.format(pop_name),
+                            index_type=index_type,
+                            compression=compression
+                        )
 
         else:
             h5_node_type = None
@@ -794,8 +924,10 @@ class NeuliteNetwork(DenseNetwork):
             post_node_id = row["post nid"]
             post_node_type = h5_node_type.loc[post_node_id, "node_type_id"]
             sections = row["target_sections"]
-            if post_node_type not in node_types or node_types[post_node_type].get("morphology") == None:
-                return -1
+            if post_node_type not in node_types:
+                raise ValueError(f"node_type not found: {post_node_type}")
+            if node_types[post_node_type].get("morphology") is None:
+                raise ValueError(f"morphology is not set for node_type: {post_node_type}")
 
             morph_path = node_types[post_node_type].get("morphology")
 
@@ -856,6 +988,19 @@ class NeuliteNetwork(DenseNetwork):
         except:
             return False
 
+    def _is_biophysical_source(self, node_id, h5_node_type_df):
+        """Check if source node_id belongs to this network (and thus is biophysical).
+
+        NeuliteNetwork only accepts biophysical nodes, so if the node_id exists
+        in h5_node_type (this network's nodes), it's biophysical.
+        External network nodes (like virtual lgn) won't be in h5_node_type.
+        """
+        try:
+            # h5_node_type_df has 'node_id' column
+            return node_id in h5_node_type_df['node_id'].values
+        except Exception:
+            return False
+
     @staticmethod
     def _process_chunk(chunk, file_cache, h5_node_type, node_types_data, morphologies_path, converted_morphologies_path=None):
         try:
@@ -867,29 +1012,17 @@ class NeuliteNetwork(DenseNetwork):
             chunk.loc[:, "ei"] = chunk.apply(NeuliteNetwork._get_ei, axis=1, h5_node_type=h5_node_type, node_types=node_types_data)
             logger.debug(f"End _get_ei chunk...")
             
-            # Filter edges to keep only biophysical->biophysical connections
-            # Check source (pre) nodes
+            # Filter edges to keep only biophysical source connections
+            # Note: Target is always biophysical since NeuliteNetwork only accepts biophysical nodes
             pre_biophysical_mask = chunk["pre nid"].apply(
                 lambda nid: NeuliteNetwork._is_biophysical_node(nid, h5_node_type, node_types_data)
             )
-            
-            # Check target (post) nodes (post_cid == -1 means non-biophysical)
-            post_biophysical_mask = chunk["post cid"] != -1
-            
-            # Keep only edges where both source and target are biophysical
-            biophysical_edges_mask = pre_biophysical_mask & post_biophysical_mask
-            
-            # Log filtering statistics
-            total_edges = len(chunk)
-            biophysical_edges = biophysical_edges_mask.sum()
-            filtered_count = total_edges - biophysical_edges
-            
+
+            filtered_count = (~pre_biophysical_mask).sum()
             if filtered_count > 0:
-                logger.info(f"Filtering out {filtered_count} edges involving non-biophysical nodes")
-                logger.debug(f"  - Non-biophysical source: {(~pre_biophysical_mask).sum()}")
-                logger.debug(f"  - Non-biophysical target: {(~post_biophysical_mask).sum()}")
-                chunk = chunk[biophysical_edges_mask]
-            
+                logger.info(f"Filtering out {filtered_count} edges from non-biophysical source nodes")
+                chunk = chunk[pre_biophysical_mask]
+
             if len(chunk) == 0:
                 logger.info("All edges were filtered out")
                 return None
@@ -1152,9 +1285,9 @@ class NeuliteNetwork(DenseNetwork):
 
 class NeuliteBuilder(NetworkBuilder):
 
-    def __init__(self, name, adaptor_cls=NeuliteNetwork, convert_morphologies=True, convert_ion_channels=True, neulite_only=True,
+    def __init__(self, name, adaptor_cls=NeuliteNetwork, convert_morphologies=True, convert_ion_channels=True,
                  simulation_config=None, generate_config_h=True, **network_props):
         self.adaptor = adaptor_cls(name, convert_morphologies=convert_morphologies, convert_ion_channels=convert_ion_channels,
-                                   neulite_only=neulite_only, simulation_config=simulation_config,
+                                   simulation_config=simulation_config,
                                    generate_config_h=generate_config_h, **network_props)
 
