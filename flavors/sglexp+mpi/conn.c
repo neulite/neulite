@@ -96,7 +96,8 @@ conn_t *initialize_connection ( const int n_each, const int n_offset, const popu
       if ( n_offset <= d_post_i && d_post_i < n_offset + n_each ) {
 	assert ( d_post_c < u -> n_comp [ n -> pid [ d_post_i - n_offset ] ] );
       }
-      
+      assert ( d_delay > 0 );
+
       if ( n_offset <= d_post_i && d_post_i < n_offset + n_each ) {
 	const int solver_id = c -> ptr_post [ d_post_i - n_offset ] + local_idx [ d_post_i - n_offset ];
 	c -> post_c [ solver_id ] = d_post_c;

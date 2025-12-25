@@ -93,7 +93,8 @@ conn_t *initialize_connection ( const population_t *u, const neuron_t *n, const 
       assert ( nf == 8 );
 
       assert ( d_post_c < u -> n_comp [ n -> pid [ d_post_i ] ] );
-      
+      assert ( d_delay > 0 );
+
       const int solver_id = c -> ptr_post [ d_post_i ] + local_idx [ d_post_i ];
       c -> post_c [ solver_id ] = d_post_c;
       c -> weight [ solver_id ] = f_weight;

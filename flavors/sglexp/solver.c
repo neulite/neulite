@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <math.h>
 #include "popl.h"
 #include "neuron.h"
@@ -108,11 +109,66 @@ static void update_matrix ( const int id, const population_t * __restrict__ u, c
     const double weight = c -> weight [ li ];
     const double erev   = c -> erev   [ li ];
     const double sum0   = s -> sum0   [ li ];
-    linsys -> b [ post_c ] += - weight * 1e-6 * ( sum0 ) * ( v [ post_c ] - erev ); /* CONVERSION: 1e-6 (unitless?) */
+    const double g = weight * sum0 * 1e-3; /* CONVERSION: 1e-3 from micro S to mS */
+    linsys -> H -> Ad [ post_c ] += g;
+    linsys -> b [ post_c ]       += g * erev;
   }
 }
 
+//
+// The following optimized version of "solve_matrix" was contributed by Mr. Gilles Gouaillardet @ RIST, Kobe.
+// This code is so fast that it is well worth including in the default kernel.
+//
 static void solve_matrix ( linsys_t * __restrict__ l )
+{
+  int n_comp = l -> H -> n_comp;
+  double *Ad = l -> H -> Ad;
+  double *Api = l -> H -> Api;
+  int *parent_id = l -> H -> parent_id;
+  double *b = l -> b;
+  double *x = l -> b;
+   
+  // TRIANG
+  int pid = parent_id [ n_comp - 1 ];
+  double prev_Ad = Ad [ pid ] - Api [ n_comp - 1 ] * Api [ n_comp - 1 ] / Ad [ n_comp - 1 ];
+  Ad [ pid ] = prev_Ad;
+  double prev_b = b [ pid ] - b [ n_comp - 1 ] * Api [ n_comp - 1 ] / Ad [ n_comp - 1];
+  b [ pid ] = prev_b;
+  int prev_pid = pid;
+  for ( int i = n_comp - 2; i > 0; i-- ) {
+    pid = parent_id [ i ];
+    if ( i != prev_pid ) {
+        prev_b = b [ i ];
+        prev_Ad = Ad [ i ];
+    }
+    prev_b = b [ pid ] - prev_b * Api [ i ] / prev_Ad;
+    prev_Ad = Ad [ pid ]  - Api [ i ] * Api [ i ] / prev_Ad; // A(i,p) = A(p,i)
+    Ad [ pid ] = prev_Ad;
+    b [ pid ] = prev_b;
+    prev_pid = pid;
+  }
+  
+  // FWSUB
+  x [ 0 ] = b [ 0 ] / Ad [ 0 ];
+  pid = parent_id [ 1 ];
+  assert ( 0 == pid );
+  double prev_x = x [ 0 ];
+  for ( int i = 1; i < n_comp; i++ ) {
+    int pid = parent_id [ i ];
+    if (pid != i-1) {
+      prev_x = x [ pid ];
+    }
+    prev_x = ( b [ i ] - prev_x * Api [ i ] ) / Ad [ i ];
+    x[i] = prev_x;
+    prev_pid = pid;
+  }
+}
+
+/*
+//
+// The following is the vanilla version of "solve_matrix". We do not use this.
+//
+static void solve_matrix_vanilla ( linsys_t * __restrict__ l )
 {
   int n_comp = l -> H -> n_comp;
   double *Ad = l -> H -> Ad;
@@ -135,6 +191,7 @@ static void solve_matrix ( linsys_t * __restrict__ l )
     x [ i ] = ( b [ i ] - x [ pid ] * Api [ i ] ) / Ad [ i ];
   }
 }
+*/
 
 void solve ( const population_t * __restrict__ u, neuron_t * __restrict__ n, ion_t * __restrict__ i, const conn_t * __restrict__ c, synapse_t * __restrict__ s, solver_t * __restrict__ solver )
 {

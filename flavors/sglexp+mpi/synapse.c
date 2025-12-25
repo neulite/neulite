@@ -35,7 +35,7 @@ void update_synapse ( const conn_t * __restrict__ c, synapse_t * __restrict__ s 
 void add_spike_to_synapse_per_ms ( const conn_t * __restrict__ c, synapse_t * __restrict__ s ) // each 1 ms
 {
   for ( int i = 0; i < c -> n_conn; i++ ) {
-    s -> sum0 [ i ] += ( s -> delay [ i ] == 1 ) ? 1 : 0;
     s -> delay [ i ] >>= 1;
+    s -> sum0 [ i ] += ( s -> delay [ i ] == 1 ) ? 1 : 0;
   }
 }
