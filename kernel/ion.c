@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-only
-// Copyright (C) 2024,2025 Neulite Core Team <neulite-core@numericalbrain.org>
+// Copyright (C) 2024,2025,2026 Neulite Core Team <neulite-core@numericalbrain.org>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -76,9 +76,9 @@ void finalize_ion ( ion_t *i )
   free ( i );
 }
 
-void update_ion ( const int id, const neuron_t * __restrict__ n, ion_t * __restrict__ i, const double dt )
+void update_ion ( const int id, const neuron_t * __restrict__ n, const double * __restrict__ v, ion_t * __restrict__ i, const double dt )
 {
-  const double _v  = n -> v  [ n -> sid [ id ] + 0 ];
+  const double _v  = v  [ 0 ];
   const double _ca = n -> ca [ n -> sid [ id ] + 0 ];
   double *ion = &i -> gate [ N_GATEVAL * id ];
 
