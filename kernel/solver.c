@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-only
-// Copyright (C) 2024,2025 Neulite Core Team <neulite-core@numericalbrain.org>
+// Copyright (C) 2024,2025,2026 Neulite Core Team <neulite-core@numericalbrain.org>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -193,22 +193,20 @@ static void solve_matrix_vanilla ( linsys_t * __restrict__ l )
 }
 */
 
-void solve ( const population_t * __restrict__ u, neuron_t * __restrict__ n, ion_t * __restrict__ i, const conn_t * __restrict__ c, synapse_t * __restrict__ s, solver_t * __restrict__ solver )
+void solve ( const int id, const population_t * __restrict__ u, neuron_t * __restrict__ n, ion_t * __restrict__ i, const conn_t * __restrict__ c, synapse_t * __restrict__ s, solver_t * __restrict__ solver )
 {
-  update_synapse ( c, s );
+  const int sid = n -> sid [ id ];
+  const int pid = n -> pid [ id ];
+  const int n_comp = u -> n_comp [ pid ];
+  linsys_t *linsys = &solver -> linsys [ id ];
 
-  //#pragma omp parallel for
-  for ( int li = 0; li < n -> n_neuron; li++ ) {
-    const int sid = n -> sid [ li ];
-    const int pid = n -> pid [ li ];
-    const int n_comp = u -> n_comp [ pid ];
-    linsys_t *linsys = &solver -> linsys [ li ];
-    update_matrix ( li, u, n, i, c, s, linsys, 0.5*DT );
-    update_ion ( li, n, i, DT );
-    update_ca ( li, u, i, n, DT );
-    solve_matrix ( linsys );
-    for ( int j = 0; j < n_comp; j++ ) { n -> v [ sid + j ] = 2 * linsys -> b [ j ] - n -> v [ sid + j ]; }
-  }
+  update_synapse ( id, c, s );
+  update_matrix ( id, u, n, i, c, s, linsys, 0.5*DT );
+  solve_matrix ( linsys );
+  update_ca ( id, u, i, n, 0.5*DT );
+  update_ion ( id, n, linsys -> b, i, DT );
+  update_ca ( id, u, i, n, 0.5*DT );
+  for ( int j = 0; j < n_comp; j++ ) { n -> v [ sid + j ] = 2 * linsys -> b [ j ] - n -> v [ sid + j ]; }
 }
 
 void finalize_solver ( solver_t *solver )
