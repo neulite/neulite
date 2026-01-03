@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-only
-// Copyright (C) 2024,2025 Neulite Core Team <neulite-core@numericalbrain.org>
+// Copyright (C) 2024,2025,2026 Neulite Core Team <neulite-core@numericalbrain.org>
 
 #pragma once
 
@@ -17,16 +17,12 @@ typedef struct {
   conn_t       *c;
   synapse_t    *s;
   FILE *v_dat, *s_dat;
-  double *v_prev;
   int *spike;
-  int tick, inv_dt;
   int mpi_size, mpi_rank, global_n_neurons;
 } network_t;
 
 extern network_t *initialize_network ( const int, const int, const char *, const char * );
 extern void finalize_network ( network_t * );
-extern void output_v ( const double, network_t * );
-extern void set_current ( const double, network_t *, double ( *current ) ( const double, const int ) );
-extern void solve_network ( network_t *, solver_t * );
-extern void spike_detection ( network_t * );
-extern void spike_propagation ( const double, network_t * );
+extern void set_current ( const int, network_t *, double ( *current ) ( const int, const int ) );
+extern void solve_network ( const int, network_t *, solver_t * );
+extern void spike_propagation ( const int, network_t * );

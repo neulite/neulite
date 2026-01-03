@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-only
-// Copyright (C) 2024,2025 Neulite Core Team <neulite-core@numericalbrain.org>
+// Copyright (C) 2024,2025,2026 Neulite Core Team <neulite-core@numericalbrain.org>
 
 #pragma once
 
@@ -22,6 +22,6 @@ typedef struct {
 
 extern ion_t *initialize_ion ( const neuron_t * );
 extern void finalize_ion ( ion_t * );
-extern void update_ion ( const int, const neuron_t *, ion_t *, const double );
+extern void update_ion ( const int, const neuron_t *, const double *, ion_t *, const double );
 extern void update_ca ( const int, const population_t *, const ion_t *, neuron_t *, const double );
 extern void calc_lhs_and_rhs ( const population_t *, const neuron_t *, const ion_t *, const int, const int, double *, double * );

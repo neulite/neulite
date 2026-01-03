@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-only
-// Copyright (C) 2024,2025 Neulite Core Team <neulite-core@numericalbrain.org>
+// Copyright (C) 2024,2025,2026 Neulite Core Team <neulite-core@numericalbrain.org>
 
 #pragma once
 

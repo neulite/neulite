@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-only
-// Copyright (C) 2024,2025 Neulite Core Team <neulite-core@numericalbrain.org>
+// Copyright (C) 2024,2025,2026 Neulite Core Team <neulite-core@numericalbrain.org>
 
 #include <stdio.h>
 #include <stdlib.h> // for exit
@@ -11,7 +11,7 @@
 extern int get_global_n_neurons ( const char * );
 extern double get_time ( void );
 
-double constant_current ( const double t, const int i ) { return ( I_DELAY <= t && t < I_DELAY + I_DURATION ) ? I_AMP : 0.0; /* UNIT: pA [BMTK] */ }
+double constant_current ( const int t_ms, const int i ) { return ( I_DELAY <= t_ms && t_ms < I_DELAY + I_DURATION ) ? I_AMP : 0.0; /* UNIT: pA [BMTK] */ }
 
 int main ( int argc, char *argv [ ] )
 {
@@ -34,15 +34,12 @@ int main ( int argc, char *argv [ ] )
   solver_t *s  = initialize_solver  ( n -> u );
   
   const double timer_start = get_time ( );
-  for ( int iter = 0; iter < TSTOP * INV_DT; iter++ ) {
-    const double t = DT * iter;
-    if ( iter % INV_DT == 0 ) { fprintf ( stderr, "t = %f\n", t ); }
+  for ( int t_ms = 0; t_ms < TSTOP; t_ms++ ) {
+    if ( mpi_rank == 0 ) { fprintf ( stderr, "t = %d\n", t_ms ); };
     
-    output_v ( t, n );
-    set_current ( t, n, constant_current );
-    solve_network ( n, s );
-    spike_detection ( n );
-    spike_propagation ( t, n );
+    set_current ( t_ms, n, constant_current );
+    solve_network ( t_ms, n, s );
+    spike_propagation ( t_ms, n );
   }
   const double timer_stop = get_time ( );
   if ( mpi_rank == 0 ) { fprintf ( stderr, "Elapsed time = %f sec.\n", timer_stop - timer_start ); }

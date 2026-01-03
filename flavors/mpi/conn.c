@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-only
-// Copyright (C) 2024,2025 Neulite Core Team <neulite-core@numericalbrain.org>
+// Copyright (C) 2024,2025,2026 Neulite Core Team <neulite-core@numericalbrain.org>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -71,7 +71,7 @@ conn_t *initialize_connection ( const int n_each, const int n_offset, const popu
   free ( pre_table );
   free ( pre_ary );
   free ( post_ary );
-
+  
   c -> post_c = calloc ( c -> n_conn, sizeof ( int ) );
   c -> weight = calloc ( c -> n_conn, sizeof ( double ) );
   c -> erev   = calloc ( c -> n_conn, sizeof ( double ) );
@@ -97,7 +97,7 @@ conn_t *initialize_connection ( const int n_each, const int n_offset, const popu
 	assert ( d_post_c < u -> n_comp [ n -> pid [ d_post_i - n_offset ] ] );
       }
       assert ( d_delay > 0 );
-
+      
       if ( n_offset <= d_post_i && d_post_i < n_offset + n_each ) {
 	const double tau_prime = f_decay * f_rise / ( f_decay - f_rise );
 	const double tau_diff  = f_rise / f_decay;
