@@ -13,6 +13,8 @@ static neuron_t *initialize ( const population_t *u )
 {
   neuron_t *n = calloc ( 1, sizeof ( neuron_t ) );
 
+  if ( u -> n_popl == 0 ) { n -> n_neuron = 0; return n; }
+
   int nc = 0; for ( int i = 0; i < u -> n_popl; i++ ) { nc += u -> n_neuron [ i ] * u -> n_comp [ i ]; } // nc == number of all compartments
   
   n -> v  = calloc ( nc, sizeof ( double ) );
