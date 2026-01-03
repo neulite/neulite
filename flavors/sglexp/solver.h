@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-only
-// Copyright (C) 2024,2025 Neulite Core Team <neulite-core@numericalbrain.org>
+// Copyright (C) 2024,2025,2026 Neulite Core Team <neulite-core@numericalbrain.org>
 
 #pragma once
 
@@ -20,5 +20,5 @@ typedef struct {
 } solver_t;
 
 extern solver_t *initialize_solver ( const population_t * );
-extern void solve ( const population_t *, neuron_t *, ion_t *, const conn_t *, synapse_t *, solver_t *solver );
+extern void solve ( const int, const population_t *, neuron_t *, ion_t *, const conn_t *, synapse_t *, solver_t *solver );
 extern void finalize_solver ( solver_t * );

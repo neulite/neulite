@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-only
-// Copyright (C) 2024,2025 Neulite Core Team <neulite-core@numericalbrain.org>
+// Copyright (C) 2024,2025,2026 Neulite Core Team <neulite-core@numericalbrain.org>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,6 +17,8 @@ extern int get_lines ( const char * );
 conn_t *initialize_connection ( const population_t *u, const neuron_t *n, const char *filename )
 {
   conn_t *c = calloc (1, sizeof ( conn_t ) );
+
+  if ( n -> n_neuron == 0 ) { c -> n_conn = 0; return c; }
 
   int *pre_ary  = calloc ( n -> n_neuron, sizeof ( int ) );
   int *post_ary = calloc ( n -> n_neuron, sizeof ( int ) );
