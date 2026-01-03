@@ -12,6 +12,9 @@
 synapse_t *initialize_synapse ( conn_t *c )
 {
   synapse_t *s = calloc ( 1, sizeof ( synapse_t ) );
+
+  if ( c -> n_conn == 0 ) { return s; }
+
   s -> sum0   = calloc ( c -> n_conn, sizeof ( double ) );
   s -> delay  = calloc ( c -> n_conn, sizeof ( int ) );
   return s;
