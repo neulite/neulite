@@ -13,8 +13,9 @@ ion_t *initialize_ion ( const neuron_t *n )
 {
   ion_t *i = calloc ( 1, sizeof ( ion_t ) );
 
-  i -> n_neuron = n -> n_neuron;
+  if ( n -> n_neuron == 0 ) { return i; }
 
+  i -> n_neuron = n -> n_neuron;
   i -> gate = calloc ( N_GATEVAL * i -> n_neuron, sizeof ( double ) );
 
   for ( int li = 0; li < i -> n_neuron; li++ ) {
