@@ -1,4 +1,4 @@
-CC = mpicc
+CC = gcc
 CFLAGS = -std=gnu11 -Wall -Wno-unused-variable -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include
 SFMTDIR = ./sfmt
 SFMTFLAGS = -I$(SFMTDIR) -DSFMT_MEXP=19937
