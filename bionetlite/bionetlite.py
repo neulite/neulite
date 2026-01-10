@@ -26,6 +26,7 @@ from bmtk.builder.builder_utils import comm, mpi_rank, mpi_size, barrier
 from bmtk.builder.edges_sorter import sort_edges
 from bmtk.builder.builder_utils import add_hdf5_attrs
 from bmtk.utils.sonata.config import SonataConfig
+from bmtk.simulator.bionet.default_setters.synaptic_weights import gaussianLL
 
 logger = logging.getLogger(__name__)
 
@@ -574,28 +575,42 @@ class NeuliteNetwork(DenseNetwork):
             matching_et = [c.edge_type_properties for c in self._connection_maps
                            if c.source_network_name == src_network and c.target_network_name == trg_network]
             edge_types_list = []
-            cols = ["edge_type_id", "syn_weight", "target_sections", "delay", "tau2", "tau1", "erev"]
+            cols = ["edge_type_id", "syn_weight", "target_sections", "delay", "tau2", "tau1", "erev", "weight_function", "weight_sigma"]
             for edge_type in matching_et:
-                # get basic parameters
-                base_params = [edge_type.get(cname, 'NULL') if edge_type.get(cname, 'NULL') is not None else 'NULL' for cname in cols[:-3]]
-                
+                # get basic parameters (edge_type_id, syn_weight, target_sections, delay)
+                base_params = [edge_type.get(cname, 'NULL') if edge_type.get(cname, 'NULL') is not None else 'NULL' for cname in cols[:4]]
+
                 # extract tau1, tau2, erev from dynamics_params
                 dynamics_params = edge_type.get('dynamics_params')
                 tau1, tau2, erev = self._extract_synapse_params(dynamics_params)
-                
-                # add all parameters to list (tau2=decay, tau1=rise order to match column names)
+
+                # add tau2, tau1, erev
                 base_params.extend([tau2, tau1, erev])
+
+                # add weight_function and weight_sigma for dynamic weight calculation
+                weight_function = edge_type.get('weight_function', 'NULL')
+                weight_sigma = edge_type.get('weight_sigma', 'NULL')
+                base_params.extend([weight_function, weight_sigma])
+
                 edge_types_list.append(base_params)
             edge_types_data = pd.DataFrame(edge_types_list, columns=cols)
-            edge_types_data["delay"] = edge_types_data["delay"].map(lambda x: Decimal(x).quantize(Decimal('1'), ROUND_HALF_UP))
+            edge_types_data["delay"] = edge_types_data["delay"].map(
+                lambda x: max(1, int(Decimal(x).quantize(Decimal('1'), ROUND_HALF_UP))) if x != 'NULL' else 'NULL'
+            )
             logger.debug(f"{len(edge_types_data)=}")
 
             node_id_table = np.zeros(self._nnodes)  # todo: set dtypes
             node_type_id_table = np.zeros(self._nnodes)
+            node_tuning = {}  # node_id -> tuning_angle mapping for gaussianLL
 
             for i, node in enumerate(self.nodes()):
                 node_id_table[i] = node.node_id  # node_id
                 node_type_id_table[i] = node.node_type_id  # node_type_id
+                # Collect tuning_angle for gaussianLL weight calculation
+                try:
+                    node_tuning[node.node_id] = node['tuning_angle']
+                except (KeyError, TypeError):
+                    pass  # Node doesn't have tuning_angle
 
             h5_node_type = pd.DataFrame(node_type_id_table, columns=["node_type_id"])
             node_ids = pd.DataFrame(node_id_table, columns=["node_id"])
@@ -733,8 +748,8 @@ class NeuliteNetwork(DenseNetwork):
             chunk_size = (len(merged_connections) // mpi_size ) + 1
             chunks = [merged_connections.iloc[i*chunk_size:(i+1)*chunk_size] for i in range(mpi_size)]
             logger.debug(f"{mpi_size=}, {chunk_size=}, {len(chunks)=}")
-            # for MPI
-            serialized_chunks = [self._serialize_data(chunk) for chunk in chunks]
+            # for MPI - include node_tuning with each chunk to avoid extra bcast
+            serialized_chunks = [self._serialize_data((chunk, node_tuning)) for chunk in chunks]
             logger.info("Processing chunks...")
             # neulite end
 
@@ -778,12 +793,12 @@ class NeuliteNetwork(DenseNetwork):
         if mpi_size == 1:
             # Single process mode: no MPI communication needed
             (serialized_chunk,) = serialized_chunks
-            chunk = self._deserialize_data(serialized_chunk)
+            chunk, node_tuning = self._deserialize_data(serialized_chunk)
         elif mpi_rank == 0:
             # Multi-process mode: rank 0 distributes chunks
             for i, attr in enumerate(serialized_chunks):
                 if i == 0:
-                    chunk = self._deserialize_data(attr)
+                    chunk, node_tuning = self._deserialize_data(attr)
                 else:
                     if comm is not None:
                         comm.send(attr, dest=i)
@@ -791,7 +806,7 @@ class NeuliteNetwork(DenseNetwork):
             # Multi-process mode: other ranks receive chunks
             if comm is not None:
                 serialized_chunk = comm.recv(source=0)
-                chunk = self._deserialize_data(serialized_chunk)
+                chunk, node_tuning = self._deserialize_data(serialized_chunk)
                 logger.debug(f"chunk is received:rank{mpi_rank}")
         # neulite end
 
@@ -799,7 +814,7 @@ class NeuliteNetwork(DenseNetwork):
             # Single process mode: h5_node_type is already available, just convert to DataFrame
             h5_node_type = pd.DataFrame.from_dict(h5_node_type)
         else:
-            # Multi-process mode: use MPI broadcast
+            # Multi-process mode: use MPI broadcast for h5_node_type only
             try:
                 if comm is not None:
                     h5_node_type = comm.bcast(h5_node_type, root=0)
@@ -817,7 +832,7 @@ class NeuliteNetwork(DenseNetwork):
         file_cache = {}
         # Calculate path to converted (preprocessed) SWC files
         converted_swc_path = os.path.join(self.neulite_dir, self.swc_dir)
-        processed_chunk = self._process_chunk(chunk, file_cache, h5_node_type, self._node_types_properties, self.morphologies_dir, converted_morphologies_path=converted_swc_path)
+        processed_chunk = self._process_chunk(chunk, file_cache, h5_node_type, self._node_types_properties, self.morphologies_dir, converted_morphologies_path=converted_swc_path, node_tuning=node_tuning)
         end_time = time.time()
         logger.info(f"Processing completed in {end_time - start_time} seconds: from rank{mpi_rank}")
 
@@ -1002,7 +1017,46 @@ class NeuliteNetwork(DenseNetwork):
             return False
 
     @staticmethod
-    def _process_chunk(chunk, file_cache, h5_node_type, node_types_data, morphologies_path, converted_morphologies_path=None):
+    def _compute_weight(row, node_tuning):
+        """Compute dynamic weight using weight_function.
+
+        For gaussianLL, calculates weight based on tuning_angle difference.
+        For other weight_functions (wmax, etc.), returns syn_weight directly.
+
+        :param row: DataFrame row with edge data
+        :param node_tuning: dict mapping node_id to tuning_angle
+        :return: computed weight value
+        """
+        weight_func_name = row.get('weight_function')
+        syn_weight = row.get('syn_weight', 0.0)
+
+        # For non-gaussianLL, return fixed syn_weight
+        if weight_func_name != 'gaussianLL':
+            return syn_weight
+
+        src_id = row['pre nid']
+        trg_id = row['post nid']
+
+        src_tuning = node_tuning.get(src_id)
+        trg_tuning = node_tuning.get(trg_id)
+
+        # If tuning_angle is not available, return fixed syn_weight
+        if src_tuning is None or trg_tuning is None:
+            return syn_weight
+
+        weight_sigma = row.get('weight_sigma', 50.0)
+        if weight_sigma == 'NULL' or weight_sigma is None:
+            weight_sigma = 50.0
+
+        # Use BMTK's gaussianLL with dict-like interface
+        edge_props = {'syn_weight': syn_weight, 'weight_sigma': float(weight_sigma)}
+        src_props = {'tuning_angle': src_tuning}
+        trg_props = {'tuning_angle': trg_tuning}
+
+        return gaussianLL(edge_props, src_props, trg_props)
+
+    @staticmethod
+    def _process_chunk(chunk, file_cache, h5_node_type, node_types_data, morphologies_path, converted_morphologies_path=None, node_tuning=None):
         try:
             logger.debug(f"Start processing chunk...")
             chunk = chunk.copy()
@@ -1011,7 +1065,19 @@ class NeuliteNetwork(DenseNetwork):
             logger.debug(f"End _get_cid chunk...")
             chunk.loc[:, "ei"] = chunk.apply(NeuliteNetwork._get_ei, axis=1, h5_node_type=h5_node_type, node_types=node_types_data)
             logger.debug(f"End _get_ei chunk...")
-            
+
+            # Compute dynamic weight using weight_function (e.g., gaussianLL)
+            if node_tuning is not None:
+                logger.debug("Computing dynamic weights...")
+                chunk.loc[:, "weight"] = chunk.apply(
+                    lambda row: NeuliteNetwork._compute_weight(row, node_tuning),
+                    axis=1
+                )
+                logger.debug(f"End computing dynamic weights")
+            else:
+                # Fallback: use syn_weight directly
+                chunk.loc[:, "weight"] = chunk["syn_weight"]
+
             # Filter edges to keep only biophysical source connections
             # Note: Target is always biophysical since NeuliteNetwork only accepts biophysical nodes
             pre_biophysical_mask = chunk["pre nid"].apply(
@@ -1026,9 +1092,13 @@ class NeuliteNetwork(DenseNetwork):
             if len(chunk) == 0:
                 logger.info("All edges were filtered out")
                 return None
-                
-            chunk.drop(["nsyns", "target_sections"], axis=1, inplace=True)
-            chunk = chunk.rename(columns={"pre nid": "#pre nid", "syn_weight": "weight", "ei":"e/i", "tau2": "tau_decay", "tau1": "tau_rise"})
+
+            # Drop columns not needed in output, including syn_weight (replaced by weight)
+            cols_to_drop = ["nsyns", "target_sections", "syn_weight", "weight_function", "weight_sigma"]
+            cols_to_drop = [c for c in cols_to_drop if c in chunk.columns]
+            chunk.drop(cols_to_drop, axis=1, inplace=True)
+
+            chunk = chunk.rename(columns={"pre nid": "#pre nid", "ei": "e/i", "tau2": "tau_decay", "tau1": "tau_rise"})
             chunk = chunk[NeuliteNetwork.CONNECTION_CSV_HEADER]
             logger.debug(f"Finished processing chunk.")
             return chunk
