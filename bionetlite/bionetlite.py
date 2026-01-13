@@ -246,6 +246,79 @@ class NeuliteNetwork(DenseNetwork):
         )
         return BIONETLITE_DEFAULTS.copy()
 
+    def update_circuit_config(self):
+        """Update circuit_config.json networks section after network files are created.
+
+        This resolves the timing issue where circuit_config.json is created before
+        network files exist, resulting in an empty networks section.
+
+        The method scans the network directory for SONATA files and updates the
+        networks section of circuit_config.json with the found files.
+        """
+        if mpi_rank != 0:
+            return
+
+        circuit_config_path = self._get_config_path("circuit_config.json")
+        if not os.path.exists(circuit_config_path):
+            logger.debug(f"circuit_config.json not found, skipping update: {circuit_config_path}")
+            return
+
+        # Read existing circuit_config.json
+        with open(circuit_config_path, 'r') as f:
+            circuit_config = json.load(f)
+
+        # Get network directory path
+        network_dir = os.path.join(self.my_base_dir, 'network') if self.my_base_dir else 'network'
+
+        # Scan network directory for SONATA files
+        net_nodes = {}
+        net_edges = {}
+
+        if os.path.exists(network_dir):
+            for fname in os.listdir(network_dir):
+                file_path = os.path.join(network_dir, fname)
+                if not os.path.isfile(file_path) or fname.startswith('.'):
+                    continue
+
+                if '_nodes.h5' in fname:
+                    net_name = fname[:fname.find('_nodes')]
+                    net_nodes.setdefault(net_name, {})['nodes_file'] = f'$NETWORK_DIR/{fname}'
+                elif '_node_types.csv' in fname:
+                    net_name = fname[:fname.find('_node_types')]
+                    net_nodes.setdefault(net_name, {})['node_types_file'] = f'$NETWORK_DIR/{fname}'
+                elif '_edges.h5' in fname:
+                    net_name = fname[:fname.find('_edges')]
+                    net_edges.setdefault(net_name, {})['edges_file'] = f'$NETWORK_DIR/{fname}'
+                elif '_edge_types.csv' in fname:
+                    net_name = fname[:fname.find('_edge_types')]
+                    net_edges.setdefault(net_name, {})['edge_types_file'] = f'$NETWORK_DIR/{fname}'
+
+        # Check if networks section needs update
+        existing_nodes = circuit_config.get('networks', {}).get('nodes', [])
+        existing_edges = circuit_config.get('networks', {}).get('edges', [])
+
+        if not net_nodes and not net_edges:
+            logger.debug("No network files found in network directory, skipping circuit_config update")
+            return
+
+        # Only update if current networks section is empty or different
+        if existing_nodes and existing_edges:
+            logger.debug("circuit_config.json already has networks defined, skipping update")
+            return
+
+        # Update networks section
+        circuit_config['networks'] = {
+            'nodes': list(net_nodes.values()),
+            'edges': list(net_edges.values()),
+            'gap_juncs': circuit_config.get('networks', {}).get('gap_juncs', [])
+        }
+
+        # Save updated circuit_config.json
+        with open(circuit_config_path, 'w') as f:
+            json.dump(circuit_config, f, indent=2)
+
+        logger.info(f"Updated circuit_config.json with {len(net_nodes)} node population(s) and {len(net_edges)} edge population(s)")
+
     def _convert_morphologies(self):
         # Create output directory if it doesn't exist
         output_dir = os.path.join(self.neulite_dir, self.swc_dir)
@@ -880,6 +953,13 @@ class NeuliteNetwork(DenseNetwork):
             logger.info(f"Created Neulite connection file: {output_path}")
             logger.info("_save_edges end")
             logger.debug('Saving completed.')
+
+        # Update circuit_config.json with network files after edges are created
+        # This resolves the timing issue where circuit_config.json is created
+        # before network files exist during module import
+        barrier()
+        self.update_circuit_config()
+        barrier()
 
     def _extract_synapse_params(self, dynamics_params, default_tau1=0.1, default_tau2=1.7, default_erev=0.0):
         """Extract tau1, tau2, and erev from dynamics_params
