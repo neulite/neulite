@@ -8,7 +8,7 @@ typedef enum { _DUMMY_, SOMA, AXON, APICAL, DEND, N_COMPTYPE } comptype_t;
 typedef struct {
 
   // Morphology
-  double *rad, *len, *area; // size == # populations * # compartments
+  double *proximal_rad, *distal_rad, *len, *area; // size == # populations * # compartments
   int *parent, *type; // size == # populations * # compartments
 
   // Passive

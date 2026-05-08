@@ -140,7 +140,15 @@ void calc_lhs_and_rhs ( const population_t * __restrict__ u, const neuron_t * __
   _c = gbar [ G_NAV   ] * ion [ OO_NaV ];                                                                  _l += _c; _r += _c * V_NA;
   _c = gbar [ G_NATS  ] * ion [ M_NATS ] * ion [ M_NATS ] * ion [ M_NATS ] * ion [ H_NATS ];               _l += _c; _r += _c * V_NA;
   _c = gbar [ G_NATA  ] * ion [ M_NATA ] * ion [ M_NATA ] * ion [ M_NATA ] * ion [ H_NATA ];               _l += _c; _r += _c * V_NA;
-  _c = gbar [ G_NAP   ] * inf_m_Nap ( _v ) * ion [ H_NAP ];                                                _l += _c; _r += _c * V_NA;
+
+  { // Nap
+    const double eps = 0.001;
+    const double I0 = gbar[ G_NAP ] * ion [ H_NAP ] * inf_m_Nap( _v ) * ( _v - V_NA );
+    const double In = gbar[ G_NAP ] * ion [ H_NAP ] * inf_m_Nap( _v + eps ) * ( _v - V_NA );
+    const double dIdv = ( In - I0 ) / ( eps );
+
+    _l += dIdv; _r += dIdv * _v - I0;
+  }
   _c = gbar [ G_KV2   ] * ion [ M_KV2 ] * ion [ M_KV2 ] * ( 0.5 * ion [ H1_KV2 ] + 0.5 * ion [ H2_KV2 ] ); _l += _c; _r += _c * V_K;
   _c = gbar [ G_KV3   ] * ion [ M_KV3 ];                                                                   _l += _c; _r += _c * V_K;
   _c = gbar [ G_KP    ] * ion [ M_KP ] * ion [ M_KP ] * ion [ H_KP ];                                      _l += _c; _r += _c * V_K;

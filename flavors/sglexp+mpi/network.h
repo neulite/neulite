@@ -24,5 +24,5 @@ typedef struct {
 extern network_t *initialize_network ( const int, const int, const char *, const char * );
 extern void finalize_network ( network_t * );
 extern void set_current ( const int, network_t *, double ( *current ) ( const int, const int ) );
-extern void solve_network ( const int, network_t *, solver_t * );
+extern void solve_network ( network_t *, solver_t * );
 extern void spike_propagation ( const int, network_t * );

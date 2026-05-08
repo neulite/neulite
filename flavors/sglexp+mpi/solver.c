@@ -37,7 +37,8 @@ solver_t *initialize_solver ( const population_t *u )
     double *mat = calloc ( n_comp * n_comp, sizeof ( double ) );
     {
       const int offset = u -> cid [ pid ];
-      double *rad = &u -> rad [ offset ];
+      double *proximal_rad = &u -> proximal_rad [ offset ];
+      double *distal_rad = &u -> distal_rad [ offset ];
       double *len = &u -> len [ offset ];
       double *ra  = &u -> ra  [ offset ];
       int *parent = &u -> parent [ offset ];
@@ -46,10 +47,15 @@ solver_t *initialize_solver ( const population_t *u )
       for ( int i = 0; i < n_comp; i++ ) {
 	const int d = parent [ i ];
 	if ( d >= 0 ) {
-	  double r = ( 2.0 / ( ( ra [ i ] * len [ i ] ) / ( rad [ i ] * rad [ i ] * M_PI ) + ( ra [ d ] * len [ d ] ) / ( rad [ d ] * rad [ d ] * M_PI ) ) ); // -1 * [mS]
-	  mat [ d + n_comp * i ] = r;
-	  mat [ i + n_comp * d ] = mat [ d + n_comp * i ]; // i*NGO -> set Rows, +d -> set Columns
-	}
+          double i_mid_rad = 0.5 * (proximal_rad[i] + distal_rad[i]);
+          double d_mid_rad = 0.5 * (proximal_rad[d] + distal_rad[d]);
+          double Rd_half = ra[ d ] * len [ d ] * 0.5f / ( M_PI * d_mid_rad * distal_rad[d] ); 
+          double Ri_half = ra[ i ] * len [ i ] * 0.5f / ( M_PI * proximal_rad[i] * i_mid_rad );
+
+          double g = ( d > 0 )? 1.0/(Rd_half + Ri_half) : 1.0/Ri_half; // -1 * [mS]
+          mat [ d + n_comp * i ] = g;
+          mat [ i + n_comp * d ] = mat [ d + n_comp * i ]; // i*NGO -> set Rows, +d -> set Columns
+        }
       }
       for ( int i = 0; i < n_comp; i++ ) {
 	double r = 0;
@@ -195,7 +201,6 @@ static void solve_matrix_vanilla ( linsys_t * __restrict__ l )
 
 void solve ( const population_t * __restrict__ u, neuron_t * __restrict__ n, ion_t * __restrict__ i, const conn_t * __restrict__ c, synapse_t * __restrict__ s, solver_t * __restrict__ solver )
 {
-  update_synapse ( c, s );
 
   //#pragma omp parallel for
   for ( int li = 0; li < n -> n_neuron; li++ ) {
@@ -204,11 +209,12 @@ void solve ( const population_t * __restrict__ u, neuron_t * __restrict__ n, ion
     const int n_comp = u -> n_comp [ pid ];
     linsys_t *linsys = &solver -> linsys [ li ];
     update_matrix ( li, u, n, i, c, s, linsys, 0.5*DT );
-    update_ion ( li, n, i, DT );
-    update_ca ( li, u, i, n, DT );
     solve_matrix ( linsys );
+    update_ca ( li, u, i, n, DT );
     for ( int j = 0; j < n_comp; j++ ) { n -> v [ sid + j ] = 2 * linsys -> b [ j ] - n -> v [ sid + j ]; }
+    update_ion ( li, n, i, DT );
   }
+  update_synapse ( c, s );
 }
 
 void finalize_solver ( solver_t *solver )

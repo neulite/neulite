@@ -118,10 +118,10 @@ static segment_tree_t *read_in_neuron_style ( const char *filename, const int n_
       segment_tree -> size++;
       
       segment_t second_half = {
-	.parent = pid,
-	.proximal = mid,
-	.distal = distal,
-	.type = distal.type
+        .parent = segid_from_rid [ proximal.id ],
+        .proximal = mid,
+        .distal = distal,
+        .type = distal.type
       };
       segment_tree -> data [ segment_tree -> size ] = second_half;
       segid_from_rid [ distal.id ] = segment_tree -> size;
@@ -175,7 +175,8 @@ static void read_swc_file ( population_t *p, const int pid, const char *filename
   p -> n_comp [ pid ] = n_comp; // update n_comp
   
   const int offset = p -> cid [ pid ];
-  double *rad  = &p -> rad  [ offset ];
+  double *proximal_rad = &p -> proximal_rad [ offset ];
+  double *distal_rad   = &p -> distal_rad   [ offset ];
   double *len  = &p -> len  [ offset ];
   double *area = &p -> area [ offset ];
   int *parent = &p -> parent [ offset ];
@@ -192,7 +193,8 @@ static void read_swc_file ( population_t *p, const int pid, const char *filename
     const double _len = sqrt ( dx * dx + dy * dy + dz * dz ) * 1.0e-4; // [mum -> cm]
     area [ i ] = M_PI * ( seg -> proximal.r + seg -> distal.r ) * 1.0e-4 * sqrt ( dr * dr * 1.0e-8 + _len * _len );
     len  [ i ] = _len;
-    rad  [ i ] = seg -> distal.r * 1.0e-4; // TODO
+    proximal_rad [ i ] = seg -> proximal.r * 1.0e-4; // TODO
+    distal_rad   [ i ] = seg -> distal.r   * 1.0e-4; // TODO
   }
   
   free ( st -> data );
