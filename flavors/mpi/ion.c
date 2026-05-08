@@ -144,7 +144,8 @@ void calc_lhs_and_rhs ( const population_t * __restrict__ u, const neuron_t * __
   { // Nap
     const double eps = 0.001;
     const double I0 = gbar[ G_NAP ] * ion [ H_NAP ] * inf_m_Nap( _v ) * ( _v - V_NA );
-    const double In = gbar[ G_NAP ] * ion [ H_NAP ] * inf_m_Nap( _v + eps ) * ( _v - V_NA );
+    const double vn = _v + eps;
+    const double In = gbar[ G_NAP ] * ion [ H_NAP ] * inf_m_Nap( vn ) * ( vn - V_NA );
     const double dIdv = ( In - I0 ) / ( eps );
 
     _l += dIdv; _r += dIdv * _v - I0;
