@@ -26,7 +26,6 @@ from bmtk.builder.builder_utils import comm, mpi_rank, mpi_size, barrier
 from bmtk.builder.edges_sorter import sort_edges
 from bmtk.builder.builder_utils import add_hdf5_attrs
 from bmtk.utils.sonata.config import SonataConfig
-from bmtk.simulator.bionet.default_setters.synaptic_weights import gaussianLL
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +48,7 @@ TUTORIAL_PARAMS = {
     'sim_ch01': {  # Tutorial1: Single cell with current injection
         'tstop': 2000.0,
         'dt': 0.1,
+        'report_vars': ['v', 'cai'],
         'current_clamp': {
             'amp': 0.12,
             'delay': 500.0,
@@ -60,6 +60,7 @@ TUTORIAL_PARAMS = {
     'sim_ch04': {  # Tutorial4: E/I network
         'tstop': 3000.0,
         'dt': 0.1,
+        'report_vars': ['v'],
         'current_clamp': {
             'amp': 0.1,
             'delay': 500.0,
@@ -121,14 +122,17 @@ class NeuliteNetwork(DenseNetwork):
                 # Get tutorial-specific parameters based on base_dir pattern
                 tutorial_params = self._get_tutorial_params(self.my_base_dir)
 
-                build_env_bionet(
-                    base_dir=self.my_base_dir,
-                    include_examples=True,
-                    config_file='config.json',
-                    tstop=tutorial_params['tstop'],
-                    dt=tutorial_params['dt'],
-                    current_clamp=tutorial_params['current_clamp']
-                )
+                build_env_kwargs = {
+                    'base_dir': self.my_base_dir,
+                    'include_examples': True,
+                    'config_file': 'config.json',
+                    'tstop': tutorial_params['tstop'],
+                    'dt': tutorial_params['dt'],
+                    'current_clamp': tutorial_params['current_clamp'],
+                }
+                if 'report_vars' in tutorial_params:
+                    build_env_kwargs['report_vars'] = tutorial_params['report_vars']
+                build_env_bionet(**build_env_kwargs)
             barrier()
 
         try:
@@ -489,6 +493,10 @@ class NeuliteNetwork(DenseNetwork):
             self._create_empty_connection_files()
 
         barrier()
+
+        # Update circuit_config.json with node files
+        self.update_circuit_config()
+
         logger.info("save_nodes end")
 
     def _save_population(self, population_file):
@@ -734,28 +742,37 @@ class NeuliteNetwork(DenseNetwork):
                     # External network: filter all edges (external sources may not be biophysical)
                     mask = np.zeros(len(source_ids), dtype=bool)
 
-                # Collect filtered data
-                for i, (sid, tid, etid, gid, old_idx, keep) in enumerate(zip(
-                    source_ids, target_ids, edge_type_ids, edge_group_ids, old_edge_group_indices, mask
-                )):
-                    if keep:
-                        all_source_ids.append(sid)
-                        all_target_ids.append(tid)
-                        all_edge_type_ids.append(etid)
-                        all_edge_group_ids.append(gid)
-                        all_edge_group_indices.append(new_group_idx[gid])
-                        new_group_idx[gid] += 1
+                # Collect filtered data (vectorized)
+                if mask.any():
+                    all_source_ids.append(source_ids[mask])
+                    all_target_ids.append(target_ids[mask])
+                    all_edge_type_ids.append(edge_type_ids[mask])
+                    all_edge_group_ids.append(edge_group_ids[mask])
 
-                        # Collect properties for this edge
+                    # Reassign edge_group_index per group (sequential across chunks)
+                    masked_group_ids = edge_group_ids[mask]
+                    chunk_new_indices = np.empty(masked_group_ids.shape[0], dtype=np.uint32)
+                    for gid in merged_edges.group_ids:
+                        gid_positions = (masked_group_ids == gid)
+                        n_in_group = gid_positions.sum()
+                        if n_in_group > 0:
+                            chunk_new_indices[gid_positions] = np.arange(
+                                new_group_idx[gid], new_group_idx[gid] + n_in_group, dtype=np.uint32
+                            )
+                            new_group_idx[gid] += int(n_in_group)
+                    all_edge_group_indices.append(chunk_new_indices)
+
+                    # Collect group properties (vectorized per group)
+                    for gid in merged_edges.group_ids:
+                        group_mask_full = (edge_group_ids == gid)
+                        combined_mask = group_mask_full & mask
+                        if not combined_mask.any():
+                            continue
+                        kept_within_group = mask[group_mask_full]
                         for prop_meta in group_metadata[gid]:
                             prop_name = prop_meta['name']
                             prop_array = merged_edges.get_group_property(prop_name, gid, chunk_id)
-                            # Calculate local index within this chunk for this group
-                            chunk_group_indices = old_edge_group_indices[edge_group_ids == gid]
-                            local_mask = chunk_group_indices <= old_idx
-                            local_idx = local_mask.sum() - 1
-                            if local_idx >= 0 and local_idx < len(prop_array):
-                                filtered_props[gid][prop_name].append(prop_array[local_idx])
+                            filtered_props[gid][prop_name].append(prop_array[kept_within_group])
 
                 # Also collect for CSV (all edges, filtering will happen in _process_chunk)
                 logger.info("Loading edge data for CSV...")
@@ -773,7 +790,7 @@ class NeuliteNetwork(DenseNetwork):
                 connections.insert(1, "post nid", target_node_id_df)
                 connections_list.append(connections)
 
-            n_filtered = len(all_source_ids)
+            n_filtered = sum(len(a) for a in all_source_ids) if all_source_ids else 0
             logger.info(f"Filtered edges: {n_total_conns} -> {n_filtered} (removed {n_total_conns - n_filtered} non-biophysical source edges)")
 
             # === Step 2: Write filtered data to h5 ===
@@ -787,13 +804,13 @@ class NeuliteNetwork(DenseNetwork):
                     pop_grp = hf.create_group('/edges/{}'.format(pop_name))
 
                     # Create datasets with filtered size
-                    pop_grp.create_dataset('source_node_id', data=np.array(all_source_ids, dtype='uint64'), compression=compression)
+                    pop_grp.create_dataset('source_node_id', data=np.concatenate(all_source_ids).astype('uint64'), compression=compression)
                     pop_grp['source_node_id'].attrs['node_population'] = src_network
-                    pop_grp.create_dataset('target_node_id', data=np.array(all_target_ids, dtype='uint64'), compression=compression)
+                    pop_grp.create_dataset('target_node_id', data=np.concatenate(all_target_ids).astype('uint64'), compression=compression)
                     pop_grp['target_node_id'].attrs['node_population'] = trg_network
-                    pop_grp.create_dataset('edge_group_id', data=np.array(all_edge_group_ids, dtype='uint16'), compression=compression)
-                    pop_grp.create_dataset('edge_group_index', data=np.array(all_edge_group_indices, dtype='uint32'), compression=compression)
-                    pop_grp.create_dataset('edge_type_id', data=np.array(all_edge_type_ids, dtype='uint32'), compression=compression)
+                    pop_grp.create_dataset('edge_group_id', data=np.concatenate(all_edge_group_ids).astype('uint16'), compression=compression)
+                    pop_grp.create_dataset('edge_group_index', data=np.concatenate(all_edge_group_indices).astype('uint32'), compression=compression)
+                    pop_grp.create_dataset('edge_type_id', data=np.concatenate(all_edge_type_ids).astype('uint32'), compression=compression)
 
                     # Write group properties
                     for gid in merged_edges.group_ids:
@@ -802,7 +819,7 @@ class NeuliteNetwork(DenseNetwork):
                             for prop_meta in group_metadata[gid]:
                                 prop_name = prop_meta['name']
                                 if filtered_props[gid][prop_name]:
-                                    prop_array = np.array(filtered_props[gid][prop_name])
+                                    prop_array = np.concatenate(filtered_props[gid][prop_name])
                                     model_grp.create_dataset(prop_name, data=prop_array, compression=compression)
 
             # === Step 3: Prepare CSV data (merged_connections) ===
@@ -814,7 +831,7 @@ class NeuliteNetwork(DenseNetwork):
             merged_connections["target_sections"] = merged_connections["target_sections"].apply(self._replace_strings)
             merged_connections["ei"] = ""
             merged_connections["nsyns"] = merged_connections["nsyns"].apply(self._to_list)
-            merged_connections = merged_connections.explode("nsyns")
+            merged_connections = merged_connections.explode("nsyns").reset_index(drop=True)
             logger.info(f"Finished merging edge types data.")
 
             # set chunk_size
@@ -1059,30 +1076,6 @@ class NeuliteNetwork(DenseNetwork):
             logger.error(row)
             raise
 
-    @staticmethod
-    def _get_ei(row, h5_node_type, node_types):
-        try:
-            pre_node = row["pre nid"]
-            pre_node_type = h5_node_type.loc[pre_node, "node_type_id"]
-            # Check if 'ei' key exists, default to 'e' if not found
-            ei_value = node_types[pre_node_type].get("ei", "e")
-            if ei_value not in ["e", "i"]:
-                logger.warning(f"Unexpected ei value '{ei_value}' for node_type {pre_node_type}, defaulting to 'e'")
-                return "e"
-            return ei_value
-        except Exception as e:
-            logger.error(f"Error in _get_ei: {e}, pre_node={row.get('pre nid', 'unknown')}")
-            return "e"  # Default to excitatory
-
-    @staticmethod
-    def _is_biophysical_node(node_id, h5_node_type, node_types_data):
-        """Check if a node is biophysical type"""
-        try:
-            node_type_id = h5_node_type.loc[node_id, "node_type_id"]
-            return node_types_data.get(node_type_id, {}).get("model_type") == "biophysical"
-        except:
-            return False
-
     def _is_biophysical_source(self, node_id, h5_node_type_df):
         """Check if source node_id belongs to this network (and thus is biophysical).
 
@@ -1097,94 +1090,65 @@ class NeuliteNetwork(DenseNetwork):
             return False
 
     @staticmethod
-    def _compute_weight(row, node_tuning):
-        """Compute dynamic weight using weight_function.
-
-        For gaussianLL, calculates weight based on tuning_angle difference.
-        For other weight_functions (wmax, etc.), returns syn_weight directly.
-
-        :param row: DataFrame row with edge data
-        :param node_tuning: dict mapping node_id to tuning_angle
-        :return: computed weight value
-        """
-        weight_func_name = row.get('weight_function')
-        syn_weight = row.get('syn_weight', 0.0)
-
-        # For non-gaussianLL, return fixed syn_weight
-        if weight_func_name != 'gaussianLL':
-            return syn_weight
-
-        src_id = row['pre nid']
-        trg_id = row['post nid']
-
-        src_tuning = node_tuning.get(src_id)
-        trg_tuning = node_tuning.get(trg_id)
-
-        # If tuning_angle is not available, return fixed syn_weight
-        if src_tuning is None or trg_tuning is None:
-            return syn_weight
-
-        weight_sigma = row.get('weight_sigma', 50.0)
-        if weight_sigma == 'NULL' or weight_sigma is None:
-            weight_sigma = 50.0
-
-        # Use BMTK's gaussianLL with dict-like interface
-        edge_props = {'syn_weight': syn_weight, 'weight_sigma': float(weight_sigma)}
-        src_props = {'tuning_angle': src_tuning}
-        trg_props = {'tuning_angle': trg_tuning}
-
-        return gaussianLL(edge_props, src_props, trg_props)
-
-    @staticmethod
     def _process_chunk(chunk, file_cache, h5_node_type, node_types_data, morphologies_path, converted_morphologies_path=None, node_tuning=None):
-        try:
-            logger.debug(f"Start processing chunk...")
-            chunk = chunk.copy()
-            logger.debug(f"End coppy chunk...")
-            chunk.loc[:, "post cid"] = chunk.apply(NeuliteNetwork._get_cid, axis=1, file_cache=file_cache, h5_node_type=h5_node_type, node_types=node_types_data, morphologies_path=morphologies_path, converted_morphologies_path=converted_morphologies_path)
-            logger.debug(f"End _get_cid chunk...")
-            chunk.loc[:, "ei"] = chunk.apply(NeuliteNetwork._get_ei, axis=1, h5_node_type=h5_node_type, node_types=node_types_data)
-            logger.debug(f"End _get_ei chunk...")
+        logger.debug(f"Start processing chunk...")
+        chunk = chunk.copy()
+        logger.debug(f"End coppy chunk...")
 
-            # Compute dynamic weight using weight_function (e.g., gaussianLL)
-            if node_tuning is not None:
-                logger.debug("Computing dynamic weights...")
-                chunk.loc[:, "weight"] = chunk.apply(
-                    lambda row: NeuliteNetwork._compute_weight(row, node_tuning),
-                    axis=1
-                )
-                logger.debug(f"End computing dynamic weights")
-            else:
-                # Fallback: use syn_weight directly
-                chunk.loc[:, "weight"] = chunk["syn_weight"]
+        # Build node_id -> node_type_id mapping for vectorized lookups
+        nid_to_ntid = pd.Series(h5_node_type["node_type_id"].values, index=h5_node_type["node_id"].values)
 
-            # Filter edges to keep only biophysical source connections
-            # Note: Target is always biophysical since NeuliteNetwork only accepts biophysical nodes
-            pre_biophysical_mask = chunk["pre nid"].apply(
-                lambda nid: NeuliteNetwork._is_biophysical_node(nid, h5_node_type, node_types_data)
-            )
+        chunk.loc[:, "post cid"] = chunk.apply(NeuliteNetwork._get_cid, axis=1, file_cache=file_cache, h5_node_type=h5_node_type, node_types=node_types_data, morphologies_path=morphologies_path, converted_morphologies_path=converted_morphologies_path)
+        logger.debug(f"End _get_cid chunk...")
+        # Vectorized ei lookup: pre nid -> node_type_id -> ei value
+        nt_ei_map = {ntid: props.get("ei", "e") for ntid, props in node_types_data.items()}
+        chunk.loc[:, "ei"] = chunk["pre nid"].map(nid_to_ntid).map(nt_ei_map).fillna("e")
+        logger.debug(f"End _get_ei chunk...")
 
-            filtered_count = (~pre_biophysical_mask).sum()
-            if filtered_count > 0:
-                logger.info(f"Filtering out {filtered_count} edges from non-biophysical source nodes")
-                chunk = chunk[pre_biophysical_mask]
+        # Compute weight: vectorized gaussianLL for performance
+        chunk.loc[:, "weight"] = chunk["syn_weight"]
+        if node_tuning:
+            gauss_mask = chunk["weight_function"] == "gaussianLL"
+            if gauss_mask.any():
+                logger.debug("Computing gaussianLL weights (vectorized)...")
+                gauss_idx = chunk.index[gauss_mask]
+                src_tuning = chunk.loc[gauss_idx, "pre nid"].map(node_tuning)
+                trg_tuning = chunk.loc[gauss_idx, "post nid"].map(node_tuning)
+                valid = src_tuning.notna() & trg_tuning.notna()
+                if valid.any():
+                    valid_idx = gauss_idx[valid]
+                    src_t = src_tuning[valid].astype(float).values
+                    trg_t = trg_tuning[valid].astype(float).values
+                    sigma = chunk.loc[valid_idx, "weight_sigma"].replace('NULL', 50.0).fillna(50.0).astype(float).values
+                    w0 = chunk.loc[valid_idx, "syn_weight"].astype(float).values
+                    # gaussianLL formula (bmtk equivalent)
+                    delta_tuning = np.abs(np.abs(np.abs(180.0 - np.abs(trg_t - src_t) % 360.0) - 90.0) - 90.0)
+                    chunk.loc[valid_idx, "weight"] = w0 * np.exp(-(delta_tuning / sigma) ** 2)
+                logger.debug("End computing gaussianLL weights")
 
-            if len(chunk) == 0:
-                logger.info("All edges were filtered out")
-                return None
+        # Filter edges to keep only biophysical source connections (vectorized)
+        # Note: Target is always biophysical since NeuliteNetwork only accepts biophysical nodes
+        bio_ntids = {ntid for ntid, props in node_types_data.items() if props.get("model_type") == "biophysical"}
+        pre_biophysical_mask = chunk["pre nid"].map(nid_to_ntid).isin(bio_ntids)
 
-            # Drop columns not needed in output, including syn_weight (replaced by weight)
-            cols_to_drop = ["nsyns", "target_sections", "syn_weight", "weight_function", "weight_sigma"]
-            cols_to_drop = [c for c in cols_to_drop if c in chunk.columns]
-            chunk.drop(cols_to_drop, axis=1, inplace=True)
+        filtered_count = (~pre_biophysical_mask).sum()
+        if filtered_count > 0:
+            logger.info(f"Filtering out {filtered_count} edges from non-biophysical source nodes")
+            chunk = chunk[pre_biophysical_mask]
 
-            chunk = chunk.rename(columns={"pre nid": "#pre nid", "ei": "e/i", "tau2": "tau_decay", "tau1": "tau_rise"})
-            chunk = chunk[NeuliteNetwork.CONNECTION_CSV_HEADER]
-            logger.debug(f"Finished processing chunk.")
-            return chunk
-        except Exception as e:
-            logger.error(f"Error processing chunk : {e}")
+        if len(chunk) == 0:
+            logger.info("All edges were filtered out")
             return None
+
+        # Drop columns not needed in output, including syn_weight (replaced by weight)
+        cols_to_drop = ["nsyns", "target_sections", "syn_weight", "weight_function", "weight_sigma"]
+        cols_to_drop = [c for c in cols_to_drop if c in chunk.columns]
+        chunk.drop(cols_to_drop, axis=1, inplace=True)
+
+        chunk = chunk.rename(columns={"pre nid": "#pre nid", "ei": "e/i", "tau2": "tau_decay", "tau1": "tau_rise"})
+        chunk = chunk[NeuliteNetwork.CONNECTION_CSV_HEADER]
+        logger.debug(f"Finished processing chunk.")
+        return chunk
 
     @staticmethod
     def _on_task_complete(result):
