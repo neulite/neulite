@@ -82,7 +82,8 @@ static population_t *initialize ( const int n_each, const int n_offset, const in
 
   const int nc = u -> cid [ u -> n_popl ]; // total number of compartments
 
-  u -> rad = calloc  ( nc, sizeof ( double ) );
+  u -> proximal_rad = calloc  ( nc, sizeof ( double ) );
+  u -> distal_rad = calloc  ( nc, sizeof ( double ) );
   u -> len = calloc  ( nc, sizeof ( double ) );
   u -> area = calloc ( nc, sizeof ( double ) );
   u -> parent = calloc ( nc, sizeof ( int ) );
@@ -145,7 +146,8 @@ void finalize_population ( population_t *u )
   free ( u -> n_comp );
   free ( u -> cid );
 
-  free ( u -> rad );
+  free ( u -> proximal_rad );
+  free ( u -> distal_rad );
   free ( u -> len );
   free ( u -> area );
   free ( u -> parent );
