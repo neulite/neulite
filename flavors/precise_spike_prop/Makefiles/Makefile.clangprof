@@ -1,0 +1,45 @@
+CC = cc
+CFLAGS = -std=gnu11 -Wall -Wno-unused-variable -O3 -fsave-optimization-record #-Rpass='.*' -Rpass-missed='.*' -Rpass-analysis='.*' #-fopt-info-all
+SFMTDIR = ./sfmt
+SFMTFLAGS = -I$(SFMTDIR) -DSFMT_MEXP=19937
+
+NAME = nl
+
+$(NAME): main.o network.o popl.o neuron.o ion.o conn.o synapse.o solver.o hines.o misc.o
+	$(CC) $(CFLAGS) -o $(NAME) $^ -lm
+
+main.o: main.c network.h config.h
+	$(CC) $(CFLAGS) $(SFMTFLAGS) -c $<
+
+network.o: network.c network.h config.h
+	$(CC) $(CFLAGS) -c $<
+
+popl.o: popl.c popl.h popl_func.h ion.h config.h
+	$(CC) $(CFLAGS) -c $<
+
+neuron.o: neuron.c neuron.h popl.h config.h
+	$(CC) $(CFLAGS) -c $<
+
+ion.o: ion.c ion.h ion_func.h popl.h neuron.h config.h
+	$(CC) $(CFLAGS) -c $<
+
+conn.o: conn.c conn.h neuron.h config.h
+	$(CC) $(CFLAGS) -c $<
+
+synapse.o: synapse.c synapse.h config.h
+	$(CC) $(CFLAGS) -c $<
+
+solver.o: solver.c solver.h config.h hines.o
+	$(CC) $(CFLAGS) -c $<
+
+hines.o: hines.c hines.h config.h
+	$(CC) $(CFLAGS) -c $<
+
+misc.o: misc.c
+	$(CC) $(CFLAGS) -c $<
+
+clean:
+	rm -f $(NAME) *.o *~
+
+distclean: clean
+	rm -f *.dat
