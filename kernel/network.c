@@ -100,7 +100,7 @@ void spike_propagation ( const int t_ms, network_t *net )
 
     // Set delay for propagation
     int size_spiking_neurons = 0;
-    unsigned int *spike_data =  calloc ( (unsigned int) net -> n -> n_neuron, sizeof ( unsigned int ) ); // avoid useless warning
+    unsigned int *spike_data =  calloc ( (unsigned int) net -> n -> n_neuron, sizeof ( unsigned int ) );
 
     for ( int i = 0; i < net -> n -> n_neuron; i++ ) {
         if ( net -> spike [ i ] ) {
