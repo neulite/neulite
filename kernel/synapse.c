@@ -31,7 +31,7 @@ void update_synapse ( const int id, const conn_t * __restrict__ c, synapse_t * _
 {
   for ( int i = c -> ptr_post [ id ]; i < c -> ptr_post [ id + 1 ]; i++ ) {
       s -> sum0 [ i ] = s -> sum0 [ i ] * c -> decay [ i ] + (( s -> delay [ i ] == 1) ? 1 : 0) ;
-      s -> delay [ i ]--;
+      if( s -> delay [ i ] > 0 ) s -> delay [ i ]--;
   }
 }
 
