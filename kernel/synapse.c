@@ -29,13 +29,9 @@ void finalize_synapse ( synapse_t *s )
 
 void update_synapse ( const int id, const conn_t * __restrict__ c, synapse_t * __restrict__ s )
 {
-  for ( int i = c -> ptr_post [ id ]; i < c -> ptr_post [ id + 1 ]; i++ ) { s -> sum0 [ i ] *= c -> decay [ i ]; }
-}
-
-void add_spike_to_synapse_per_ms ( const conn_t * __restrict__ c, synapse_t * __restrict__ s ) // each 1 ms
-{
-  for ( int i = 0; i < c -> n_conn; i++ ) {
-    s -> sum0 [ i ] += ( s -> delay [ i ] == 1 ) ? 1 : 0;
-    s -> delay [ i ] >>= 1;
+  for ( int i = c -> ptr_post [ id ]; i < c -> ptr_post [ id + 1 ]; i++ ) {
+      s -> sum0 [ i ] = s -> sum0 [ i ] * c -> decay [ i ] + (( s -> delay [ i ] == 1) ? 1 : 0) ;
+      s -> delay [ i ]--;
   }
 }
+

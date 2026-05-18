@@ -12,6 +12,23 @@
 
 extern int get_global_n_neurons ( const char * );
 
+#include <assert.h>
+
+#define SPIKE_DATA_BITS (32U) // unsigned int
+#define ITR_BIT_WIDTH ( 8U ) // assume <256 (dt = 0.005, 200)
+#define ID_BIT_WIDTH ( SPIKE_DATA_BITS - ITR_BIT_WIDTH ) // 24
+#define ITR_BIT_OFFSET (ID_BIT_WIDTH)
+#define ID_BIT_MASK  ( (1U << ID_BIT_WIDTH) - 1U )
+
+#define PACK_ID_ITR( id, itr ) ( ((unsigned int) (itr) << ITR_BIT_OFFSET) | ((unsigned int) (id)) )
+#define GET_ITR(x) ( (x) >> ITR_BIT_OFFSET )
+#define GET_ID(x)  ( (x) & ID_BIT_MASK )
+
+void assert_pack_spike_data( const int neuron_num ){
+  static_assert( INV_DT < (1U << ITR_BIT_WIDTH), "INV_DT must be less than 2^ITR_BIT_WIDTH" );
+  assert( neuron_num < (unsigned int) ID_BIT_MASK );
+}
+
 network_t *initialize_network ( const int mpi_size, const int mpi_rank, const char *population_file, const char *connection_file )
 {
   network_t *net = calloc ( 1, sizeof ( network_t ) );
@@ -80,10 +97,12 @@ void solve_network ( const int t_ms, network_t *net, solver_t *solver )
     for ( int iter = 0; iter < INV_DT; iter++ ) {
       v_hist [ iter + INV_DT * i ] = n -> v [ sid ];
       solve ( i, net -> u, net -> n, net -> i, net -> c, net -> s, solver );
-      spike += ( v_prev <= SPIKE_THRESHOLD && n -> v [ sid ] > SPIKE_THRESHOLD );
+      if ( v_prev <= SPIKE_THRESHOLD && n -> v [ sid ] > SPIKE_THRESHOLD ) {
+        spike = iter + 1;
+      }
       v_prev = n -> v [ sid ];
     }
-    net -> spike [ i ] = ( spike > 0 );
+    net -> spike [ i ] = ( spike );
   }
   
   for ( int iter = 0; iter < INV_DT; iter++ ) {
@@ -99,73 +118,75 @@ void solve_network ( const int t_ms, network_t *net, solver_t *solver )
 
 void spike_propagation ( const int t_ms, network_t *net )
 {
-  const int n_each   = ( net -> global_n_neurons + net -> mpi_size - 1 ) / net -> mpi_size;
-  const int n_offset = n_each * net -> mpi_rank;
-  const int mpi_size = net -> mpi_size;
-  
-  for ( int i = 0; i < net -> n -> n_neuron; i++ ) {
-    if ( net -> spike [ i ] ) { fprintf ( net -> s_dat, "%d %d\n", t_ms, n_offset + i ); }
-  }
+    const int n_each   = ( net -> global_n_neurons + net -> mpi_size - 1 ) / net -> mpi_size;
+    const int n_offset = n_each * net -> mpi_rank;
+    const int mpi_size = net -> mpi_size;
 
-  add_spike_to_synapse_per_ms ( net -> c, net -> s ); // Add spike after delayed period is over
-
-  //
-  // Broadcast spikes across nodes
-  //
-  int *local_spiking_neurons = malloc ( n_each * sizeof ( int ) );
-  int local_count = 0;
-  for ( int i = 0; i < net -> n -> n_neuron; i++ ) {
-    if ( net -> spike [ i ] ) { local_spiking_neurons [ local_count++ ] = n_offset + i; }
-  }
-  memset ( net -> spike, 0, net -> n -> n_neuron * sizeof ( int ) ); // net -> spike is no longer necessary
-    
-  // Gather # of neurons that emitted a spike on each process
-  int *spike_counts = malloc ( mpi_size * sizeof ( int ) );
-  MPI_Allgather ( &local_count, 1, MPI_INT, spike_counts, 1, MPI_INT, MPI_COMM_WORLD );
-    
-  // Calculate offsets
-  int *displs = malloc ( mpi_size * sizeof ( int ) );
-  displs [ 0 ] = 0;
-  for ( int i = 1; i < mpi_size; i++ ) {
-    displs [ i ] = displs [ i - 1 ] + spike_counts [ i - 1 ];
-  }
-
-  // Gather the neuron IDs
-  int total_spikes = displs [ mpi_size - 1 ] + spike_counts [ mpi_size - 1 ];
-  int *global_spiking_neurons = malloc ( total_spikes * sizeof ( int ) );
-  MPI_Allgatherv ( local_spiking_neurons, local_count, MPI_INT, global_spiking_neurons, spike_counts, displs, MPI_INT, MPI_COMM_WORLD );
-
-  // Copy to spiking_neurons for backward compatibility
-  const int size_spiking_neurons = total_spikes;
-  int *spiking_neurons = malloc ( ( size_spiking_neurons ? size_spiking_neurons : 1 ) * sizeof ( int ) );
-  if ( size_spiking_neurons > 0 ) {
-    memcpy(spiking_neurons, global_spiking_neurons, size_spiking_neurons * sizeof ( int ) );
-  }
-    
-  // Free memory
-  free ( local_spiking_neurons );
-  free ( spike_counts );
-  free ( displs );
-  free ( global_spiking_neurons ); 
-
-  //
-  // Spike propagation
-  //
-  const conn_t *c = net -> c;
-  synapse_t *s = net -> s;
-  int neuron_idx = 0, table_idx = 0;
-  while ( neuron_idx < size_spiking_neurons && table_idx < c -> n_pre ) {
-    if        ( spiking_neurons [ neuron_idx ] < c -> pre_table [ table_idx ] ) {
-      neuron_idx++;
-    } else if ( spiking_neurons [ neuron_idx ] > c -> pre_table [ table_idx ] ) {
-      table_idx++;
-    } else {
-      for ( int j = c -> ptr_pre [ table_idx ]; j < c -> ptr_pre [ table_idx + 1 ]; j++ ) {
-	s -> delay [ c -> id [ j ] ] = ( 1 << c -> delay [ j ] );
-      }
-      table_idx++;
-      neuron_idx++;
+    for ( int i = 0; i < net -> n -> n_neuron; i++ ) {
+        if ( net -> spike [ i ] ) { fprintf ( net -> s_dat, "%lf %d\n", (double)t_ms + DT * (double)(net -> spike[i] - 1), n_offset + i ); }
     }
-  }
-  free ( spiking_neurons );
+
+    //
+    // Broadcast spikes across nodes
+    //
+    int *local_spike_data = malloc ( n_each * sizeof ( int ) );
+    int local_count = 0;
+    for ( int i = 0; i < net -> n -> n_neuron; i++ ) {
+        if ( net -> spike [ i ] ) {
+            local_spike_data [ local_count++ ] = PACK_ID_ITR( n_offset + i, net -> spike[ i ] );
+        }
+    }
+    memset ( net -> spike, 0, net -> n -> n_neuron * sizeof ( int ) ); // net -> spike is no longer necessary
+
+    // Gather # of neurons that emitted a spike on each process
+    int *spike_counts = malloc ( mpi_size * sizeof ( int ) );
+    MPI_Allgather ( &local_count, 1, MPI_INT, spike_counts, 1, MPI_INT, MPI_COMM_WORLD );
+
+    // Calculate offsets
+    int *displs = malloc ( mpi_size * sizeof ( int ) );
+    displs [ 0 ] = 0;
+    for ( int i = 1; i < mpi_size; i++ ) {
+        displs [ i ] = displs [ i - 1 ] + spike_counts [ i - 1 ];
+    }
+
+    // Gather the neuron IDs
+    int total_spikes = displs [ mpi_size - 1 ] + spike_counts [ mpi_size - 1 ];
+    int *global_spike_data = malloc ( total_spikes * sizeof ( int ) );
+    MPI_Allgatherv ( local_spike_data, local_count, MPI_INT, global_spike_data, spike_counts, displs, MPI_INT, MPI_COMM_WORLD );
+
+    // Copy to spike_data for backward compatibility
+    const int size_spike_data = total_spikes;
+    int *spike_data = malloc ( ( size_spike_data ? size_spike_data : 1 ) * sizeof ( int ) );
+    if ( size_spike_data > 0 ) {
+        memcpy(spike_data, global_spike_data, size_spike_data * sizeof ( int ) );
+    }
+
+    // Free memory
+    free ( local_spike_data );
+    free ( spike_counts );
+    free ( displs );
+    free ( global_spike_data ); 
+
+    //
+    // Spike propagation
+    //
+    const conn_t *c = net -> c;
+    synapse_t *s = net -> s;
+    int neuron_idx = 0, table_idx = 0;
+    while ( neuron_idx < size_spike_data && table_idx < c -> n_pre ) {
+        if        ( GET_ID ( spike_data [ neuron_idx ] ) < c -> pre_table [ table_idx ] ) {
+            neuron_idx++;
+        } else if ( GET_ID ( spike_data [ neuron_idx ] ) > c -> pre_table [ table_idx ] ) {
+            table_idx++;
+        } else {
+            unsigned int itr = GET_ITR ( spike_data [neuron_idx] );
+            unsigned int id  = GET_ID  ( spike_data [neuron_idx] );
+            for ( int j = c -> ptr_pre [ table_idx ]; j < c -> ptr_pre [ table_idx + 1 ]; j++ ) {
+                s -> delay [ c -> id [ j ] ] = ( c -> delay [ j ] - (int)(1.f/DT) + itr );
+            }
+            table_idx++;
+            neuron_idx++;
+        }
+    }
+    free ( spike_data );
 }
