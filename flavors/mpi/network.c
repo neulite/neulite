@@ -37,6 +37,7 @@ network_t *initialize_network ( const int mpi_size, const int mpi_rank, const ch
   const int n_each   = ( net -> global_n_neurons + mpi_size - 1 ) / mpi_size;
   const int n_offset = n_each * mpi_rank;
 
+  assert_pack_spike_data( net -> global_n_neurons );
   net -> u = initialize_population ( n_each, n_offset, population_file );
   net -> n = initialize_neuron     ( net -> u );
   net -> i = initialize_ion        ( net -> n );
