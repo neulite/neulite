@@ -676,7 +676,7 @@ class NeuliteNetwork(DenseNetwork):
                 edge_types_list.append(base_params)
             edge_types_data = pd.DataFrame(edge_types_list, columns=cols)
             edge_types_data["delay"] = edge_types_data["delay"].map(
-                lambda x: max(1, int(Decimal(x).quantize(Decimal('1'), ROUND_HALF_UP))) if x != 'NULL' else 'NULL'
+                lambda x: max(1.0, float(x)) if x != 'NULL' else 'NULL'
             )
             logger.debug(f"{len(edge_types_data)=}")
 
@@ -1375,6 +1375,7 @@ class NeuliteNetwork(DenseNetwork):
             f"#define TSTOP ( {params['tstop']} )",
             f"#define DT ( {params['dt']} )",
             f"#define INV_DT ( ( int ) ( 1.0 / ( DT ) ) )",
+            "#define ITR_BIT_WIDTH ( 8U )",
             "",
             "// Neuron parameters",
             f"#define SPIKE_THRESHOLD ( {params['spike_threshold']} )",
@@ -1404,4 +1405,3 @@ class NeuliteBuilder(NetworkBuilder):
         self.adaptor = adaptor_cls(name, convert_morphologies=convert_morphologies, convert_ion_channels=convert_ion_channels,
                                    simulation_config=simulation_config,
                                    generate_config_h=generate_config_h, **network_props)
-
