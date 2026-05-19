@@ -19,7 +19,7 @@ conn_t *initialize_connection ( const population_t *u, const neuron_t *n, const 
   conn_t *c = calloc (1, sizeof ( conn_t ) );
 
   if ( n -> n_neuron == 0 ) { c -> n_conn = 0; return c; }
- 
+
   int *pre_ary  = calloc ( n -> n_neuron, sizeof ( int ) );
   int *post_ary = calloc ( n -> n_neuron, sizeof ( int ) );
   int n_conn = 0, n_pre = 0;
@@ -72,7 +72,7 @@ conn_t *initialize_connection ( const population_t *u, const neuron_t *n, const 
   }
   free (pre_ary);
   free (post_ary);
- 
+
   c -> post_c = calloc ( c -> n_conn, sizeof ( int ) );
   c -> weight = calloc ( c -> n_conn, sizeof ( double ) );
   c -> erev   = calloc ( c -> n_conn, sizeof ( double ) );
@@ -96,7 +96,7 @@ conn_t *initialize_connection ( const population_t *u, const neuron_t *n, const 
 
       assert ( d_post_c < u -> n_comp [ n -> pid [ d_post_i ] ] );
       assert ( f_delay >= 1.0 );
-      
+
       const double tau_prime = f_decay * f_rise / ( f_decay - f_rise );
       const double tau_diff  = f_rise / f_decay;
       const double norm_coef = 1.0 / ( pow ( tau_diff, ( tau_prime / f_decay ) ) - pow ( tau_diff, ( tau_prime / f_rise ) ) );
@@ -122,7 +122,7 @@ conn_t *initialize_connection ( const population_t *u, const neuron_t *n, const 
     free ( local_idx );
     fclose ( file );
   }
-  
+
   return c;
 }
 

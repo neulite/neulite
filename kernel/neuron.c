@@ -16,7 +16,7 @@ static neuron_t *initialize ( const population_t *u )
   if ( u -> n_popl == 0 ) { n -> n_neuron = 0; return n; }
 
   int nc = 0; for ( int i = 0; i < u -> n_popl; i++ ) { nc += u -> n_neuron [ i ] * u -> n_comp [ i ]; } // nc == number of all compartments
-  
+
   n -> v  = calloc ( nc, sizeof ( double ) );
   n -> ca = calloc ( nc, sizeof ( double ) );
   n -> i_ext = calloc ( nc, sizeof ( double ) );
@@ -34,9 +34,9 @@ static neuron_t *initialize ( const population_t *u )
       n -> sid [ idx ] = offset;
       n -> pid [ idx ] = pid;
       for ( int j = 0; j < n_comp; j++ ) {
-	n -> v     [ offset + j ] = vl [ j ];
-	n -> ca    [ offset + j ] = ca_init ( );
-	n -> i_ext [ offset + j ] = 0.0;
+        n -> v     [ offset + j ] = vl [ j ];
+        n -> ca    [ offset + j ] = ca_init ( );
+        n -> i_ext [ offset + j ] = 0.0;
       }
       idx++;
       offset += n_comp;

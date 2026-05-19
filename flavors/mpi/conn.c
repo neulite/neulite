@@ -19,7 +19,7 @@ conn_t *initialize_connection ( const int n_each, const int n_offset, const popu
   conn_t *c = calloc (1, sizeof ( conn_t ) );
 
   if ( n -> n_neuron == 0 ) { c -> n_conn = 0; return c; }
-  
+
   int *pre_table = calloc ( 0, sizeof ( int ) ); // allocate dynamically
   int *pre_ary   = calloc ( 0, sizeof ( int ) ); // allocate dynamically
   int *post_ary  = calloc ( n -> n_neuron, sizeof ( int ) );
@@ -37,19 +37,19 @@ conn_t *initialize_connection ( const int n_each, const int n_offset, const popu
       const int nf = sscanf ( buf, "%d,%d", &d_pre, &d_post_i );
       assert ( nf == 2 );
       if ( n_offset <= d_post_i && d_post_i < n_offset + n_each ) {
-	n_conn += 2;
+        n_conn += 2;
         if ( pre < d_pre ) {
-	  pre_table_size++;
-	  pre_table = realloc ( pre_table, pre_table_size * sizeof ( int ) );
-	  pre_table [ pre_table_size - 1 ] = d_pre;
-	  pre = d_pre;
-	  pre_ary_size++;
-	  pre_ary = realloc ( pre_ary, pre_ary_size * sizeof ( int ) );
-	  pre_ary [ pre_ary_size - 1 ] = 2;
-	} else {
-	  pre_ary [ pre_ary_size - 1 ] += 2;
-	}
-	post_ary [ d_post_i - n_offset ] += 2;
+          pre_table_size++;
+          pre_table = realloc ( pre_table, pre_table_size * sizeof ( int ) );
+          pre_table [ pre_table_size - 1 ] = d_pre;
+          pre = d_pre;
+          pre_ary_size++;
+          pre_ary = realloc ( pre_ary, pre_ary_size * sizeof ( int ) );
+          pre_ary [ pre_ary_size - 1 ] = 2;
+        } else {
+          pre_ary [ pre_ary_size - 1 ] += 2;
+        }
+        post_ary [ d_post_i - n_offset ] += 2;
       }
     }
     fclose ( file );
@@ -71,7 +71,7 @@ conn_t *initialize_connection ( const int n_each, const int n_offset, const popu
   free ( pre_table );
   free ( pre_ary );
   free ( post_ary );
-  
+
   c -> post_c = calloc ( c -> n_conn, sizeof ( int ) );
   c -> weight = calloc ( c -> n_conn, sizeof ( double ) );
   c -> erev   = calloc ( c -> n_conn, sizeof ( double ) );
@@ -125,7 +125,7 @@ conn_t *initialize_connection ( const int n_each, const int n_offset, const popu
     free ( local_idx );
     fclose ( file );
   }
-  
+
   return c;
 }
 

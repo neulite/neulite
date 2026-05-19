@@ -53,13 +53,13 @@ static segment_tree_t *read_in_neuron_style ( const char *filename, const int n_
     i++;
   }
   fclose ( file );
-  
+
   segment_tree_t *segment_tree = calloc ( 1, sizeof ( segment_tree_t ) );
 
   segment_tree -> data = calloc ( n_comp, sizeof ( segment_t ) );
   segment_tree -> size = 0;
   int segid_from_rid [ n_comp ]; for ( int i = 0; i < n_comp; i++ ) { segid_from_rid [ i ] = 0; }
-  
+
   if ( swc [ 0 ] . type == SOMA ) {
     swc_t distal = swc [ 0 ];
     swc_t proximal = { .id = -1, .type = distal.type, .x = distal.x - 2*distal.r, .y = distal.y, .z = distal.z, .r = distal.r, .parent = distal.parent };
@@ -98,30 +98,30 @@ static segment_tree_t *read_in_neuron_style ( const char *filename, const int n_
     } else if ( grandparent_type == SOMA && distal.type != AXON && segid_from_rid [ proximal.id ] == segid_from_rid [ proximal.parent ] ) {
       int pid = segid_from_rid [ proximal.id ];
       swc_t mid = {
-	.id = -1,
-	.type = distal.type,
-	.x = ( distal.x + proximal.x ) * 0.5,
-	.y = ( distal.y + proximal.y ) * 0.5,
-	.z = ( distal.z + proximal.z ) * 0.5,
-	.r = ( distal.r + proximal.r ) * 0.5,
-	.parent = -1
+        .id = -1,
+        .type = distal.type,
+        .x = ( distal.x + proximal.x ) * 0.5,
+        .y = ( distal.y + proximal.y ) * 0.5,
+        .z = ( distal.z + proximal.z ) * 0.5,
+        .r = ( distal.r + proximal.r ) * 0.5,
+        .parent = -1
       };
 
       segment_t first_half = {
-	.parent = pid,
-	.proximal = proximal,
-	.distal = mid,
-	.type = mid.type
+        .parent = pid,
+        .proximal = proximal,
+        .distal = mid,
+        .type = mid.type
       };
       segment_tree -> data [ segment_tree -> size ] = first_half;
       segid_from_rid [ proximal.id ] = segment_tree -> size;
       segment_tree -> size++;
-      
+
       segment_t second_half = {
-	.parent = segid_from_rid [ proximal.id ],
-	.proximal = mid,
-	.distal = distal,
-	.type = distal.type
+        .parent = segid_from_rid [ proximal.id ],
+        .proximal = mid,
+        .distal = distal,
+        .type = distal.type
       };
       segment_tree -> data [ segment_tree -> size ] = second_half;
       segid_from_rid [ distal.id ] = segment_tree -> size;
@@ -131,13 +131,13 @@ static segment_tree_t *read_in_neuron_style ( const char *filename, const int n_
       const int pid = ( has_skipped_parent ) ? segid_from_rid [ proximal.parent ] : segid_from_rid [ proximal.id ];
 
       if ( proximal.type == SOMA && distal.type == AXON ) {
-	proximal.r = distal.r;
+        proximal.r = distal.r;
       }
       segment_t seg = {
-	.parent = pid,
-	.proximal = proximal,
-	.distal = distal,
-	.type = distal.type
+        .parent = pid,
+        .proximal = proximal,
+        .distal = distal,
+        .type = distal.type
       };
       segment_tree -> data [ segment_tree -> size ] = seg;
       segid_from_rid [ rid ] = segment_tree -> size;
@@ -173,7 +173,7 @@ static void read_swc_file ( population_t *p, const int pid, const char *filename
 
   int n_comp = st -> size;
   p -> n_comp [ pid ] = n_comp; // update n_comp
-  
+
   const int offset = p -> cid [ pid ];
   double *proximal_rad = &p -> proximal_rad [ offset ];
   double *distal_rad   = &p -> distal_rad   [ offset ];
@@ -196,7 +196,7 @@ static void read_swc_file ( population_t *p, const int pid, const char *filename
     proximal_rad [ i ] = seg -> proximal.r * 1.0e-4; // TODO
     distal_rad   [ i ] = seg -> distal.r   * 1.0e-4; // TODO
   }
-  
+
   free ( st -> data );
   st -> size = 0;
   free ( st );
@@ -212,7 +212,7 @@ static void read_pas_file ( population_t *u, const int pid, const char *filename
     while ( fgets ( buf, 1024, file ) ) {
       if ( strip_comment_destructive ( buf ) == 0 ) { continue; }
       if ( remove_blank_destructive_for_csv ( buf ) == 0 ) { continue; }
-      
+
       int d_type;
       double f_cm, f_ra, f_gl, f_vl;
       const int nf = sscanf ( buf, "%d,%lf,%lf,%lf,%lf", &d_type, &f_cm, &f_ra, &f_gl, &f_vl );
@@ -249,12 +249,12 @@ static void read_ion_file ( population_t *u, const int pid, const char *filename
   while ( fgets ( buf, 1024, file ) ) {
     if ( strip_comment_destructive ( buf ) == 0 ) { continue; }
     if ( remove_blank_destructive_for_csv ( buf ) == 0 ) { continue; }
-      
+
     int d_type;
     double f_cm, f_ra, f_gl, f_vl, f_gamma, f_decay;
     double f [ N_GBAR ] = { 0.0 };
     const int nf = sscanf ( buf, "%d,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf",
-			    &d_type, &f_cm, &f_ra, &f_gl, &f_vl, &f_gamma, &f_decay, &f[0], &f[1], &f[2], &f[3], &f[4], &f[5], &f[6], &f[7], &f[8], &f[9], &f[10], &f[11], &f[12], &f[13], &f[14] );
+        &d_type, &f_cm, &f_ra, &f_gl, &f_vl, &f_gamma, &f_decay, &f[0], &f[1], &f[2], &f[3], &f[4], &f[5], &f[6], &f[7], &f[8], &f[9], &f[10], &f[11], &f[12], &f[13], &f[14] );
     assert ( nf == 5 || nf == 22 );
     if ( nf == 22 ) {
       u -> gamma [ d_type + N_COMPTYPE * pid ] = f_gamma;
@@ -263,15 +263,15 @@ static void read_ion_file ( population_t *u, const int pid, const char *filename
     if ( nf == 22 && ALLACTIVE == 1 ) {
       const int n_comp = u -> n_comp [ pid ];
       for ( int i = 0; i < n_comp; i++ ) {
-	const double area = u -> area [ u -> cid [ pid ] + i ];
-	for ( int j = 0; j < N_GBAR; j++ ) {
-	  u -> gbar [ j + N_GBAR * ( i + n_comp * pid ) ] = f [ j ] * area * 1e3; /* CONVERSION: 1e3 from S to mS */
-	}
+        const double area = u -> area [ u -> cid [ pid ] + i ];
+        for ( int j = 0; j < N_GBAR; j++ ) {
+          u -> gbar [ j + N_GBAR * ( i + n_comp * pid ) ] = f [ j ] * area * 1e3; /* CONVERSION: 1e3 from S to mS */
+        }
       }
     } else { // Default is perisomatic
       if ( d_type == SOMA ) {
-	const double area = u -> area [ u -> cid [ pid ] + 0 ]; // 0 == SOMA
-	for ( int i = 0; i < N_GBAR; i++ ) { u -> gbar [ i + N_GBAR * pid ] = f[i] * area * 1e3; /* CONVERSION: 1e3 from S to mS */ }
+        const double area = u -> area [ u -> cid [ pid ] + 0 ]; // 0 == SOMA
+        for ( int i = 0; i < N_GBAR; i++ ) { u -> gbar [ i + N_GBAR * pid ] = f[i] * area * 1e3; /* CONVERSION: 1e3 from S to mS */ }
       }
     }
   }

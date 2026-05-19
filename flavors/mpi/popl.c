@@ -107,12 +107,12 @@ population_t *initialize_population ( const int n_each, const int n_offset, cons
   int n_popl = get_lines ( filename );
   int n_neuron [ n_popl ], n_comp [ n_popl ];
   get_population_size ( filename, n_popl, n_neuron, n_comp );
-  
+
   // Below, population size is of local
   population_t *u = initialize ( n_each, n_offset, n_popl, n_neuron, n_comp );
 
   if ( u -> n_popl == 0 ) { return u; }
-  
+
   FILE *file = fopen ( filename, "r" );
   if ( ! file ) { fprintf ( stderr, "Error: no such file %s\n", filename ); exit ( 1 ); }
 

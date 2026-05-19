@@ -67,7 +67,7 @@ ion_t *initialize_ion ( const neuron_t *n )
       ion [ OO_NaV ] = vcb [ 11 ];
     }
   }
-  
+
   return i;
 }
 
@@ -84,7 +84,7 @@ void update_ion ( const int id, const neuron_t * __restrict__ n, const double * 
   double *ion = &i -> gate [ N_GATEVAL * id ];
 
   Nav_update ( _v, &ion [ OO_NaV ], &ion [ C1_NaV ], &ion [ C2_NaV ], &ion [ C3_NaV ], &ion [ C4_NaV ], &ion [ C5_NaV ],
-	           &ion [ I1_NaV ], &ion [ I2_NaV ], &ion [ I3_NaV ], &ion [ I4_NaV ], &ion [ I5_NaV ], &ion [ I6_NaV ] );
+      &ion [ I1_NaV ], &ion [ I2_NaV ], &ion [ I3_NaV ], &ion [ I4_NaV ], &ion [ I5_NaV ], &ion [ I6_NaV ] );
 
   ion [ M_NATS ]  = inf_m_NaTs ( _v )      + ( ion [ M_NATS ]  - inf_m_NaTs ( _v ) )    * exp ( - dt / tau_m_NaTs   ( _v ) );
   ion [ H_NATS ]  = inf_h_NaTs ( _v )      + ( ion [ H_NATS ]  - inf_h_NaTs ( _v ) )    * exp ( - dt / tau_h_NaTs   ( _v ) );
@@ -125,7 +125,7 @@ void update_ca ( const int id, const population_t * __restrict__ u, const ion_t 
     const double gamma = u -> gamma [ SOMA + N_COMPTYPE * pid ]; // perisomatic
     const double decay = u -> decay [ SOMA + N_COMPTYPE * pid ]; // perisomatic
     const double i_ca =  (1e-3 * ( v - rev_ca ( ca ) ) * ( gbar [ G_CAHVA ] * ion [ M_CAHVA ] * ion [ M_CAHVA ] * ion [ H_CAHVA ]
-							   + gbar [ G_CALVA ] * ion [ M_CALVA ] * ion [ M_CALVA ] * ion [ H_CALVA ] ) ) / area;
+          + gbar [ G_CALVA ] * ion [ M_CALVA ] * ion [ M_CALVA ] * ion [ H_CALVA ] ) ) / area;
     n -> ca [ sid ] += dt * dcadt ( ca, i_ca, gamma, decay );
   }
 }
@@ -138,7 +138,7 @@ void calc_lhs_and_rhs ( const population_t * __restrict__ u, const neuron_t * __
   double *gbar = &u -> gbar [ N_GBAR * pid ]; // perisomatic
   double _l = 0.0, _r = 0.0;
   double \
-  _c = gbar [ G_NAV   ] * ion [ OO_NaV ];                                                                  _l += _c; _r += _c * V_NA;
+    _c = gbar [ G_NAV   ] * ion [ OO_NaV ];                                                                  _l += _c; _r += _c * V_NA;
   _c = gbar [ G_NATS  ] * ion [ M_NATS ] * ion [ M_NATS ] * ion [ M_NATS ] * ion [ H_NATS ];               _l += _c; _r += _c * V_NA;
   _c = gbar [ G_NATA  ] * ion [ M_NATA ] * ion [ M_NATA ] * ion [ M_NATA ] * ion [ H_NATA ];               _l += _c; _r += _c * V_NA;
 

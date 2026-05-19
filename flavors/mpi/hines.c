@@ -10,14 +10,14 @@
 hines_matrix_t *hines_matrix_allocate ( int n )
 {
   hines_matrix_t *H = ( hines_matrix_t * ) malloc ( sizeof ( hines_matrix_t ) );
-  
+
   H -> n_comp    = n;
   H -> Ad        = calloc ( H -> n_comp, sizeof ( double ) );
   H -> Api       = calloc ( H -> n_comp, sizeof ( double ) );
   H -> bu_Ad     = calloc ( H -> n_comp, sizeof ( double ) );
   H -> bu_Api    = calloc ( H -> n_comp, sizeof ( double ) );
   H -> parent_id = calloc ( H -> n_comp, sizeof ( int ) );
-  
+
   return H;
 }
 
@@ -37,10 +37,10 @@ hines_matrix_t *hines_matrix_initialize ( const population_t *u, const int pid )
 
 void hines_matrix_finalize ( hines_matrix_t * H )
 {
-    free ( H -> Ad );
-    free ( H -> Api );
-    free ( H -> bu_Ad );
-    free ( H -> bu_Api );
-    free ( H -> parent_id );
-    H -> n_comp = 0;
+  free ( H -> Ad );
+  free ( H -> Api );
+  free ( H -> bu_Ad );
+  free ( H -> bu_Api );
+  free ( H -> parent_id );
+  H -> n_comp = 0;
 }
