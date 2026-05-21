@@ -19,7 +19,7 @@ conn_t *initialize_connection ( const int n_each, const int n_offset, const popu
   conn_t *c = calloc (1, sizeof ( conn_t ) );
 
   if ( n -> n_neuron == 0 ) { c -> n_conn = 0; return c; }
-  
+
   int *pre_table = calloc ( 0, sizeof ( int ) ); // allocate dynamically
   int *pre_ary   = calloc ( 0, sizeof ( int ) ); // allocate dynamically
   int *post_ary  = calloc ( n -> n_neuron, sizeof ( int ) );
@@ -37,19 +37,19 @@ conn_t *initialize_connection ( const int n_each, const int n_offset, const popu
       const int nf = sscanf ( buf, "%d,%d", &d_pre, &d_post_i );
       assert ( nf == 2 );
       if ( n_offset <= d_post_i && d_post_i < n_offset + n_each ) {
-	n_conn += 2;
+        n_conn += 2;
         if ( pre < d_pre ) {
-	  pre_table_size++;
-	  pre_table = realloc ( pre_table, pre_table_size * sizeof ( int ) );
-	  pre_table [ pre_table_size - 1 ] = d_pre;
-	  pre = d_pre;
-	  pre_ary_size++;
-	  pre_ary = realloc ( pre_ary, pre_ary_size * sizeof ( int ) );
-	  pre_ary [ pre_ary_size - 1 ] = 2;
-	} else {
-	  pre_ary [ pre_ary_size - 1 ] += 2;
-	}
-	post_ary [ d_post_i - n_offset ] += 2;
+          pre_table_size++;
+          pre_table = realloc ( pre_table, pre_table_size * sizeof ( int ) );
+          pre_table [ pre_table_size - 1 ] = d_pre;
+          pre = d_pre;
+          pre_ary_size++;
+          pre_ary = realloc ( pre_ary, pre_ary_size * sizeof ( int ) );
+          pre_ary [ pre_ary_size - 1 ] = 2;
+        } else {
+          pre_ary [ pre_ary_size - 1 ] += 2;
+        }
+        post_ary [ d_post_i - n_offset ] += 2;
       }
     }
     fclose ( file );
@@ -71,7 +71,7 @@ conn_t *initialize_connection ( const int n_each, const int n_offset, const popu
   free ( pre_table );
   free ( pre_ary );
   free ( post_ary );
-  
+
   c -> post_c = calloc ( c -> n_conn, sizeof ( int ) );
   c -> weight = calloc ( c -> n_conn, sizeof ( double ) );
   c -> erev   = calloc ( c -> n_conn, sizeof ( double ) );
@@ -87,45 +87,45 @@ conn_t *initialize_connection ( const int n_each, const int n_offset, const popu
     while ( fgets ( buf, 1024, file ) ) {
       if ( strip_comment_destructive ( buf ) == 0 ) { continue; }
       if ( remove_blank_destructive_for_csv ( buf ) == 0 ) { continue; }
-      int d_pre, d_post_i, d_post_c, d_delay;
-      double f_weight, f_decay, f_rise, f_erev;
+      int d_pre, d_post_i, d_post_c;
+      double f_weight, f_decay, f_rise, f_erev, f_delay;
       char c_type;
-      const int nf = sscanf ( buf, "%d,%d,%d,%lf,%lf,%lf,%lf,%d,%c", &d_pre, &d_post_i, &d_post_c, &f_weight, &f_decay, &f_rise, &f_erev, &d_delay, &c_type );
+      const int nf = sscanf ( buf, "%d,%d,%d,%lf,%lf,%lf,%lf,%lf,%c", &d_pre, &d_post_i, &d_post_c, &f_weight, &f_decay, &f_rise, &f_erev, &f_delay, &c_type );
       assert ( nf == 9 );
 
       if ( n_offset <= d_post_i && d_post_i < n_offset + n_each ) {
-	assert ( d_post_c < u -> n_comp [ n -> pid [ d_post_i - n_offset ] ] );
+        assert ( d_post_c < u -> n_comp [ n -> pid [ d_post_i - n_offset ] ] );
       }
-      assert ( d_delay > 0 );
-      
+      assert ( f_delay >= 1.0f );
+
       if ( n_offset <= d_post_i && d_post_i < n_offset + n_each ) {
-	const double tau_prime = f_decay * f_rise / ( f_decay - f_rise );
-	const double tau_diff  = f_rise / f_decay;
-	const double norm_coef = 1.0 / ( pow ( tau_diff, ( tau_prime / f_decay ) ) - pow ( tau_diff, ( tau_prime / f_rise ) ) );
-	const int solver_id1 = c -> ptr_post [ d_post_i - n_offset ] + local_idx [ d_post_i - n_offset ];
-	c -> post_c [ solver_id1 ] = d_post_c;
-	c -> weight [ solver_id1 ] = norm_coef * f_weight;
-	c -> erev   [ solver_id1 ] = f_erev;
-	c -> decay  [ solver_id1 ] = exp ( - DT / f_decay );
-	local_idx [ d_post_i - n_offset ]++;
-	c -> delay [ idx ] = d_delay;
-	c -> id    [ idx ] = solver_id1;
-	idx++;
-	const int solver_id2 = c -> ptr_post [ d_post_i - n_offset ] + local_idx [ d_post_i - n_offset ];
-	c -> post_c [ solver_id2 ] = d_post_c;
-	c -> weight [ solver_id2 ] = - norm_coef * f_weight;
-	c -> erev   [ solver_id2 ] = f_erev;
-	c -> decay  [ solver_id2 ] = exp ( - DT / f_rise );
-	local_idx [ d_post_i - n_offset ]++;
-	c -> delay [ idx ] = d_delay;
-	c -> id    [ idx ] = solver_id2;
-	idx++;
+        const double tau_prime = f_decay * f_rise / ( f_decay - f_rise );
+        const double tau_diff  = f_rise / f_decay;
+        const double norm_coef = 1.0 / ( pow ( tau_diff, ( tau_prime / f_decay ) ) - pow ( tau_diff, ( tau_prime / f_rise ) ) );
+        const int solver_id1 = c -> ptr_post [ d_post_i - n_offset ] + local_idx [ d_post_i - n_offset ];
+        c -> post_c [ solver_id1 ] = d_post_c;
+        c -> weight [ solver_id1 ] = norm_coef * f_weight;
+        c -> erev   [ solver_id1 ] = f_erev;
+        c -> decay  [ solver_id1 ] = exp ( - DT / f_decay );
+        local_idx [ d_post_i - n_offset ]++;
+        c -> delay [ idx ] = (int)(f_delay / DT);
+        c -> id    [ idx ] = solver_id1;
+        idx++;
+        const int solver_id2 = c -> ptr_post [ d_post_i - n_offset ] + local_idx [ d_post_i - n_offset ];
+        c -> post_c [ solver_id2 ] = d_post_c;
+        c -> weight [ solver_id2 ] = - norm_coef * f_weight;
+        c -> erev   [ solver_id2 ] = f_erev;
+        c -> decay  [ solver_id2 ] = exp ( - DT / f_rise );
+        local_idx [ d_post_i - n_offset ]++;
+        c -> delay [ idx ] = (int)(f_delay / DT);
+        c -> id    [ idx ] = solver_id2;
+        idx++;
       }
     }
     free ( local_idx );
     fclose ( file );
   }
-  
+
   return c;
 }
 

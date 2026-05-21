@@ -4,8 +4,8 @@
 #pragma once
 
 typedef struct {
-    int n_comp;
-    double *Ad, *Api;
-    double *bu_Ad, *bu_Api;
-    int *parent_id;
+  int n_comp;
+  double *Ad, *Api;
+  double *bu_Ad, *bu_Api;
+  int *parent_id;
 } hines_matrix_t;

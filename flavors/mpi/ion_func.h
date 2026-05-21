@@ -201,11 +201,11 @@ static double tau_m_KP ( const double v ){
   const double tauF = 1.0;
   const double celcius = 34.0;
   const double qt = pow ( 2.3, (celcius - 21.0)/ 10.0 ); 
-    if (v < -50.0 + vshift){
-      return tauF * (1.25+175.03*exp(-(v - vshift) * -0.026))/qt;
-    } else {
-      return tauF * (1.25+13*exp(-(v - vshift) * 0.026))/qt;
-    }
+  if (v < -50.0 + vshift){
+    return tauF * (1.25+175.03*exp(-(v - vshift) * -0.026))/qt;
+  } else {
+    return tauF * (1.25+13*exp(-(v - vshift) * 0.026))/qt;
+  }
 }
 
 static double tau_h_KP ( const double v ){
@@ -384,27 +384,27 @@ static double tau_h_CaLVA ( const double v ){
 #define TMP_ITER_NaV ( DT / DT_NaV )
 #define ITER_NaV MAX(1, TMP_ITER_NaV)
 /*
-static void swap_row( int rA, int rB, int n, double A [ ] [ n ], double b [ ] ){ 
-  for ( int i = 0; i < n; i++ ) {
-    double tmp = A [ rA ] [ i ];
-    A [ rA ] [ i ] = A [ rB ] [ i ];
-    A [ rB ] [ i ] = tmp;
-  }
-  double tmp = b [ rA ];
-  b [ rA ] = b [ rB ];
-  b [ rB ] = tmp;     
-}
+   static void swap_row( int rA, int rB, int n, double A [ ] [ n ], double b [ ] ){ 
+   for ( int i = 0; i < n; i++ ) {
+   double tmp = A [ rA ] [ i ];
+   A [ rA ] [ i ] = A [ rB ] [ i ];
+   A [ rB ] [ i ] = tmp;
+   }
+   double tmp = b [ rA ];
+   b [ rA ] = b [ rB ];
+   b [ rB ] = tmp;     
+   }
 
-static int pivoting( int p, int n, const double A [ ] [ n ] ){
-  int max = p;
-  for ( int i = p + 1; i < n; i++ ) {
-    if( fabs( A [ i ] [ p ] ) > fabs( A [ max ] [ p ] ) ){
-      max = i;
-    }
-  }
-  return max;
-}
-*/
+   static int pivoting( int p, int n, const double A [ ] [ n ] ){
+   int max = p;
+   for ( int i = p + 1; i < n; i++ ) {
+   if( fabs( A [ i ] [ p ] ) > fabs( A [ max ] [ p ] ) ){
+   max = i;
+   }
+   }
+   return max;
+   }
+   */
 static void forward_elimination ( int n, double A [ ] [ n ], double b [ ] ) {
   for ( int i = 0; i < n; i++ ) {
     //int ip = pivoting ( i, n, A );
@@ -551,18 +551,18 @@ static void Set_Nav_param ( const double l_v, double matrix [ N_STATE_NAV ] [ N_
 
   //                  c1,                c2,                c3,                c4,                c5,                i1,                i2,                i3,                i4,               i5,               i6,                 oo
   double l_mat [ N_STATE_NAV ] [ N_STATE_NAV ] = {
-  /*c1*/  {1-(c1c2+c1i1),              c2c1,               0.0,               0.0,               0.0,              i1c1,               0.0,               0.0,               0.0,               0.0,              0.0,               0.0 },
-  /*c2*/  {         c1c2,1-(c2c1+c2c3+c2i2),              c3c2,               0.0,               0.0,               0.0,              i2c2,               0.0,               0.0,               0.0,              0.0,               0.0 },
-  /*c3*/  {          0.0,              c2c3,1-(c3c2+c3c4+c3i3),              c4c3,               0.0,               0.0,               0.0,              i3c3,               0.0,               0.0,              0.0,               0.0 },
-  /*c4*/  {          0.0,               0.0,              c3c4,1-(c4c3+c4c5+c4i4),              c5c4,               0.0,               0.0,               0.0,              i4c4,               0.0,              0.0,               0.0 },
-  /*c5*/  {          0.0,               0.0,               0.0,              c4c5,1-(c5c4+c5oo+c5i5),               0.0,               0.0,               0.0,               0.0,              i5c5,              0.0,              ooc5 },
-  /*i1*/  {         c1i1,               0.0,               0.0,               0.0,               0.0,     1-(i1c1+i1i2),              i2i1,               0.0,               0.0,               0.0,              0.0,               0.0 },
-  /*i2*/  {          0.0,              c2i2,               0.0,               0.0,               0.0,              i1i2,1-(i2i1+i2i3+i2c2),              i3i2,               0.0,               0.0,              0.0,               0.0 },
-  /*i3*/  {          0.0,               0.0,              c3i3,               0.0,               0.0,               0.0,              i2i3,1-(i3i2+i3i4+i3c3),              i4i3,               0.0,              0.0,               0.0 },
-  /*i4*/  {          0.0,               0.0,               0.0,              c4i4,               0.0,               0.0,               0.0,              i3i4,1-(i4i3+i4i5+i4c4),              i5i4,              0.0,               0.0 },
-  /*i5*/  {          0.0,               0.0,               0.0,               0.0,              c5i5,               0.0,               0.0,               0.0,              i4i5,1-(i5i4+i5i6+i5c5),             i6i5,               0.0 },
-  /*i6*/  {          0.0,               0.0,               0.0,               0.0,               0.0,               0.0,               0.0,               0.0,               0.0,              i5i6,    1-(i6i5+i6oo),              ooi6 },
-  /*oo*/  {          0.0,               0.0,               0.0,               0.0,              c5oo,               0.0,               0.0,               0.0,               0.0,               0.0,             i6oo,     1-(ooc5+ooi6) }
+    /*c1*/  {1-(c1c2+c1i1),              c2c1,               0.0,               0.0,               0.0,              i1c1,               0.0,               0.0,               0.0,               0.0,              0.0,               0.0 },
+    /*c2*/  {         c1c2,1-(c2c1+c2c3+c2i2),              c3c2,               0.0,               0.0,               0.0,              i2c2,               0.0,               0.0,               0.0,              0.0,               0.0 },
+    /*c3*/  {          0.0,              c2c3,1-(c3c2+c3c4+c3i3),              c4c3,               0.0,               0.0,               0.0,              i3c3,               0.0,               0.0,              0.0,               0.0 },
+    /*c4*/  {          0.0,               0.0,              c3c4,1-(c4c3+c4c5+c4i4),              c5c4,               0.0,               0.0,               0.0,              i4c4,               0.0,              0.0,               0.0 },
+    /*c5*/  {          0.0,               0.0,               0.0,              c4c5,1-(c5c4+c5oo+c5i5),               0.0,               0.0,               0.0,               0.0,              i5c5,              0.0,              ooc5 },
+    /*i1*/  {         c1i1,               0.0,               0.0,               0.0,               0.0,     1-(i1c1+i1i2),              i2i1,               0.0,               0.0,               0.0,              0.0,               0.0 },
+    /*i2*/  {          0.0,              c2i2,               0.0,               0.0,               0.0,              i1i2,1-(i2i1+i2i3+i2c2),              i3i2,               0.0,               0.0,              0.0,               0.0 },
+    /*i3*/  {          0.0,               0.0,              c3i3,               0.0,               0.0,               0.0,              i2i3,1-(i3i2+i3i4+i3c3),              i4i3,               0.0,              0.0,               0.0 },
+    /*i4*/  {          0.0,               0.0,               0.0,              c4i4,               0.0,               0.0,               0.0,              i3i4,1-(i4i3+i4i5+i4c4),              i5i4,              0.0,               0.0 },
+    /*i5*/  {          0.0,               0.0,               0.0,               0.0,              c5i5,               0.0,               0.0,               0.0,              i4i5,1-(i5i4+i5i6+i5c5),             i6i5,               0.0 },
+    /*i6*/  {          0.0,               0.0,               0.0,               0.0,               0.0,               0.0,               0.0,               0.0,               0.0,              i5i6,    1-(i6i5+i6oo),              ooi6 },
+    /*oo*/  {          0.0,               0.0,               0.0,               0.0,              c5oo,               0.0,               0.0,               0.0,               0.0,               0.0,             i6oo,     1-(ooc5+ooi6) }
   };
   for ( int i = 0; i < N_STATE_NAV; i++ ) { 
     for ( int j = 0; j < N_STATE_NAV; j++ ) { 
@@ -574,7 +574,7 @@ static void Set_Nav_param ( const double l_v, double matrix [ N_STATE_NAV ] [ N_
 
 // First order
 static void Nav_update ( const double l_v, double *oo, double *c1, double *c2, double *c3, double *c4, double *c5, double *i1, double *i2, double *i3, double *i4, double *i5, double *i6 ) {
-  
+
   double vca [ N_STATE_NAV ] [ N_STATE_NAV ] = {};
   double vcb [ N_STATE_NAV ] = { c1 [ 0 ] , c2 [ 0 ], c3 [ 0 ], c4 [ 0 ], c5 [ 0 ], i1 [ 0 ], i2 [ 0 ], i3 [ 0 ], i4 [ 0 ], i5 [ 0 ], i6 [ 0 ], oo [ 0 ] };  
   double matrixA [ N_STATE_NAV ] [ N_STATE_NAV ] = {};
@@ -596,7 +596,7 @@ static void Nav_update ( const double l_v, double *oo, double *c1, double *c2, d
     //  }
     //}
     //for ( int i = 0; i < N_STATE_NAV; i++ ) { vca [ i ] [ i ] += 1.0; }
-    
+
     for ( int col = 0; col < N_STATE_NAV; col++ ) { vca [ N_STATE_NAV - 1 ] [ col ] = 1.0; } // I6 channel 
     vcb [ N_STATE_NAV - 1 ] = 1.0;
     gaussian_elimination ( N_STATE_NAV, vca, vcb );

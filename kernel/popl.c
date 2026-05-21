@@ -55,9 +55,9 @@ population_t *initialize_population ( const char *filename )
   int n_popl = get_lines ( filename );
   int n_neuron [ n_popl ], n_comp [ n_popl ];
   get_population_size ( filename, n_popl, n_neuron, n_comp );
-  
+
   population_t *u = initialize ( n_popl, n_neuron, n_comp );
-  
+
   FILE *file = fopen ( filename, "r" );
   if ( ! file ) { fprintf ( stderr, "Error: no such file %s\n", filename ); exit ( 1 ); }
 

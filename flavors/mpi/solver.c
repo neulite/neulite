@@ -23,7 +23,7 @@ solver_t *initialize_solver ( const population_t *u )
 {
   const int n_popl = u -> n_popl;
   int n_neuron = 0; for ( int i = 0; i < n_popl; i++ ) { n_neuron += u -> n_neuron [ i ]; }
-  
+
   solver_t *solver = calloc ( 1, sizeof ( solver_t ) );
   solver -> linsys = calloc ( n_neuron, sizeof ( linsys_t ) );
   solver -> n_popl = n_popl;
@@ -45,8 +45,8 @@ solver_t *initialize_solver ( const population_t *u )
 
       for ( int i = 0; i < n_comp * n_comp; i++ ) { mat [ i ] = 0.0; }
       for ( int i = 0; i < n_comp; i++ ) {
-	const int d = parent [ i ];
-	if ( d >= 0 ) {
+        const int d = parent [ i ];
+        if ( d >= 0 ) {
           double i_mid_rad = 0.5 * (proximal_rad[i] + distal_rad[i]);
           double d_mid_rad = 0.5 * (proximal_rad[d] + distal_rad[d]);
           double Rd_half = ra[ d ] * len [ d ] * 0.5f / ( M_PI * d_mid_rad * distal_rad[d] ); 
@@ -55,14 +55,14 @@ solver_t *initialize_solver ( const population_t *u )
           double g = ( d > 0 )? 1.0/(Rd_half + Ri_half) : 1.0/Ri_half; // -1 * [mS]
           mat [ d + n_comp * i ] = g;
           mat [ i + n_comp * d ] = mat [ d + n_comp * i ]; // i*NGO -> set Rows, +d -> set Columns
-	}
+        }
       }
       for ( int i = 0; i < n_comp; i++ ) {
-	double r = 0;
-	for ( int j = 0; j < n_comp; j++ ) {
-	  r += mat [ j + n_comp * i ];
-	}
-	mat [ i + n_comp * i ] = r;
+        double r = 0;
+        for ( int j = 0; j < n_comp; j++ ) {
+          r += mat [ j + n_comp * i ];
+        }
+        mat [ i + n_comp * i ] = r;
       }
     }
 
@@ -70,11 +70,11 @@ solver_t *initialize_solver ( const population_t *u )
       linsys_t *s = &solver -> linsys [ offset + li ];
       s -> H = hines_matrix_initialize( u, pid );
       for ( int i = 0; i < n_comp; i++ ) {
-	const int parent_id = s -> H -> parent_id [ i ];
-	s -> H -> Ad     [ i ] = mat [ i + n_comp * i ];
-	s -> H -> Api    [ i ] = ( parent_id >= 0 ) ? -mat [ parent_id + n_comp * i ] : 0;
-	s -> H -> bu_Ad  [ i ] = mat [ i + n_comp * i ];
-	s -> H -> bu_Api [ i ] = ( parent_id >= 0 ) ? -mat [ parent_id + n_comp * i ] : 0;
+        const int parent_id = s -> H -> parent_id [ i ];
+        s -> H -> Ad     [ i ] = mat [ i + n_comp * i ];
+        s -> H -> Api    [ i ] = ( parent_id >= 0 ) ? -mat [ parent_id + n_comp * i ] : 0;
+        s -> H -> bu_Ad  [ i ] = mat [ i + n_comp * i ];
+        s -> H -> bu_Api [ i ] = ( parent_id >= 0 ) ? -mat [ parent_id + n_comp * i ] : 0;
       }
       s -> b = calloc ( n_comp, sizeof ( double ) ); // b value
     }
@@ -104,7 +104,7 @@ static void update_matrix ( const int id, const population_t * __restrict__ u, c
     linsys -> H -> Ad[ li ] += ( cm [ li ] / dt ) + g_leak [ li ];
     linsys -> b [ li ]  = ( cm [ li ] / dt ) * v [ li ] + g_leak [ li ] * v_leak [ li ] + i_ext [ li ] * 1e-3; /* CONVERSION: 1e-3 from pA to nA */
   }
-  
+
   double lhs = 0.0, rhs = 0.0;
   calc_lhs_and_rhs ( u, n, i, pid, id, &lhs, &rhs );
   linsys -> H -> Ad[ 0  ] += lhs;
@@ -133,7 +133,7 @@ static void solve_matrix ( linsys_t * __restrict__ l )
   int *parent_id = l -> H -> parent_id;
   double *b = l -> b;
   double *x = l -> b;
-   
+
   // TRIANG
   int pid = parent_id [ n_comp - 1 ];
   double prev_Ad = Ad [ pid ] - Api [ n_comp - 1 ] * Api [ n_comp - 1 ] / Ad [ n_comp - 1 ];
@@ -144,8 +144,8 @@ static void solve_matrix ( linsys_t * __restrict__ l )
   for ( int i = n_comp - 2; i > 0; i-- ) {
     pid = parent_id [ i ];
     if ( i != prev_pid ) {
-        prev_b = b [ i ];
-        prev_Ad = Ad [ i ];
+      prev_b = b [ i ];
+      prev_Ad = Ad [ i ];
     }
     prev_b = b [ pid ] - prev_b * Api [ i ] / prev_Ad;
     prev_Ad = Ad [ pid ]  - Api [ i ] * Api [ i ] / prev_Ad; // A(i,p) = A(p,i)
@@ -153,7 +153,7 @@ static void solve_matrix ( linsys_t * __restrict__ l )
     b [ pid ] = prev_b;
     prev_pid = pid;
   }
-  
+
   // FWSUB
   x [ 0 ] = b [ 0 ] / Ad [ 0 ];
   pid = parent_id [ 1 ];
@@ -176,26 +176,26 @@ static void solve_matrix ( linsys_t * __restrict__ l )
 //
 static void solve_matrix_vanilla ( linsys_t * __restrict__ l )
 {
-  int n_comp = l -> H -> n_comp;
-  double *Ad = l -> H -> Ad;
-  double *Api = l -> H -> Api;
-  int *parent_id = l -> H -> parent_id;
-  double *b = l -> b;
-  double *x = l -> b;
-  
-  // TRIANG
-  for ( int i = n_comp - 1; i > 0; i-- ) {
-    int pid = parent_id [ i ];
-    Ad [ pid ] -= Api [ i ] * Api [ i ] / Ad [ i ]; // A(i,p) = A(p,i)
-    b  [ pid ] -= b   [ i ] * Api [ i ] / Ad [ i ];
-  }
-  
-  // FWSUB
-  x [ 0 ] = b [ 0 ] / Ad [ 0 ];
-  for ( int i = 1; i < n_comp; i++ ) {
-    int pid = parent_id [ i ];
-    x [ i ] = ( b [ i ] - x [ pid ] * Api [ i ] ) / Ad [ i ];
-  }
+int n_comp = l -> H -> n_comp;
+double *Ad = l -> H -> Ad;
+double *Api = l -> H -> Api;
+int *parent_id = l -> H -> parent_id;
+double *b = l -> b;
+double *x = l -> b;
+
+// TRIANG
+for ( int i = n_comp - 1; i > 0; i-- ) {
+int pid = parent_id [ i ];
+Ad [ pid ] -= Api [ i ] * Api [ i ] / Ad [ i ]; // A(i,p) = A(p,i)
+b  [ pid ] -= b   [ i ] * Api [ i ] / Ad [ i ];
+}
+
+// FWSUB
+x [ 0 ] = b [ 0 ] / Ad [ 0 ];
+for ( int i = 1; i < n_comp; i++ ) {
+int pid = parent_id [ i ];
+x [ i ] = ( b [ i ] - x [ pid ] * Api [ i ] ) / Ad [ i ];
+}
 }
 */
 

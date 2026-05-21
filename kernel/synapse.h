@@ -10,5 +10,4 @@ typedef struct {
 
 extern synapse_t *initialize_synapse ( conn_t * );
 extern void update_synapse ( const int, const conn_t *, synapse_t * );
-extern void add_spike_to_synapse_per_ms ( const conn_t *, synapse_t * ); // each 1 ms
 extern void finalize_synapse ( synapse_t * );

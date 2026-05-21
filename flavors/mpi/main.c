@@ -16,13 +16,13 @@ double constant_current ( const int t_ms, const int i ) { return ( I_DELAY <= t_
 int main ( int argc, char *argv [ ] )
 {
   if ( argc < 3 ) { fprintf ( stderr, "usage: %s <population_csv> <connection_csv>\n", argv [ 0 ] ); exit ( 1 ); }
-  
+
   MPI_Init ( &argc, &argv );
   int mpi_size; MPI_Comm_size ( MPI_COMM_WORLD, &mpi_size );
   int mpi_rank; MPI_Comm_rank ( MPI_COMM_WORLD, &mpi_rank );
   char mpi_host [ 1024 ]; { int len; MPI_Get_processor_name ( mpi_host, &len ); mpi_host [ len ] = '\0'; }
   fprintf ( stderr, "Hello from %s: rank %d of %d\n", mpi_host, mpi_rank, mpi_size );
-  
+
   const int global_n_neurons = get_global_n_neurons ( argv [ 1 ] );
   if ( mpi_size > global_n_neurons ) {
     if ( mpi_rank == 0 ) { fprintf ( stderr, "Error: mpi_size (%d) > global_n_neurons (%d)\n", mpi_size, global_n_neurons ); }
@@ -32,18 +32,18 @@ int main ( int argc, char *argv [ ] )
 
   network_t *n = initialize_network ( mpi_size, mpi_rank, argv [ 1 ], argv [ 2 ] );
   solver_t *s  = initialize_solver  ( n -> u );
-  
+
   const double timer_start = get_time ( );
   for ( int t_ms = 0; t_ms < TSTOP; t_ms++ ) {
     if ( mpi_rank == 0 ) { fprintf ( stderr, "t = %d\n", t_ms ); };
-    
+
     set_current ( t_ms, n, constant_current );
     solve_network ( t_ms, n, s );
     spike_propagation ( t_ms, n );
   }
   const double timer_stop = get_time ( );
   if ( mpi_rank == 0 ) { fprintf ( stderr, "Elapsed time = %f sec.\n", timer_stop - timer_start ); }
-  
+
   finalize_solver  ( s );
   finalize_network ( n );
   MPI_Finalize ( );

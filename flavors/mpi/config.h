@@ -8,6 +8,7 @@
 #define TSTOP ( 2000.0 )
 #define DT ( 0.1 )
 #define INV_DT ( ( int ) ( 1.0 / ( DT ) ) )
+#define ITR_BIT_WIDTH ( 8U )
 
 // Neuron parameters
 #define SPIKE_THRESHOLD ( -15.0 )

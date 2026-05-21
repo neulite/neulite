@@ -19,7 +19,7 @@ conn_t *initialize_connection ( const population_t *u, const neuron_t *n, const 
   conn_t *c = calloc (1, sizeof ( conn_t ) );
 
   if ( n -> n_neuron == 0 ) { c -> n_conn = 0; return c; }
- 
+
   int *pre_ary  = calloc ( n -> n_neuron, sizeof ( int ) );
   int *post_ary = calloc ( n -> n_neuron, sizeof ( int ) );
   int n_conn = 0, n_pre = 0;
@@ -72,7 +72,7 @@ conn_t *initialize_connection ( const population_t *u, const neuron_t *n, const 
   }
   free (pre_ary);
   free (post_ary);
- 
+
   c -> post_c = calloc ( c -> n_conn, sizeof ( int ) );
   c -> weight = calloc ( c -> n_conn, sizeof ( double ) );
   c -> erev   = calloc ( c -> n_conn, sizeof ( double ) );
@@ -88,15 +88,15 @@ conn_t *initialize_connection ( const population_t *u, const neuron_t *n, const 
     while ( fgets ( buf, 1024, file ) ) {
       if ( strip_comment_destructive ( buf ) == 0 ) { continue; }
       if ( remove_blank_destructive_for_csv ( buf ) == 0 ) { continue; }
-      int d_pre, d_post_i, d_post_c, d_delay;
-      double f_weight, f_decay, f_rise, f_erev;
+      int d_pre, d_post_i, d_post_c;
+      double f_weight, f_decay, f_rise, f_erev, f_delay;
       char c_type;
-      const int nf = sscanf ( buf, "%d,%d,%d,%lf,%lf,%lf,%lf,%d,%c", &d_pre, &d_post_i, &d_post_c, &f_weight, &f_decay, &f_rise, &f_erev, &d_delay, &c_type );
+      const int nf = sscanf ( buf, "%d,%d,%d,%lf,%lf,%lf,%lf,%lf,%c", &d_pre, &d_post_i, &d_post_c, &f_weight, &f_decay, &f_rise, &f_erev, &f_delay, &c_type );
       assert ( nf == 9 );
 
       assert ( d_post_c < u -> n_comp [ n -> pid [ d_post_i ] ] );
-      assert ( d_delay > 0 );
-      
+      assert ( f_delay >= 1.0 );
+
       const double tau_prime = f_decay * f_rise / ( f_decay - f_rise );
       const double tau_diff  = f_rise / f_decay;
       const double norm_coef = 1.0 / ( pow ( tau_diff, ( tau_prime / f_decay ) ) - pow ( tau_diff, ( tau_prime / f_rise ) ) );
@@ -106,7 +106,7 @@ conn_t *initialize_connection ( const population_t *u, const neuron_t *n, const 
       c -> erev   [ solver_id1 ] = f_erev;
       c -> decay  [ solver_id1 ] = exp ( - DT / f_decay );
       local_idx [ d_post_i ]++;
-      c -> delay [ idx ] = d_delay;
+      c -> delay [ idx ] = (int)(f_delay / DT);
       c -> id    [ idx ] = solver_id1;
       idx++;
       const int solver_id2 = c -> ptr_post [ d_post_i ] + local_idx [ d_post_i ];
@@ -115,14 +115,14 @@ conn_t *initialize_connection ( const population_t *u, const neuron_t *n, const 
       c -> erev   [ solver_id2 ] = f_erev;
       c -> decay  [ solver_id2 ] = exp ( - DT / f_rise );
       local_idx [ d_post_i ]++;
-      c -> delay [ idx ] = d_delay;
+      c -> delay [ idx ] = (int)(f_delay / DT);
       c -> id    [ idx ] = solver_id2;
       idx++;
     }
     free ( local_idx );
     fclose ( file );
   }
-  
+
   return c;
 }
 
