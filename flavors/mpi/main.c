@@ -11,7 +11,7 @@
 extern int get_global_n_neurons ( const char * );
 extern double get_time ( void );
 
-double constant_current ( const int t_ms, const int i ) { return ( I_DELAY <= t_ms && t_ms < I_DELAY + I_DURATION ) ? I_AMP : 0.0; /* UNIT: pA [BMTK] */ }
+double constant_current ( const int t_ms, const int i ) { return ( I_DELAY <= t_ms && t_ms < I_DELAY + I_DURATION ) ? I_AMP : 0.0; /* UNIT: nA [BMTK] */ }
 
 int main ( int argc, char *argv [ ] )
 {
