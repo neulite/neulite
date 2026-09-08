@@ -102,7 +102,7 @@ static void update_matrix ( const int id, const population_t * __restrict__ u, c
 
   for ( int li = 0; li < n_comp; li++ ) {
     linsys -> H -> Ad[ li ] += ( cm [ li ] / dt ) + g_leak [ li ];
-    linsys -> b [ li ]  = ( cm [ li ] / dt ) * v [ li ] + g_leak [ li ] * v_leak [ li ] + i_ext [ li ] * 1e-3; /* CONVERSION: 1e-3 from pA to nA */
+    linsys -> b [ li ]  = ( cm [ li ] / dt ) * v [ li ] + g_leak [ li ] * v_leak [ li ] + i_ext [ li ] * 1e-3; /* CONVERSION: 1e-3 from nA to uA */
   }
 
   double lhs = 0.0, rhs = 0.0;
