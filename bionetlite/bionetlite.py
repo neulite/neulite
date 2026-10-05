@@ -6,6 +6,7 @@ from collections import Counter
 from decimal import Decimal, ROUND_HALF_UP
 import glob
 import h5py
+import hashlib
 import json
 import logging
 import numpy as np
@@ -316,10 +317,27 @@ class NeuliteNetwork(DenseNetwork):
     EDGE_TYPE_COLUMNS = ["edge_type_id", "syn_weight", "target_sections", "delay",
                          "tau2", "tau1", "erev", "weight_function", "weight_sigma"]
     NODE_PROPERTY_COLUMNS = ["node_id", "node_type_id", "tuning_angle", "x", "z"]
+    SWC_ID_MAP_DIR = "swc_id_map"
+    SWC_ID_MAP_COLUMNS = [
+        "morphology",
+        "bmtk_swc_id",
+        "zero_based_id",
+        "converted_cid",
+        "type",
+        "x",
+        "y",
+        "z",
+        "r",
+        "parent",
+        "status",
+    ]
 
     def __init__(self, name, convert_morphologies=True, convert_ion_channels=True,
                  simulation_config=None, generate_config_h=True,
                  enable_direction_rules=False,
+                 preselect_synapse_locations=False,
+                 preselect_synapse_seed=None,
+                 write_precise_target_debug_properties=True,
                  **network_props):
         super(NeuliteNetwork, self).__init__(name, **network_props or {})
 
@@ -348,6 +366,9 @@ class NeuliteNetwork(DenseNetwork):
         self.convert_morphologies_flag = convert_morphologies
         self.convert_ion_channels_flag = convert_ion_channels
         self.enable_direction_rules = enable_direction_rules
+        self.preselect_synapse_locations = preselect_synapse_locations
+        self.preselect_synapse_seed = preselect_synapse_seed
+        self.write_precise_target_debug_properties = write_precise_target_debug_properties
         self.skipped_node_groups = []
         self._edge_type_order_by_id = {}
         self._next_edge_type_order = 0
@@ -392,6 +413,9 @@ class NeuliteNetwork(DenseNetwork):
     def build(self, force=False):
         if mpi_size > 1:
             build_time_uuid()
+        if self.preselect_synapse_locations and mpi_size > 1:
+            from bmtk.builder.bionet import get_swc as _get_swc
+            barrier()
         return super(NeuliteNetwork, self).build(force=force)
 
     @staticmethod
@@ -485,7 +509,214 @@ class NeuliteNetwork(DenseNetwork):
         if edge_type_id is not None:
             self._edge_type_order_by_id[int(edge_type_id)] = self._next_edge_type_order
             self._next_edge_type_order += 1
+        if self.preselect_synapse_locations:
+            self._add_precise_targeting_properties(connection, properties)
         return connection
+
+    def _add_precise_targeting_properties(self, connection, edge_properties):
+        if connection.source_network_name != self.name or connection.target_network_name != self.name:
+            raise ValueError(
+                "Automatic precise targeting currently supports self-network biophysical edges only; "
+                f"got {connection.source_network_name} -> {connection.target_network_name}"
+            )
+
+        if self.write_precise_target_debug_properties:
+            names = ["sec_id", "sec_x", "bmtk_swc_id", "bmtk_swc_dist", "neulite_post_cid"]
+            dtypes = [np.uint32, np.float64, np.int64, np.float64, np.int64]
+        else:
+            names = ["sec_id", "sec_x", "neulite_post_cid"]
+            dtypes = [np.uint32, np.float64, np.int64]
+
+        if self._is_missing_value(edge_properties.get("target_sections")):
+            rule = self._missing_precise_targeting_rule(
+                "target_sections is required when preselect_synapse_locations=True"
+            )
+            connection.add_properties(names, rule=rule, dtypes=dtypes)
+            return
+
+        target_sections = self._normalize_precise_target_sections(edge_properties.get("target_sections"))
+        distance_range = self._normalize_precise_distance_range(edge_properties.get("distance_range"))
+        edge_type_id = int(connection.edge_type_properties["edge_type_id"])
+        rule = self._precise_targeting_rule(edge_type_id, target_sections, distance_range)
+        connection.add_properties(names, rule=rule, dtypes=dtypes)
+
+    @staticmethod
+    def _missing_precise_targeting_rule(message):
+        def rule(source, target):
+            raise ValueError(message)
+
+        return rule
+
+    def _precise_targeting_rule(self, edge_type_id, target_sections, distance_range):
+        synapse_ordinals = Counter()
+        swc_cache = {}
+        mapping_cache = {}
+
+        def rule(source, target):
+            source_node_id = self._node_id_from_builder_node(source)
+            target_node_id = self._node_id_from_builder_node(target)
+            ordinal_key = (source_node_id, target_node_id)
+            synapse_ordinal = synapse_ordinals[ordinal_key]
+            synapse_ordinals[ordinal_key] += 1
+
+            placement = self._preselect_synapse_location(
+                source,
+                target,
+                target_sections=target_sections,
+                distance_range=distance_range,
+                edge_type_id=edge_type_id,
+                synapse_ordinal=synapse_ordinal,
+                swc_cache=swc_cache,
+                mapping_cache=mapping_cache,
+            )
+            if self.write_precise_target_debug_properties:
+                return placement
+            return placement[0], placement[1], placement[4]
+
+        return rule
+
+    @staticmethod
+    def _node_id_from_builder_node(node):
+        if hasattr(node, "node_id"):
+            return int(node.node_id)
+        return int(node["node_id"])
+
+    @staticmethod
+    def _literal_or_value(value):
+        if isinstance(value, str):
+            try:
+                return ast.literal_eval(value)
+            except (SyntaxError, ValueError):
+                return value
+        return value
+
+    @staticmethod
+    def _normalize_precise_target_sections(target_sections):
+        if NeuliteNetwork._is_missing_value(target_sections):
+            raise ValueError("target_sections is required when preselect_synapse_locations=True")
+
+        target_sections = NeuliteNetwork._literal_or_value(target_sections)
+        if isinstance(target_sections, str):
+            target_sections = [target_sections]
+        if isinstance(target_sections, np.ndarray):
+            target_sections = target_sections.tolist()
+        if not isinstance(target_sections, (list, tuple)) or len(target_sections) == 0:
+            raise ValueError("target_sections must be a non-empty list when preselect_synapse_locations=True")
+
+        section_names = []
+        section_name_by_swc_type = {
+            1: "somatic",
+            2: "axon",
+            3: "basal",
+            4: "apical",
+        }
+        for section in target_sections:
+            if isinstance(section, (int, np.integer)):
+                section = section_name_by_swc_type.get(int(section), section)
+            elif isinstance(section, str) and section.strip() in ("1", "2", "3", "4"):
+                section = section_name_by_swc_type[int(section.strip())]
+            section = str(section)
+            if section in ("axon", "axonal", "2"):
+                raise ValueError("axon precise targeting is not supported")
+            section_names.append(section)
+
+        return tuple(section_names)
+
+    @staticmethod
+    def _normalize_precise_distance_range(distance_range):
+        if NeuliteNetwork._is_missing_value(distance_range):
+            logger.info(
+                "distance_range not specified for precise targeting; using all-distance default [0.0, 1.0e20]"
+            )
+            return (0.0, 1.0e20)
+
+        distance_range = NeuliteNetwork._literal_or_value(distance_range)
+        if isinstance(distance_range, np.ndarray):
+            distance_range = distance_range.tolist()
+        if not isinstance(distance_range, (list, tuple)) or len(distance_range) != 2:
+            raise ValueError("distance_range must be a two-value sequence when preselect_synapse_locations=True")
+
+        dmin, dmax = float(distance_range[0]), float(distance_range[1])
+        if dmin < 0.0 or dmax <= dmin:
+            raise ValueError(
+                "distance_range must satisfy 0.0 <= min < max when preselect_synapse_locations=True"
+            )
+        return (dmin, dmax)
+
+    def _stable_preselect_seed(self, edge_type_id, source_node_id, target_node_id, synapse_ordinal):
+        payload = "|".join(
+            str(value)
+            for value in (
+                self.preselect_synapse_seed,
+                edge_type_id,
+                source_node_id,
+                target_node_id,
+                synapse_ordinal,
+            )
+        ).encode("utf-8")
+        return int.from_bytes(hashlib.sha256(payload).digest()[:8], "little") % (2 ** 32)
+
+    def _bmtk_swc_for_target(self, target, swc_cache):
+        target_node_id = self._node_id_from_builder_node(target)
+        if target_node_id not in swc_cache:
+            from bmtk.builder.bionet import get_swc
+            swc_cache[target_node_id] = get_swc(
+                target,
+                morphology_dir=self.morphologies_dir,
+                use_cache=False,
+            )
+        return swc_cache[target_node_id]
+
+    @staticmethod
+    def _validate_candidate_probabilities(candidate_segment_indices, candidate_probabilities):
+        candidate_probabilities = np.asarray(candidate_probabilities, dtype=np.float64)
+        if len(candidate_segment_indices) != len(candidate_probabilities):
+            raise ValueError("BMTK precise targeting returned mismatched candidate segments and probabilities")
+        probability_sum = float(np.sum(candidate_probabilities))
+        if probability_sum <= 0.0 or not np.isfinite(probability_sum) or not np.all(np.isfinite(candidate_probabilities)):
+            raise ValueError("BMTK precise targeting returned invalid candidate probabilities")
+        return candidate_probabilities / probability_sum
+
+    def _preselect_synapse_location(self, source, target, target_sections, distance_range,
+                                    edge_type_id, synapse_ordinal, swc_cache=None,
+                                    mapping_cache=None):
+        if swc_cache is None:
+            swc_cache = {}
+        if mapping_cache is None:
+            mapping_cache = {}
+
+        source_node_id = self._node_id_from_builder_node(source)
+        target_node_id = self._node_id_from_builder_node(target)
+        swc = self._bmtk_swc_for_target(target, swc_cache)
+        candidate_segment_indices, candidate_probabilities = swc.find_sections(target_sections, distance_range)
+        if len(candidate_segment_indices) == 0:
+            raise ValueError(
+                "No candidate target sections found for precise targeting: "
+                f"target_node_id={target_node_id}, sections={target_sections}, distance_range={distance_range}"
+            )
+        candidate_probabilities = self._validate_candidate_probabilities(
+            candidate_segment_indices,
+            candidate_probabilities,
+        )
+
+        seed = self._stable_preselect_seed(edge_type_id, source_node_id, target_node_id, synapse_ordinal)
+        rng = np.random.default_rng(seed)
+        chosen_segment_index = int(rng.choice(candidate_segment_indices, p=candidate_probabilities))
+        sec_id = int(swc.seg_props.sec_id[chosen_segment_index])
+        sec_x = float(swc.seg_props.x[chosen_segment_index])
+        bmtk_swc_id, bmtk_swc_dist = swc.get_swc_id(sec_id, sec_x)
+        neulite_post_cid = self._lookup_neulite_cid_from_bmtk_swc_id(
+            target.get("morphology"),
+            int(bmtk_swc_id),
+            mapping_cache=mapping_cache,
+        )
+        return (
+            np.uint32(sec_id),
+            float(sec_x),
+            int(bmtk_swc_id),
+            float(bmtk_swc_dist),
+            int(neulite_post_cid),
+        )
 
     def set_config_path(self, config_path):
         """Set the path for config.json.
@@ -698,15 +929,90 @@ class NeuliteNetwork(DenseNetwork):
         for file in files:
             logger.debug(f"_convert_morphologies: {file}")
             swc = pd.read_csv(file, names=['id', 'type', 'x', 'y', 'z', 'r', 'parent'], comment="#", delimiter=" ", dtype={'id': int, 'parent': int})
+            swc["bmtk_swc_id"] = swc["id"]
             swc = self._replace_zero_based_index(swc)
+            swc["zero_based_id"] = swc["id"]
+            swc["status"] = "mapped"
+            removed_axon_map = self._removed_axon_mapping_rows(swc, os.path.basename(file))
             swc = self._fix_axon_perisomatic_directed_df(swc)
             swc = self._sort_by_DFS(swc)
-            swc = swc.rename(columns={'id': '#id'})
+            self._write_swc_id_map(os.path.basename(file), swc, removed_axon_map)
+            swc = swc[["id", "type", "x", "y", "z", "r", "parent"]].rename(columns={'id': '#id'})
             output_file = os.path.join(output_dir, os.path.basename(file))
             swc.to_csv(output_file, index=False, sep=" ", float_format='%.6f')
             logger.debug(f"Saved converted morphology to: {output_file}")
         
         logger.info(f"Morphology conversion completed. Converted {len(files)} SWC files to {output_dir}")
+
+    def _swc_id_map_path(self, morphology):
+        return os.path.join(
+            self.neulite_dir,
+            self.SWC_ID_MAP_DIR,
+            f"{os.path.basename(morphology)}.csv",
+        )
+
+    def _write_swc_id_map(self, morphology, converted_swc, removed_axon_map):
+        map_dir = os.path.join(self.neulite_dir, self.SWC_ID_MAP_DIR)
+        if not os.path.exists(map_dir):
+            os.makedirs(map_dir)
+
+        converted_map = converted_swc.copy()
+        converted_map["morphology"] = morphology
+        converted_map["converted_cid"] = converted_map["id"]
+
+        mapping = pd.concat([converted_map, removed_axon_map], ignore_index=True, sort=False)
+        for column in self.SWC_ID_MAP_COLUMNS:
+            if column not in mapping.columns:
+                mapping[column] = pd.NA
+
+        mapping = mapping[self.SWC_ID_MAP_COLUMNS]
+        mapping.to_csv(self._swc_id_map_path(morphology), index=False)
+
+    def _lookup_neulite_cid_from_bmtk_swc_id(self, morphology, bmtk_swc_id, mapping_cache=None):
+        if mapping_cache is None:
+            mapping_cache = {}
+        if self._is_missing_value(morphology):
+            raise ValueError("morphology is required for precise targeting SWC id lookup")
+
+        morphology_basename = os.path.basename(morphology)
+        if morphology_basename not in mapping_cache:
+            map_path = self._swc_id_map_path(morphology_basename)
+            if not os.path.exists(map_path):
+                raise FileNotFoundError(f"SWC id map not found for morphology {morphology_basename}: {map_path}")
+            mapping_cache[morphology_basename] = pd.read_csv(map_path)
+
+        mapping = mapping_cache[morphology_basename]
+        matches = mapping[mapping["bmtk_swc_id"] == bmtk_swc_id]
+        if matches.empty:
+            raise ValueError(
+                f"bmtk_swc_id={bmtk_swc_id} is not present in SWC id map for {morphology_basename}"
+            )
+
+        mapped = matches[matches["status"] == "mapped"]
+        if mapped.empty:
+            statuses = sorted(str(status) for status in matches["status"].dropna().unique())
+            raise ValueError(
+                f"bmtk_swc_id={bmtk_swc_id} is not mapped for {morphology_basename}; "
+                f"status={statuses}"
+            )
+
+        converted_cid = mapped.iloc[0]["converted_cid"]
+        if self._is_missing_value(converted_cid):
+            raise ValueError(
+                f"bmtk_swc_id={bmtk_swc_id} has no converted_cid for {morphology_basename}"
+            )
+        return int(converted_cid)
+
+    @staticmethod
+    def _removed_axon_mapping_rows(swc, morphology):
+        axon_rows = swc[swc["type"] == 2].copy()
+        if axon_rows.empty:
+            return pd.DataFrame(columns=NeuliteNetwork.SWC_ID_MAP_COLUMNS)
+
+        axon_rows["morphology"] = morphology
+        axon_rows["converted_cid"] = pd.NA
+        axon_rows["status"] = "axon_removed"
+        return axon_rows[NeuliteNetwork.SWC_ID_MAP_COLUMNS]
 
     def _replace_zero_based_index(self, swc_df):
         if swc_df['id'][0] == 1:
@@ -748,16 +1054,19 @@ class NeuliteNetwork(DenseNetwork):
         # sort by new id
         new_df = new_df.sort_values('new_id')
 
-        # create DataFrame
-        final_df = pd.DataFrame({
-            'id': new_df['new_id'],
-            'type': new_df['type'],
-            'x': new_df['x'],
-            'y': new_df['y'],
-            'z': new_df['z'],
-            'r': new_df['r'],
-            'parent': new_df['new_parent']
-        })
+        base_columns = ["id", "type", "x", "y", "z", "r", "parent"]
+        final_data = {
+            'id': new_df['new_id'].to_numpy(),
+            'type': new_df['type'].to_numpy(),
+            'x': new_df['x'].to_numpy(),
+            'y': new_df['y'].to_numpy(),
+            'z': new_df['z'].to_numpy(),
+            'r': new_df['r'].to_numpy(),
+            'parent': new_df['new_parent'].to_numpy()
+        }
+        for column in [c for c in swc_df.columns if c not in base_columns]:
+            final_data[column] = new_df[column].to_numpy()
+        final_df = pd.DataFrame(final_data)
 
         return final_df
 
@@ -816,6 +1125,12 @@ class NeuliteNetwork(DenseNetwork):
             'r': [0.5, 0.5],
             'parent': [df[df['type'] == 1]['id'].iloc[-1], max_id + 1]
         })
+        for column in [c for c in df.columns if c not in new_axon_df.columns]:
+            new_axon_df[column] = pd.NA
+        if "zero_based_id" in new_axon_df.columns:
+            new_axon_df["zero_based_id"] = new_axon_df["id"]
+        if "status" in new_axon_df.columns:
+            new_axon_df["status"] = "synthetic_axon"
 
         # Concatenate original df (without axon) and new axon df
         result_df = pd.concat([df, new_axon_df], ignore_index=True)
@@ -1170,6 +1485,31 @@ class NeuliteNetwork(DenseNetwork):
         return nsyns
 
     @staticmethod
+    def _connection_chunk_group_property(merged_edges, chunk_id, prop_name, n_edges):
+        values = np.full(n_edges, np.nan, dtype=object)
+        if n_edges == 0:
+            return values
+
+        edge_group_ids = np.asarray(merged_edges.get_edge_group_ids(chunk_id))
+        edge_group_indices = np.asarray(merged_edges.get_edge_group_indices(chunk_id))
+
+        for group_id in np.unique(edge_group_ids):
+            group_mask = edge_group_ids == group_id
+            if not np.any(group_mask):
+                continue
+
+            try:
+                group_values = np.asarray(merged_edges.get_group_property(prop_name, int(group_id), chunk_id))
+            except KeyError:
+                continue
+
+            group_indices = edge_group_indices[group_mask]
+            local_indices = (group_indices - group_indices.min()).astype(np.int64)
+            values[group_mask] = group_values[local_indices]
+
+        return values
+
+    @staticmethod
     def _connection_chunk_dataframe(merged_edges, chunk_id, edge_types_data):
         source_ids = merged_edges.get_source_node_ids(chunk_id)
         target_ids = merged_edges.get_target_node_ids(chunk_id)
@@ -1185,6 +1525,29 @@ class NeuliteNetwork(DenseNetwork):
 
         connections = pd.merge(edge_type_id_df, edge_types_data, on='edge_type_id', how='left')
         connections = pd.concat([connections, nsyns_data], axis=1)
+        legacy_post_cids = NeuliteNetwork._connection_chunk_group_property(
+            merged_edges,
+            chunk_id,
+            "post_cid",
+            len(source_ids),
+        )
+        if not pd.Series(legacy_post_cids).map(NeuliteNetwork._is_missing_value).all():
+            raise ValueError("Edge property post_cid is not supported; use neulite_post_cid")
+
+        preselected_post_cids = NeuliteNetwork._connection_chunk_group_property(
+            merged_edges,
+            chunk_id,
+            "neulite_post_cid",
+            len(source_ids),
+        )
+        missing_mask = pd.Series(preselected_post_cids).map(NeuliteNetwork._is_missing_value)
+        if not missing_mask.all():
+            if missing_mask.any():
+                raise ValueError(
+                    "Preselected post cid group property coverage is partial; "
+                    f"neulite_post_cid is missing for {int(missing_mask.sum())} edge row(s)"
+                )
+            connections["post cid"] = pd.Series(preselected_post_cids, dtype="object")
         connections.insert(0, "pre nid", source_node_id_df)
         connections.insert(1, "post nid", target_node_id_df)
         return connections
@@ -1214,6 +1577,10 @@ class NeuliteNetwork(DenseNetwork):
     def _assign_post_cids_before_distribution(self, connections, h5_node_type):
         file_cache = {}
         converted_swc_path = os.path.join(self.neulite_dir, self.swc_dir)
+        NeuliteNetwork._validate_preassigned_post_cids(connections)
+        if "post cid" in connections.columns:
+            return connections
+
         connections = self._post_cid_sampling_order(connections)
         connections.loc[:, "post cid"] = self._assign_post_cids(
             connections,
@@ -2106,11 +2473,17 @@ class NeuliteBuilder(NetworkBuilder):
     def __init__(self, name, adaptor_cls=NeuliteNetwork, convert_morphologies=True, convert_ion_channels=True,
                  simulation_config=None, generate_config_h=True,
                  enable_direction_rules=False,
+                 preselect_synapse_locations=False,
+                 preselect_synapse_seed=None,
+                 write_precise_target_debug_properties=True,
                  **network_props):
         self.adaptor = adaptor_cls(name, convert_morphologies=convert_morphologies, convert_ion_channels=convert_ion_channels,
                                    simulation_config=simulation_config,
                                    generate_config_h=generate_config_h,
                                    enable_direction_rules=enable_direction_rules,
+                                   preselect_synapse_locations=preselect_synapse_locations,
+                                   preselect_synapse_seed=preselect_synapse_seed,
+                                   write_precise_target_debug_properties=write_precise_target_debug_properties,
                                    **network_props)
 
     def save_edges(self, edges_file_name=None, edge_types_file_name=None, output_dir='.', src_network=None,
