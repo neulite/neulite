@@ -3,6 +3,7 @@
 
 import ast
 from collections import Counter
+from dataclasses import dataclass
 from decimal import Decimal, ROUND_HALF_UP
 import glob
 import h5py
@@ -310,6 +311,18 @@ def apply_weight_functions(chunk, node_tuning=None, node_props=None, strict=Fals
     return chunk
 
 
+@dataclass(frozen=True)
+class _PreciseCandidateTable:
+    """Read-only precise targeting candidates shared by targets with the same morphology."""
+    indices: np.ndarray
+    probabilities: np.ndarray
+    sec_id: np.ndarray
+    sec_x: np.ndarray
+    swc_id: np.ndarray
+    swc_dist: np.ndarray
+    errors: dict
+
+
 class NeuliteNetwork(DenseNetwork):
     # Connection CSV header definition
     CONNECTION_CSV_HEADER = ["#pre nid", "post nid", "post cid", "weight",
@@ -372,6 +385,9 @@ class NeuliteNetwork(DenseNetwork):
         self.skipped_node_groups = []
         self._edge_type_order_by_id = {}
         self._next_edge_type_order = 0
+        self._precise_candidate_cache = {}
+        self._precise_mapping_cache = {}
+        self._precise_synapse_ordinals = {}
 
         if simulation_config is not None and generate_config_h:
             def generate_from_simulation_config():
@@ -416,7 +432,25 @@ class NeuliteNetwork(DenseNetwork):
         if self.preselect_synapse_locations and mpi_size > 1:
             from bmtk.builder.bionet import get_swc as _get_swc
             barrier()
-        return super(NeuliteNetwork, self).build(force=force)
+        self._clear_precise_cache()
+        try:
+            return super(NeuliteNetwork, self).build(force=force)
+        finally:
+            self._clear_precise_cache()
+
+    def _add_edges(self, connection_map, i):
+        edge_type_id = int(connection_map.edge_type_properties["edge_type_id"])
+        try:
+            return super(NeuliteNetwork, self)._add_edges(connection_map, i)
+        finally:
+            if edge_type_id in self._precise_synapse_ordinals:
+                self._precise_synapse_ordinals[edge_type_id].clear()
+
+    def _clear_precise_cache(self):
+        self._precise_candidate_cache.clear()
+        self._precise_mapping_cache.clear()
+        for synapse_ordinals in self._precise_synapse_ordinals.values():
+            synapse_ordinals.clear()
 
     @staticmethod
     def _rank0_failure_message(context, failure):
@@ -549,8 +583,7 @@ class NeuliteNetwork(DenseNetwork):
 
     def _precise_targeting_rule(self, edge_type_id, target_sections, distance_range):
         synapse_ordinals = Counter()
-        swc_cache = {}
-        mapping_cache = {}
+        self._precise_synapse_ordinals[edge_type_id] = synapse_ordinals
 
         def rule(source, target):
             source_node_id = self._node_id_from_builder_node(source)
@@ -566,8 +599,6 @@ class NeuliteNetwork(DenseNetwork):
                 distance_range=distance_range,
                 edge_type_id=edge_type_id,
                 synapse_ordinal=synapse_ordinal,
-                swc_cache=swc_cache,
-                mapping_cache=mapping_cache,
             )
             if self.write_precise_target_debug_properties:
                 return placement
@@ -656,16 +687,13 @@ class NeuliteNetwork(DenseNetwork):
         ).encode("utf-8")
         return int.from_bytes(hashlib.sha256(payload).digest()[:8], "little") % (2 ** 32)
 
-    def _bmtk_swc_for_target(self, target, swc_cache):
-        target_node_id = self._node_id_from_builder_node(target)
-        if target_node_id not in swc_cache:
-            from bmtk.builder.bionet import get_swc
-            swc_cache[target_node_id] = get_swc(
-                target,
-                morphology_dir=self.morphologies_dir,
-                use_cache=False,
-            )
-        return swc_cache[target_node_id]
+    def _bmtk_swc_for_target(self, target):
+        from bmtk.builder.bionet import get_swc
+        return get_swc(
+            target,
+            morphology_dir=self.morphologies_dir,
+            use_cache=False,
+        )
 
     @staticmethod
     def _validate_candidate_probabilities(candidate_segment_indices, candidate_probabilities):
@@ -677,44 +705,96 @@ class NeuliteNetwork(DenseNetwork):
             raise ValueError("BMTK precise targeting returned invalid candidate probabilities")
         return candidate_probabilities / probability_sum
 
-    def _preselect_synapse_location(self, source, target, target_sections, distance_range,
-                                    edge_type_id, synapse_ordinal, swc_cache=None,
-                                    mapping_cache=None):
-        if swc_cache is None:
-            swc_cache = {}
-        if mapping_cache is None:
-            mapping_cache = {}
+    def _precise_candidate_key(self, target, target_sections, distance_range):
+        morphology = target.get("morphology")
+        if self._is_missing_value(morphology):
+            raise ValueError("morphology is required for precise targeting")
 
-        source_node_id = self._node_id_from_builder_node(source)
-        target_node_id = self._node_id_from_builder_node(target)
-        swc = self._bmtk_swc_for_target(target, swc_cache)
+        swc_path = os.path.join(self.morphologies_dir, morphology)
+        if not os.path.exists(swc_path) and not swc_path.endswith(".swc"):
+            swc_path += ".swc"
+
+        # BMTK's find_sections depends only on these inputs, not on the cell position or rotation.
+        return (
+            os.path.realpath(swc_path),
+            target.get("model_processing") == "aibs_perisomatic",
+            tuple(target_sections),
+            tuple(distance_range),
+        )
+
+    def _precise_candidate_table(self, target, target_sections, distance_range):
+        key = self._precise_candidate_key(target, target_sections, distance_range)
+        if key in self._precise_candidate_cache:
+            return self._precise_candidate_cache[key]
+
+        swc = self._bmtk_swc_for_target(target)
         candidate_segment_indices, candidate_probabilities = swc.find_sections(target_sections, distance_range)
         if len(candidate_segment_indices) == 0:
             raise ValueError(
                 "No candidate target sections found for precise targeting: "
-                f"target_node_id={target_node_id}, sections={target_sections}, distance_range={distance_range}"
+                f"target_node_id={self._node_id_from_builder_node(target)}, "
+                f"sections={target_sections}, distance_range={distance_range}"
             )
         candidate_probabilities = self._validate_candidate_probabilities(
             candidate_segment_indices,
             candidate_probabilities,
         )
 
-        seed = self._stable_preselect_seed(edge_type_id, source_node_id, target_node_id, synapse_ordinal)
+        indices = np.array(candidate_segment_indices, copy=True)
+        sec_id = np.array(swc.seg_props.sec_id[indices], dtype=np.uint32)
+        sec_x = np.array(swc.seg_props.x[indices], dtype=np.float64)
+        swc_id = np.zeros(len(indices), dtype=np.int64)
+        swc_dist = np.zeros(len(indices), dtype=np.float64)
+        errors = {}
+        for row, (candidate_sec_id, candidate_sec_x) in enumerate(zip(sec_id, sec_x)):
+            # Only the selected candidate may fail the build, so keep the error until it is chosen.
+            try:
+                swc_id[row], swc_dist[row] = swc.get_swc_id(int(candidate_sec_id), float(candidate_sec_x))
+            except (ValueError, IndexError, KeyError, TypeError) as exc:
+                # Retaining the exception would keep its traceback and SWC reader alive.
+                errors[row] = (type(exc), exc.args)
+
+        table = _PreciseCandidateTable(
+            indices=indices,
+            probabilities=candidate_probabilities,
+            sec_id=sec_id,
+            sec_x=sec_x,
+            swc_id=swc_id,
+            swc_dist=swc_dist,
+            errors=errors,
+        )
+        for array in (indices, candidate_probabilities, sec_id, sec_x, swc_id, swc_dist):
+            array.flags.writeable = False
+        self._precise_candidate_cache[key] = table
+        return table
+
+    def _preselect_synapse_location(self, source, target, target_sections, distance_range,
+                                    edge_type_id, synapse_ordinal):
+        table = self._precise_candidate_table(target, target_sections, distance_range)
+
+        seed = self._stable_preselect_seed(
+            edge_type_id,
+            self._node_id_from_builder_node(source),
+            self._node_id_from_builder_node(target),
+            synapse_ordinal,
+        )
         rng = np.random.default_rng(seed)
-        chosen_segment_index = int(rng.choice(candidate_segment_indices, p=candidate_probabilities))
-        sec_id = int(swc.seg_props.sec_id[chosen_segment_index])
-        sec_x = float(swc.seg_props.x[chosen_segment_index])
-        bmtk_swc_id, bmtk_swc_dist = swc.get_swc_id(sec_id, sec_x)
+        chosen_segment_index = int(rng.choice(table.indices, p=table.probabilities))
+        row = int(np.searchsorted(table.indices, chosen_segment_index))
+        if row in table.errors:
+            error_type, error_args = table.errors[row]
+            raise error_type(*error_args)
+
         neulite_post_cid = self._lookup_neulite_cid_from_bmtk_swc_id(
             target.get("morphology"),
-            int(bmtk_swc_id),
-            mapping_cache=mapping_cache,
+            int(table.swc_id[row]),
+            mapping_cache=self._precise_mapping_cache,
         )
         return (
-            np.uint32(sec_id),
-            float(sec_x),
-            int(bmtk_swc_id),
-            float(bmtk_swc_dist),
+            np.uint32(table.sec_id[row]),
+            float(table.sec_x[row]),
+            int(table.swc_id[row]),
+            float(table.swc_dist[row]),
             int(neulite_post_cid),
         )
 
