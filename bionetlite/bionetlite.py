@@ -71,16 +71,255 @@ TUTORIAL_PARAMS = {
 }
 
 
+_WEIGHT_FUNCTIONS = {}
+_DIRECTION_RULE_NAMES = {"DirectionRule_EE", "DirectionRule_others"}
+
+
+def register_weight_function(name):
+    """Register a chunk-level weight function under a SONATA weight_function name."""
+    def decorator(func):
+        _WEIGHT_FUNCTIONS[name] = func
+        return func
+    return decorator
+
+
+def normalize_weight_function_name(name):
+    if name is None:
+        return "wmax"
+    if isinstance(name, str):
+        stripped = name.strip()
+        if stripped in ("", "NULL", "None", "nan"):
+            return "wmax"
+        return stripped
+    try:
+        if pd.isna(name):
+            return "wmax"
+    except (TypeError, ValueError):
+        pass
+    return str(name)
+
+
+def known_weight_functions():
+    return tuple(sorted(_WEIGHT_FUNCTIONS))
+
+
+def _coerce_node_props(node_props=None, node_tuning=None):
+    if node_props is None:
+        if node_tuning is None:
+            return None
+        return pd.DataFrame.from_dict(
+            {node_id: {"tuning_angle": value} for node_id, value in node_tuning.items()},
+            orient="index",
+        )
+    if isinstance(node_props, pd.DataFrame):
+        if "node_id" in node_props.columns:
+            props = node_props.set_index("node_id", drop=False)
+        else:
+            props = node_props
+    else:
+        props = pd.DataFrame.from_dict(node_props, orient="index")
+
+    if node_tuning is not None:
+        tuning = pd.Series(node_tuning)
+        tuning_by_node_id = pd.Series(props.index.map(tuning), index=props.index)
+        if "tuning_angle" in props.columns:
+            props = props.copy()
+            props["tuning_angle"] = props["tuning_angle"].fillna(tuning_by_node_id)
+        else:
+            props = props.copy()
+            props["tuning_angle"] = tuning_by_node_id
+    return props
+
+
+def _node_property(rows, node_props, node_column, property_name):
+    if node_props is None or property_name not in node_props.columns:
+        return pd.Series(np.nan, index=rows.index)
+    return rows[node_column].map(node_props[property_name])
+
+
+def _numeric_edge_property(rows, property_name, default=None):
+    if property_name not in rows.columns:
+        return pd.Series(np.nan, index=rows.index)
+
+    values = pd.to_numeric(
+        rows[property_name].replace("NULL", np.nan),
+        errors="coerce",
+    )
+    if default is not None:
+        values = values.fillna(default)
+    return values.astype(float)
+
+
+def _raise_if_missing(function_name, values_by_name):
+    missing = pd.DataFrame(values_by_name).isna()
+    if not missing.any().any():
+        return
+
+    missing_columns = sorted(missing.columns[missing.any()].tolist())
+    bad_indices = missing.index[missing.any(axis=1)].tolist()[:5]
+    raise ValueError(
+        f"{function_name} requires non-missing {', '.join(missing_columns)} "
+        f"for row index(es): {bad_indices}"
+    )
+
+
+def _delta_tuning_180(src_tuning, trg_tuning):
+    return np.abs(np.abs((np.abs(trg_tuning - src_tuning) % 360.0) - 180.0) - 180.0)
+
+
+@register_weight_function("wmax")
+def wmax(rows, node_props=None, node_tuning=None):
+    syn_weight = _numeric_edge_property(rows, "syn_weight")
+    _raise_if_missing("wmax", {"syn_weight": syn_weight})
+    return syn_weight
+
+
+register_weight_function("default_weight_fnc")(wmax)
+register_weight_function("set_syn_weight")(wmax)
+
+
+@register_weight_function("gaussianLL")
+def gaussian_ll(rows, node_props=None, node_tuning=None):
+    node_props = _coerce_node_props(node_props, node_tuning)
+
+    src_tuning = _node_property(rows, node_props, "pre nid", "tuning_angle")
+    trg_tuning = _node_property(rows, node_props, "post nid", "tuning_angle")
+    sigma = _numeric_edge_property(rows, "weight_sigma")
+    syn_weight = _numeric_edge_property(rows, "syn_weight")
+
+    _raise_if_missing(
+        "gaussianLL",
+        {
+            "source tuning_angle": src_tuning,
+            "target tuning_angle": trg_tuning,
+            "weight_sigma": sigma,
+            "syn_weight": syn_weight,
+        },
+    )
+
+    src_t = src_tuning.astype(float).values
+    trg_t = trg_tuning.astype(float).values
+    delta_tuning = np.abs(np.abs(np.abs(180.0 - np.abs(trg_t - src_t) % 360.0) - 90.0) - 90.0)
+    weights = syn_weight.values * np.exp(-(delta_tuning / sigma.values) ** 2)
+    return pd.Series(weights, index=rows.index)
+
+
+@register_weight_function("DirectionRule_others")
+def direction_rule_others(rows, node_props=None, node_tuning=None):
+    node_props = _coerce_node_props(node_props, node_tuning)
+    src_tuning = _node_property(rows, node_props, "pre nid", "tuning_angle")
+    trg_tuning = _node_property(rows, node_props, "post nid", "tuning_angle")
+    sigma = _numeric_edge_property(rows, "weight_sigma")
+    syn_weight = _numeric_edge_property(rows, "syn_weight")
+
+    _raise_if_missing(
+        "DirectionRule_others",
+        {
+            "source tuning_angle": src_tuning,
+            "target tuning_angle": trg_tuning,
+            "weight_sigma": sigma,
+            "syn_weight": syn_weight,
+        },
+    )
+
+    delta_tuning = _delta_tuning_180(src_tuning.astype(float).values, trg_tuning.astype(float).values)
+    weights = np.exp(-((delta_tuning / sigma.values) ** 2)) * syn_weight.values
+    return pd.Series(weights, index=rows.index)
+
+
+@register_weight_function("DirectionRule_EE")
+def direction_rule_ee(rows, node_props=None, node_tuning=None):
+    node_props = _coerce_node_props(node_props, node_tuning)
+    src_tuning = _node_property(rows, node_props, "pre nid", "tuning_angle")
+    trg_tuning = _node_property(rows, node_props, "post nid", "tuning_angle")
+    x_src = _node_property(rows, node_props, "pre nid", "x")
+    z_src = _node_property(rows, node_props, "pre nid", "z")
+    x_trg = _node_property(rows, node_props, "post nid", "x")
+    z_trg = _node_property(rows, node_props, "post nid", "z")
+    sigma = _numeric_edge_property(rows, "weight_sigma")
+    syn_weight = _numeric_edge_property(rows, "syn_weight")
+
+    _raise_if_missing(
+        "DirectionRule_EE",
+        {
+            "source tuning_angle": src_tuning,
+            "target tuning_angle": trg_tuning,
+            "source x": x_src,
+            "source z": z_src,
+            "target x": x_trg,
+            "target z": z_trg,
+            "weight_sigma": sigma,
+            "syn_weight": syn_weight,
+        },
+    )
+
+    src_t = src_tuning.astype(float).values
+    trg_t = trg_tuning.astype(float).values
+    delta_tuning = _delta_tuning_180(src_t, trg_t)
+    w_multiplier = np.exp(-((delta_tuning / sigma.values) ** 2))
+
+    delta_x = (x_trg.astype(float).values - x_src.astype(float).values) * 0.07
+    delta_z = (z_trg.astype(float).values - z_src.astype(float).values) * 0.04
+    theta_pref = trg_t * (np.pi / 180.0)
+    xz = delta_x * np.cos(theta_pref) + delta_z * np.sin(theta_pref)
+    phase_scale_ratio = np.exp(-(xz ** 2 / 2.0))
+
+    theta_tar_scale = np.abs(np.abs(np.abs(180.0 - np.abs(trg_t) % 360.0) - 90.0) - 90.0)
+    phase_scale_ratio = phase_scale_ratio * (5.5 / 4.0 - 11.0 / 1680.0 * theta_tar_scale)
+
+    weights = w_multiplier * phase_scale_ratio * syn_weight.values
+    return pd.Series(weights, index=rows.index)
+
+
+def apply_weight_functions(chunk, node_tuning=None, node_props=None, strict=False, enable_direction_rules=False):
+    """Apply registered weight functions to a connection chunk.
+
+    In strict mode, unknown names raise ValueError. With strict=False they keep
+    the historical bionetlite behavior and pass through syn_weight.
+
+    DirectionRule_* names are registered but disabled by default to preserve the
+    existing no-direction Neulite workflow. Set enable_direction_rules=True to
+    match BMTK's DirectionRule_* runtime weight functions at build time.
+    """
+    base_weight = _numeric_edge_property(chunk, "syn_weight")
+    _raise_if_missing("weight function dispatch", {"syn_weight": base_weight})
+    chunk.loc[:, "weight"] = base_weight
+    if "weight_function" not in chunk.columns:
+        return chunk
+
+    node_props = _coerce_node_props(node_props, node_tuning)
+    function_names = chunk["weight_function"].map(normalize_weight_function_name)
+    if not enable_direction_rules:
+        function_names = function_names.map(lambda name: "wmax" if name in _DIRECTION_RULE_NAMES else name)
+
+    unknown_names = sorted({name for name in function_names.unique() if name not in _WEIGHT_FUNCTIONS})
+    if strict and unknown_names:
+        raise ValueError(f"Unknown weight_function(s): {', '.join(unknown_names)}")
+
+    for name, indices in function_names.groupby(function_names).groups.items():
+        func = _WEIGHT_FUNCTIONS.get(name)
+        if func is None:
+            continue
+        chunk.loc[indices, "weight"] = func(
+            chunk.loc[indices],
+            node_props=node_props,
+            node_tuning=node_tuning,
+        )
+
+    return chunk
+
+
 class NeuliteNetwork(DenseNetwork):
     # Connection CSV header definition
     CONNECTION_CSV_HEADER = ["#pre nid", "post nid", "post cid", "weight",
                              "tau_decay", "tau_rise", "erev", "delay", "e/i"]
     EDGE_TYPE_COLUMNS = ["edge_type_id", "syn_weight", "target_sections", "delay",
                          "tau2", "tau1", "erev", "weight_function", "weight_sigma"]
-    NODE_PROPERTY_COLUMNS = ["node_id", "node_type_id", "tuning_angle"]
+    NODE_PROPERTY_COLUMNS = ["node_id", "node_type_id", "tuning_angle", "x", "z"]
 
     def __init__(self, name, convert_morphologies=True, convert_ion_channels=True,
                  simulation_config=None, generate_config_h=True,
+                 enable_direction_rules=False,
                  **network_props):
         super(NeuliteNetwork, self).__init__(name, **network_props or {})
 
@@ -108,6 +347,7 @@ class NeuliteNetwork(DenseNetwork):
         self.swc_dir = "data"
         self.convert_morphologies_flag = convert_morphologies
         self.convert_ion_channels_flag = convert_ion_channels
+        self.enable_direction_rules = enable_direction_rules
         self.skipped_node_groups = []
         self._edge_type_order_by_id = {}
         self._next_edge_type_order = 0
@@ -822,7 +1062,8 @@ class NeuliteNetwork(DenseNetwork):
                 "node_id": node_id,
                 "node_type_id": int(node.node_type_id),
             }
-            node_props["tuning_angle"] = self._node_property_or_nan(node, "tuning_angle")
+            for prop_name in ("tuning_angle", "x", "z"):
+                node_props[prop_name] = self._node_property_or_nan(node, prop_name)
             try:
                 if not pd.isna(node_props["tuning_angle"]):
                     node_tuning[node_id] = node_props["tuning_angle"]
@@ -1246,6 +1487,7 @@ class NeuliteNetwork(DenseNetwork):
             self.morphologies_dir,
             converted_morphologies_path=converted_swc_path,
             node_tuning=node_tuning,
+            enable_direction_rules=self.enable_direction_rules,
         )
         end_time = time.time()
         logger.info(f"Processing completed in {end_time - start_time} seconds: from rank{mpi_rank}")
@@ -1541,7 +1783,8 @@ class NeuliteNetwork(DenseNetwork):
 
     @staticmethod
     def _process_chunk(chunk, file_cache, h5_node_type, node_types_data, morphologies_path,
-                       converted_morphologies_path=None, node_tuning=None):
+                       converted_morphologies_path=None, node_tuning=None,
+                       enable_direction_rules=False):
         logger.debug(f"Start processing chunk...")
         chunk = chunk.copy()
         logger.debug(f"End coppy chunk...")
@@ -1577,26 +1820,14 @@ class NeuliteNetwork(DenseNetwork):
         chunk.loc[:, "ei"] = NeuliteNetwork._source_ei_series(chunk, nid_to_ntid, node_types_data)
         logger.debug(f"End _get_ei chunk...")
 
-        # Compute weight: vectorized gaussianLL for performance
-        chunk.loc[:, "weight"] = chunk["syn_weight"]
-        if node_tuning:
-            gauss_mask = chunk["weight_function"] == "gaussianLL"
-            if gauss_mask.any():
-                logger.debug("Computing gaussianLL weights (vectorized)...")
-                gauss_idx = chunk.index[gauss_mask]
-                src_tuning = chunk.loc[gauss_idx, "pre nid"].map(node_tuning)
-                trg_tuning = chunk.loc[gauss_idx, "post nid"].map(node_tuning)
-                valid = src_tuning.notna() & trg_tuning.notna()
-                if valid.any():
-                    valid_idx = gauss_idx[valid]
-                    src_t = src_tuning[valid].astype(float).values
-                    trg_t = trg_tuning[valid].astype(float).values
-                    sigma = chunk.loc[valid_idx, "weight_sigma"].replace('NULL', 50.0).fillna(50.0).astype(float).values
-                    w0 = chunk.loc[valid_idx, "syn_weight"].astype(float).values
-                    # gaussianLL formula (bmtk equivalent)
-                    delta_tuning = np.abs(np.abs(np.abs(180.0 - np.abs(trg_t - src_t) % 360.0) - 90.0) - 90.0)
-                    chunk.loc[valid_idx, "weight"] = w0 * np.exp(-(delta_tuning / sigma) ** 2)
-                logger.debug("End computing gaussianLL weights")
+        # DirectionRule_* remains no-direction by default; truly unknown names fail fast.
+        chunk = apply_weight_functions(
+            chunk,
+            node_tuning=node_tuning,
+            node_props=h5_node_type,
+            strict=True,
+            enable_direction_rules=enable_direction_rules,
+        )
 
         # Filter edges to keep only biophysical source connections (vectorized)
         # Note: Target is always biophysical since NeuliteNetwork only accepts biophysical nodes
@@ -1874,10 +2105,12 @@ class NeuliteBuilder(NetworkBuilder):
 
     def __init__(self, name, adaptor_cls=NeuliteNetwork, convert_morphologies=True, convert_ion_channels=True,
                  simulation_config=None, generate_config_h=True,
+                 enable_direction_rules=False,
                  **network_props):
         self.adaptor = adaptor_cls(name, convert_morphologies=convert_morphologies, convert_ion_channels=convert_ion_channels,
                                    simulation_config=simulation_config,
                                    generate_config_h=generate_config_h,
+                                   enable_direction_rules=enable_direction_rules,
                                    **network_props)
 
     def save_edges(self, edges_file_name=None, edge_types_file_name=None, output_dir='.', src_network=None,
