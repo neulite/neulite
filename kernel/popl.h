@@ -13,6 +13,7 @@ typedef struct {
 
   // Passive
   double *cm, *ra, *gl, *vl; // size == # populations * # compartments
+  double *v_init;
 
   // Size
   int *n_neuron, *n_comp, *cid; // size == # populations; cid = compartment id

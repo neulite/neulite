@@ -29,12 +29,12 @@ static neuron_t *initialize ( const population_t *u )
   int idx = 0, offset = 0;
   for ( int pid = 0; pid < u -> n_popl; pid++ ) {
     const int n_comp = u -> n_comp [ pid ];
-    const double *vl = &u -> vl [ u -> cid [ pid ] ];
+    const double *v_init = &u -> v_init [ u -> cid [ pid ] ];
     for ( int i = 0; i < u -> n_neuron [ pid ]; i++ ) {
       n -> sid [ idx ] = offset;
       n -> pid [ idx ] = pid;
       for ( int j = 0; j < n_comp; j++ ) {
-        n -> v     [ offset + j ] = vl [ j ];
+        n -> v     [ offset + j ] = v_init [ j ];
         n -> ca    [ offset + j ] = ca_init ( );
         n -> i_ext [ offset + j ] = 0.0;
       }

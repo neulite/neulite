@@ -273,15 +273,14 @@ def direction_rule_ee(rows, node_props=None, node_tuning=None):
     return pd.Series(weights, index=rows.index)
 
 
-def apply_weight_functions(chunk, node_tuning=None, node_props=None, strict=False, enable_direction_rules=False):
+def apply_weight_functions(chunk, node_tuning=None, node_props=None, strict=False, enable_direction_rules=True):
     """Apply registered weight functions to a connection chunk.
 
     In strict mode, unknown names raise ValueError. With strict=False they keep
     the historical bionetlite behavior and pass through syn_weight.
 
-    DirectionRule_* names are registered but disabled by default to preserve the
-    existing no-direction Neulite workflow. Set enable_direction_rules=True to
-    match BMTK's DirectionRule_* runtime weight functions at build time.
+    DirectionRule_* names match BMTK's runtime weight functions at build time
+    by default. Set enable_direction_rules=False to keep their base syn_weight.
     """
     base_weight = _numeric_edge_property(chunk, "syn_weight")
     _raise_if_missing("weight function dispatch", {"syn_weight": base_weight})
@@ -347,8 +346,8 @@ class NeuliteNetwork(DenseNetwork):
 
     def __init__(self, name, convert_morphologies=True, convert_ion_channels=True,
                  simulation_config=None, generate_config_h=True,
-                 enable_direction_rules=False,
-                 preselect_synapse_locations=False,
+                 enable_direction_rules=True,
+                 preselect_synapse_locations=True,
                  preselect_synapse_seed=None,
                  write_precise_target_debug_properties=True,
                  **network_props):
@@ -388,6 +387,13 @@ class NeuliteNetwork(DenseNetwork):
         self._precise_candidate_cache = {}
         self._precise_mapping_cache = {}
         self._precise_synapse_ordinals = {}
+
+        if isinstance(simulation_config, (str, os.PathLike)):
+            simulation_config = SonataConfig.from_json(os.fspath(simulation_config))
+        elif simulation_config is not None and not isinstance(simulation_config, SonataConfig):
+            simulation_config = SonataConfig.from_dict(simulation_config)
+        self._simulation_config = simulation_config
+        self._v_init = self._resolve_initial_voltage()
 
         if simulation_config is not None and generate_config_h:
             def generate_from_simulation_config():
@@ -482,12 +488,30 @@ class NeuliteNetwork(DenseNetwork):
 
         barrier()
 
+    def _resolve_initial_voltage(self, config=None):
+        """Resolve the shared BMTK voltage independently of config.h generation."""
+        effective_config = self._simulation_config if self._simulation_config is not None else config
+        conditions = effective_config.get('conditions', {}) if effective_config is not None else {}
+        if not isinstance(conditions, dict):
+            raise ValueError("conditions must be an object containing an optional conditions.v_init")
+        value = conditions.get('v_init', -80.0)
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise ValueError("conditions.v_init must be a finite number in mV")
+        try:
+            value = float(value)
+        except (OverflowError, ValueError) as exc:
+            raise ValueError("conditions.v_init must be a finite number in mV") from exc
+        if not np.isfinite(value):
+            raise ValueError("conditions.v_init must be a finite number in mV")
+        return value
+
     def _initialize_from_config_path(self, config_path, simulation_config, generate_config_h):
         if not os.path.exists(config_path):
             logger.warning(f"Initialization warning: config file not found: {config_path}")
             return
 
         config = SonataConfig.from_json(config_path)
+        self._v_init = self._resolve_initial_voltage(config)
         self.morphologies_dir = config["components"]["morphologies_dir"]
         self.biophysical_neuron_models_dir = config["components"]["biophysical_neuron_models_dir"]
         self._run_rank0_task(
@@ -804,19 +828,13 @@ class NeuliteNetwork(DenseNetwork):
         :param config_path: the path for config.json
         """
         config = SonataConfig.from_json(config_path)
+        self._v_init = self._resolve_initial_voltage(config)
         self.morphologies_dir = config["components"]["morphologies_dir"]
         self.biophysical_neuron_models_dir = config["components"]["biophysical_neuron_models_dir"]
-        if mpi_rank == 0:
-            if self.convert_morphologies_flag and os.path.exists(self.morphologies_dir):
-                logger.info("Converting morphology SWC files for Neulite")
-                self._convert_morphologies()
-            elif self.convert_morphologies_flag:
-                logger.error(f"Morphologies directory does not exists. [{self.morphologies_dir}]")
-                raise Exception(f"Morphologies directory does not exists. [{self.morphologies_dir}]")
-            if self.convert_ion_channels_flag and self.biophysical_neuron_models_dir:
-                logger.info("Converting ion channel JSON files to CSV format")
-                self.convert_ion_channels()
-        barrier()
+        self._run_rank0_task(
+            lambda: self._initialize_neulite_assets(config, self._simulation_config, False),
+            "Neulite asset initialization",
+        )
 
     def set_dir(self, ion_dir, swc_dir):
         """Set the directory path of ion and swc files for Neulite.
@@ -2231,7 +2249,7 @@ class NeuliteNetwork(DenseNetwork):
     @staticmethod
     def _process_chunk(chunk, file_cache, h5_node_type, node_types_data, morphologies_path,
                        converted_morphologies_path=None, node_tuning=None,
-                       enable_direction_rules=False):
+                       enable_direction_rules=True):
         logger.debug(f"Start processing chunk...")
         chunk = chunk.copy()
         logger.debug(f"End coppy chunk...")
@@ -2332,8 +2350,9 @@ class NeuliteNetwork(DenseNetwork):
             output_dir = self.ion_dir
             
         files = glob.glob(os.path.join(input_dir, "*_fit.json"))
-        channel_list = ['Cm', 'Ra', 'leak', 'e_pas', 'gamma', 'decay', 'NaV', 'NaTs', 'NaTa', 'Nap',
-                        'Kv2like', 'Kv3_1', 'K_P', 'K_T', 'Kd', 'Im', 'Im_v2', 'Ih', 'SK', 'Ca_HVA', 'Ca_LVA']
+        ion_channels = ['NaV', 'NaTs', 'NaTa', 'Nap', 'Kv2like', 'Kv3_1', 'K_P', 'K_T',
+                        'Kd', 'Im', 'Im_v2', 'Ih', 'SK', 'Ca_HVA', 'Ca_LVA']
+        channel_list = ['Cm', 'Ra', 'leak', 'e_pas', 'V_INIT', 'gamma', 'decay'] + ion_channels
 
         # Create output directory if it doesn't exist
         actual_output_dir = os.path.join(self.neulite_dir, output_dir)
@@ -2342,6 +2361,7 @@ class NeuliteNetwork(DenseNetwork):
 
         for file in files:
             csv_data = pd.DataFrame(0.0, index=range(4), columns=channel_list, dtype=np.float64)
+            csv_data['V_INIT'] = self._v_init
 
             with open(file, 'r') as json_open:
                 json_load = json.load(json_open)
@@ -2448,7 +2468,7 @@ class NeuliteNetwork(DenseNetwork):
                     csv_data.loc[3, 'decay'] = float(data[1]['value'])
 
             # Insert values of ion channels
-            for channel in channel_list[6:]:
+            for channel in ion_channels:
                 value = ion_data[ion_data['mechanism'] == channel]['value']
                 csv_data.loc[0, channel] = 0.0 if len(value) == 0 else float(value.iloc[-1])
 
@@ -2552,8 +2572,8 @@ class NeuliteBuilder(NetworkBuilder):
 
     def __init__(self, name, adaptor_cls=NeuliteNetwork, convert_morphologies=True, convert_ion_channels=True,
                  simulation_config=None, generate_config_h=True,
-                 enable_direction_rules=False,
-                 preselect_synapse_locations=False,
+                 enable_direction_rules=True,
+                 preselect_synapse_locations=True,
                  preselect_synapse_seed=None,
                  write_precise_target_debug_properties=True,
                  **network_props):

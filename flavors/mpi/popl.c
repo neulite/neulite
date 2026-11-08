@@ -93,6 +93,7 @@ static population_t *initialize ( const int n_each, const int n_offset, const in
   u -> ra = calloc ( nc, sizeof ( double ) );
   u -> gl = calloc ( nc, sizeof ( double ) );
   u -> vl = calloc ( nc, sizeof ( double ) );
+  u -> v_init = calloc ( nc, sizeof ( double ) );
 
   u -> gamma = calloc ( n_popl * N_COMPTYPE, sizeof ( double ) );
   u -> decay = calloc ( n_popl * N_COMPTYPE, sizeof ( double ) );
@@ -157,6 +158,7 @@ void finalize_population ( population_t *u )
   free ( u -> ra );
   free ( u -> gl );
   free ( u -> vl );
+  free ( u -> v_init );
 
   free ( u -> gbar );
   free ( u -> gamma );

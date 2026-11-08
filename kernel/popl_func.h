@@ -205,7 +205,7 @@ static void read_swc_file ( population_t *p, const int pid, const char *filename
 
 static void read_pas_file ( population_t *u, const int pid, const char *filename )
 {
-  double _cm [ N_COMPTYPE ], _ra [ N_COMPTYPE ], _gl [ N_COMPTYPE ], _vl [ N_COMPTYPE ];
+  double _cm [ N_COMPTYPE ], _ra [ N_COMPTYPE ], _gl [ N_COMPTYPE ], _vl [ N_COMPTYPE ], _v_init [ N_COMPTYPE ];
   {
     FILE *file = fopen ( filename, "r" );
     if ( ! file ) { fprintf ( stderr, "Error: no such PAS file %s\n", filename ); exit ( 1 ); }
@@ -215,13 +215,14 @@ static void read_pas_file ( population_t *u, const int pid, const char *filename
       if ( remove_blank_destructive_for_csv ( buf ) == 0 ) { continue; }
 
       int d_type;
-      double f_cm, f_ra, f_gl, f_vl;
-      const int nf = sscanf ( buf, "%d,%lf,%lf,%lf,%lf", &d_type, &f_cm, &f_ra, &f_gl, &f_vl );
-      assert ( nf == 5 );
+      double f_cm, f_ra, f_gl, f_vl, f_v_init;
+      const int nf = sscanf ( buf, "%d,%lf,%lf,%lf,%lf,%lf", &d_type, &f_cm, &f_ra, &f_gl, &f_vl, &f_v_init );
+      assert ( nf == 6 );
       _cm [ d_type ] = f_cm;
       _ra [ d_type ] = f_ra;
       _gl [ d_type ] = f_gl;
       _vl [ d_type ] = f_vl;
+      _v_init [ d_type ] = f_v_init;
     }
     fclose ( file );
   }
@@ -231,6 +232,7 @@ static void read_pas_file ( population_t *u, const int pid, const char *filename
   double *ra = &u -> ra [ offset ];
   double *gl = &u -> gl [ offset ];
   double *vl = &u -> vl [ offset ];
+  double *v_init = &u -> v_init [ offset ];
 
   for ( int i = 0; i < u -> n_comp [ pid ]; i++ ) {
     const int type    = u -> type   [ offset + i ];
@@ -239,6 +241,7 @@ static void read_pas_file ( population_t *u, const int pid, const char *filename
     ra [ i ] = _ra [ type ] * 1e-3;
     gl [ i ] = _gl [ type ] * area * 1e3; /* CONVERSION: 1e3 from S to mS */
     vl [ i ] = _vl [ type ];
+    v_init [ i ] = _v_init [ type ];
   }
 }
 
@@ -252,16 +255,16 @@ static void read_ion_file ( population_t *u, const int pid, const char *filename
     if ( remove_blank_destructive_for_csv ( buf ) == 0 ) { continue; }
 
     int d_type;
-    double f_cm, f_ra, f_gl, f_vl, f_gamma, f_decay;
+    double f_cm, f_ra, f_gl, f_vl, f_v_init, f_gamma, f_decay;
     double f [ N_GBAR ] = { 0.0 };
-    const int nf = sscanf ( buf, "%d,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf",
-        &d_type, &f_cm, &f_ra, &f_gl, &f_vl, &f_gamma, &f_decay, &f[0], &f[1], &f[2], &f[3], &f[4], &f[5], &f[6], &f[7], &f[8], &f[9], &f[10], &f[11], &f[12], &f[13], &f[14] );
-    assert ( nf == 5 || nf == 22 );
-    if ( nf == 22 ) {
+    const int nf = sscanf ( buf, "%d,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf",
+        &d_type, &f_cm, &f_ra, &f_gl, &f_vl, &f_v_init, &f_gamma, &f_decay, &f[0], &f[1], &f[2], &f[3], &f[4], &f[5], &f[6], &f[7], &f[8], &f[9], &f[10], &f[11], &f[12], &f[13], &f[14] );
+    assert ( nf == 6 || nf == 23 );
+    if ( nf == 23 ) {
       u -> gamma [ d_type + N_COMPTYPE * pid ] = f_gamma;
       u -> decay [ d_type + N_COMPTYPE * pid ] = f_decay;
     }
-    if ( nf == 22 && ALLACTIVE == 1 ) {
+    if ( nf == 23 && ALLACTIVE == 1 ) {
       const int n_comp = u -> n_comp [ pid ];
       for ( int i = 0; i < n_comp; i++ ) {
         const double area = u -> area [ u -> cid [ pid ] + i ];
